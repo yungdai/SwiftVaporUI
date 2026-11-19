@@ -7,7 +7,7 @@ struct Seedling: Sendable {
     let sown: Bool
 }
 
-/// Sample seedlings for the list examples.
+/// Seedlings in the propagator, some sown and some waiting.
 let seedlings = [
     Seedling(name: "Basil", daysToSprout: 7, sown: true),
     Seedling(name: "Chilli", daysToSprout: 14, sown: false),

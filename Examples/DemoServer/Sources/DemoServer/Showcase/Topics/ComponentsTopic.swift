@@ -173,7 +173,7 @@ struct PlantSummary: View {
 
 // snippet: fragments
 // In main.swift:
-/// Registers the routes the component examples link to.
+/// Registers the routes the component examples call.
 func registerComponentRoutes(_ app: Application) {
     app.get("fragments", "stat") { _ in
         StatTile(label: "Fragments rendered", value: "1")

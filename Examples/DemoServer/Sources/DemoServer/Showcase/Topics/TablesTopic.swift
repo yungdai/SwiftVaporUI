@@ -7,7 +7,7 @@ struct HarvestRow: Sendable {
     let kilograms: Double
 }
 
-/// Sample harvest rows for the table examples.
+/// This season's harvest, one row per crop and bed.
 let harvest = [
     HarvestRow(crop: "Tomatoes", bed: "South", kilograms: 12.5),
     HarvestRow(crop: "Courgettes", bed: "East", kilograms: 8),

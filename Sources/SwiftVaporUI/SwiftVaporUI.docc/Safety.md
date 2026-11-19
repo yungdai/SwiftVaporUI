@@ -8,12 +8,13 @@ SwiftVaporUI escapes by default, so putting user input on a page is safe in the 
 
 - Text and attribute values are always HTML-escaped. `Paragraph(userInput)` cannot inject a tag.
 - Attribute names and tag names are validated. Unsafe ones are dropped rather than written.
-- Inline ``Style`` and ``Script`` content cannot close its own tag early.
+- Inline ``Style`` and ``Script`` content cannot close its own tag early, or hide the closing tag behind `<!--`.
+- URL attributes (`href`, `src`, `action`, `formaction`, `poster`, `cite`, `data`) that use a `javascript:` or `vbscript:` scheme are written as `#`, so a link built from user input cannot run script.
 
 ### Where you still need care
 
 - ``RawHTML`` writes its string exactly as given. Only use it with markup you wrote or otherwise trust.
-- Escaping does not validate URLs. Check the scheme before putting untrusted input into an `href` or `src`, so a `javascript:` URL cannot sneak in.
+- Other URLs are written as given. A `data:` URL or a link to another site is still allowed, so check untrusted URLs against the hosts you expect.
 - `Button(_:action:)` with `.script(_:)` and inline ``Script`` run the code you give them. Never build that code from user input.
 - ``HTMLEscaping`` exposes the escaping functions for custom views that write HTML themselves.
 

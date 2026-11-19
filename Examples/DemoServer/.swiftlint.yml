@@ -1,5 +1,5 @@
-# The DemoServer package lints with the repo-wide rules.
-parent_config: ../../.swiftlint.yml
+# Nested configuration for the showcase website. SwiftLint applies it on top
+# of the repo-wide .swiftlint.yml for the files in this folder.
 
 # The showcase is mostly prose, sample data and CSS in string literals,
 # so long lines are expected here.

@@ -73,10 +73,9 @@ HTMLResponse(status: .notFound) { NotFoundPage() }
 
 The repository contains a showcase site in `Examples/DemoServer`, with a page for each feature area, a capstone page that puts everything together, and a playground. Every example shows the Swift source next to its live result.
 
-To run it in Xcode, open `Examples/DemoServer/Package.swift`, choose the **DemoServer** scheme and **My Mac**, and press Command-R. To run it from a terminal:
+The showcase is the `DemoServer` target of the same package as the library, so one checkout both releases SwiftVaporUI and runs the site. To run it in Xcode, open the repository's `Package.swift`, choose the **DemoServer** scheme and **My Mac**, and press Command-R. To run it from a terminal, in the repository folder:
 
 ```bash
-cd Examples/DemoServer
 swift run DemoServer
 ```
 

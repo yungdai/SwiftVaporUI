@@ -8,14 +8,19 @@ struct CapstonePage: View {
 
     /// One step of the walkthrough.
     struct Step: Sendable {
+
         /// The step's anchor.
         let id: String
+
         /// The step's heading.
         let title: String
+
         /// What the step explains.
         let text: String
+
         /// The snippet marker id of its code.
         let snippet: String
+
         /// The file the code is in.
         let file: String
     }

@@ -256,7 +256,21 @@ public struct Track: View {
 
     /// What kind of text the track holds.
     public enum Kind: String, Sendable {
-        case subtitles, captions, descriptions, chapters, metadata
+
+        /// A translation of the dialogue.
+        case subtitles
+
+        /// The dialogue and other sounds, for viewers who cannot hear them.
+        case captions
+
+        /// A text description of what is on screen.
+        case descriptions
+
+        /// Chapter titles, for moving around the video.
+        case chapters
+
+        /// Data for scripts, not shown to viewers.
+        case metadata
     }
 
     // MARK: - Properties

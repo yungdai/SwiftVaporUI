@@ -8,19 +8,23 @@ public struct HTMLAttributes: Sendable, Equatable, ExpressibleByDictionaryLitera
 
     /// One attribute: a name and an optional value.
     public struct Attribute: Sendable, Equatable {
+
         /// The attribute name.
         public var name: String
+
         /// The value, or `nil` for a boolean attribute.
         public var value: String?
     }
 
     // MARK: - Properties
 
-    /// Whether there are no attributes.
-    public var isEmpty: Bool { storage.isEmpty }
-
     /// The attributes, in the order they were first set.
     public private(set) var storage: [Attribute] = []
+
+    // MARK: - Computed Properties
+
+    /// Whether there are no attributes.
+    public var isEmpty: Bool { storage.isEmpty }
 
     // MARK: - Initializers
 

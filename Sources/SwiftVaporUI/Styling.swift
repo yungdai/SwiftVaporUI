@@ -77,7 +77,24 @@ public struct Font: Sendable, Hashable {
 
     /// A CSS font weight.
     public enum Weight: Int, Sendable {
-        case light = 300, regular = 400, medium = 500, semibold = 600, bold = 700, heavy = 800
+
+        /// Light (300).
+        case light = 300
+
+        /// Regular (400).
+        case regular = 400
+
+        /// Medium (500).
+        case medium = 500
+
+        /// Semibold (600).
+        case semibold = 600
+
+        /// Bold (700).
+        case bold = 700
+
+        /// Heavy (800).
+        case heavy = 800
     }
 
     // MARK: - Static Properties

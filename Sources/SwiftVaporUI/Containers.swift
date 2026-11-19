@@ -339,11 +339,14 @@ public struct GridItem: Sendable, Hashable {
 
     /// How a column is sized.
     public enum Size: Sendable, Hashable {
+
         /// Exactly this many pixels wide.
         case fixed(Double)
+
         /// A share of the free space, at least `minimum` pixels and at most
         /// `maximum` pixels wide.
         case flexible(minimum: Double = 0, maximum: Double = .infinity)
+
         /// As many columns as fit, each at least `minimum` pixels wide. Used
         /// with other columns, it is one column of that size instead, because
         /// CSS cannot repeat it alongside them.
@@ -472,15 +475,25 @@ public enum Axis: Sendable, Hashable {
 
     /// A set of directions.
     public struct Set: OptionSet, Sendable, Hashable {
-        /// The bit mask of directions.
-        public let rawValue: Int
-        /// Creates a set of directions from a bit mask.
-        public init(rawValue: Int) { self.rawValue = rawValue }
+
+        // MARK: - Static Properties
 
         /// Left and right.
         public static let horizontal = Set(rawValue: 1)
+
         /// Up and down.
         public static let vertical = Set(rawValue: 2)
+
+        // MARK: - Properties
+
+        /// The bit mask of directions.
+        public let rawValue: Int
+
+        // MARK: - Initializer
+
+        /// Creates a set of directions from a bit mask.
+        /// - Parameter rawValue: The bit mask of directions.
+        public init(rawValue: Int) { self.rawValue = rawValue }
     }
 
     /// Left and right.

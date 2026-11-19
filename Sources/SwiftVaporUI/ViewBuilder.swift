@@ -153,8 +153,10 @@ public struct ConditionalView<TrueContent: View, FalseContent: View>: View {
 
     /// Which branch was taken.
     enum Storage: Sendable {
+
         /// The `if` branch, or the first `switch` case.
         case first(TrueContent)
+
         /// The `else` branch, or a later `switch` case.
         case second(FalseContent)
     }

@@ -3,6 +3,8 @@ import SwiftVaporUI
 /// A feature area of SwiftVaporUI, shown as one page of the showcase.
 struct Topic: Sendable {
 
+    // MARK: - Properties
+
     /// The URL path segment, such as `text` for `/text`.
     let slug: String
 
@@ -17,6 +19,8 @@ struct Topic: Sendable {
 
     /// The examples, in page order.
     let examples: [Example]
+
+    // MARK: - Computed Properties
 
     /// The page's URL path, such as `/text`.
     var path: String { "/\(slug)" }

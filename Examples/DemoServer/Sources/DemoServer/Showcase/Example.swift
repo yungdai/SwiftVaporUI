@@ -82,6 +82,7 @@ struct Example: Sendable {
         self.file = file
         self.isolated = isolated
     }
+
 }
 
 /// Swift source extracted from a file, with where it came from.
@@ -96,6 +97,7 @@ struct SourceSnippet: Sendable {
 
     /// The first line of the snippet in that file, counting from 1.
     let line: Int?
+
 }
 
 /// Reads and caches the demo's own source files.
@@ -193,4 +195,5 @@ final class SourceLibrary: @unchecked Sendable {
         }
         return (path as NSString).lastPathComponent
     }
+
 }

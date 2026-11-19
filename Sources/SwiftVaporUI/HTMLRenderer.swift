@@ -85,6 +85,7 @@ public struct HTMLRenderer: Sendable {
         }
         output += ">"
     }
+
 }
 
 /// Escaping helpers used by the renderer. Exposed for use in custom views.
@@ -172,4 +173,5 @@ public enum HTMLEscaping {
             }
         }
     }
+
 }

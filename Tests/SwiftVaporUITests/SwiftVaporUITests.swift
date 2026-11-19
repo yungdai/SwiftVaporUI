@@ -22,6 +22,7 @@ private struct Badge: View {
     var body: some View {
         Span(label).class("badge")
     }
+
 }
 
 /// A titled card around content, for the composition tests.
@@ -56,6 +57,7 @@ private struct Card<Content: View>: View {
         }
         .class("card")
     }
+
 }
 
 /// A list with an empty state, for the conditional tests.
@@ -85,6 +87,7 @@ private struct Checklist: View {
             }
         }
     }
+
 }
 
 /// Tests for rendering, escaping and the result builder.
@@ -206,6 +209,7 @@ final class RenderingTests: XCTestCase {
         let views: [AnyView] = [AnyView(Text("a")), AnyView(Strong("b"))]
         XCTAssertEqual(ForEach(views) { $0 }.render(), "a<strong>b</strong>")
     }
+
 }
 
 /// Tests for attribute modifiers.
@@ -287,6 +291,7 @@ final class ModifierTests: XCTestCase {
         .render()
         XCTAssertEqual(html, "<p class=\"first\">one</p><p>two</p>")
     }
+
 }
 
 /// Tests for the element views.
@@ -431,6 +436,7 @@ final class ElementTests: XCTestCase {
                 + "</head><body><main><h1>Hi</h1></main></body></html>"
         )
     }
+
 }
 
 /// Tests for the styling modifiers.
@@ -478,6 +484,7 @@ final class StylingTests: XCTestCase {
             "<div style=\"color: red&quot; onclick=&quot;x\"></div>"
         )
     }
+
 }
 
 /// Tests for returning views from Vapor routes.
@@ -503,4 +510,5 @@ final class VaporIntegrationTests: XCTestCase {
         }
         try await app.asyncShutdown()
     }
+
 }

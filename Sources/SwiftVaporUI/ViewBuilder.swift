@@ -80,6 +80,7 @@ public enum ViewBuilder {
     public static func buildLimitedAvailability<Content: View>(_ content: Content) -> AnyView {
         AnyView(content)
     }
+
 }
 
 /// Sibling views produced by a `ViewBuilder` block. Longer blocks nest:
@@ -116,6 +117,7 @@ public struct TupleView<First: View, Second: View>: View {
         first._render(into: &renderer)
         second._render(into: &renderer)
     }
+
 }
 
 /// The result of an `if` without an `else` in a `ViewBuilder`.
@@ -144,6 +146,7 @@ public struct OptionalView<Wrapped: View>: View {
     public func _render(into renderer: inout HTMLRenderer) {
         wrapped?._render(into: &renderer)
     }
+
 }
 
 /// The result of an `if`/`else` or `switch` in a `ViewBuilder`.
@@ -159,6 +162,7 @@ public struct ConditionalView<TrueContent: View, FalseContent: View>: View {
 
         /// The `else` branch, or a later `switch` case.
         case second(FalseContent)
+
     }
 
     // MARK: - Properties
@@ -179,4 +183,5 @@ public struct ConditionalView<TrueContent: View, FalseContent: View>: View {
         case let .second(view): view._render(into: &renderer)
         }
     }
+
 }

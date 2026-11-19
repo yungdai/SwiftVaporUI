@@ -61,6 +61,7 @@ public struct Checkbox: View {
         if isChecked { attributes.setFlag("checked") }
         return VoidElement("input", attributes: attributes)
     }
+
 }
 
 /// A radio button (`<input type="radio">`). Buttons with the same `name`
@@ -105,6 +106,7 @@ public struct RadioButton: View {
         if isChecked { attributes.setFlag("checked") }
         return VoidElement("input", attributes: attributes)
     }
+
 }
 
 /// A number field (`<input type="number">`).
@@ -160,6 +162,7 @@ public struct NumberField: View {
         attributes["step"] = step.map(cssNumber)
         return VoidElement("input", attributes: attributes)
     }
+
 }
 
 /// A slider (`<input type="range">`).
@@ -210,6 +213,7 @@ public struct RangeField: View {
         attributes["value"] = cssNumber(value)
         return VoidElement("input", attributes: attributes)
     }
+
 }
 
 /// A date field (`<input type="date">`). Values are `yyyy-MM-dd` strings.
@@ -264,6 +268,7 @@ public struct DateField: View {
         attributes["max"] = max
         return VoidElement("input", attributes: attributes)
     }
+
 }
 
 /// An email address field (`<input type="email">`). The browser checks the
@@ -296,7 +301,13 @@ public struct EmailField: View {
     ///   - value: The initial value.
     ///   - allowsMultiple: Whether several comma-separated addresses are allowed.
     ///   - id: The element `id`, for use with `Label(for:)`.
-    public init(_ placeholder: String? = nil, name: String, value: String? = nil, multiple allowsMultiple: Bool = false, id: String? = nil) {
+    public init(
+        _ placeholder: String? = nil,
+        name: String,
+        value: String? = nil,
+        multiple allowsMultiple: Bool = false,
+        id: String? = nil
+    ) {
         self.name = name
         self.value = value
         self.placeholder = placeholder
@@ -315,6 +326,7 @@ public struct EmailField: View {
         if allowsMultiple { attributes.setFlag("multiple") }
         return VoidElement("input", attributes: attributes)
     }
+
 }
 
 /// A file picker (`<input type="file">`).
@@ -361,6 +373,7 @@ public struct FileField: View {
         if allowsMultiple { attributes.setFlag("multiple") }
         return VoidElement("input", attributes: attributes)
     }
+
 }
 
 // MARK: - SwiftUI-style controls
@@ -407,6 +420,7 @@ struct LabeledControl<Title: View, Control: View>: View {
         renderer.pending = []
         renderer.write("</label>")
     }
+
 }
 
 /// A labelled checkbox, in the style of SwiftUI's `Toggle`.
@@ -454,6 +468,7 @@ public struct Toggle<Title: View>: View {
     public var body: some View {
         LabeledControl(title: title, control: Checkbox(name: name, value: value, isChecked: isOn), titleFirst: false)
     }
+
 }
 
 /// Initializers that take plain text.
@@ -468,6 +483,7 @@ extension Toggle where Title == Text {
     public init(_ title: String, name: String, isOn: Bool = false, value: String = "on") {
         self.init(name: name, isOn: isOn, value: value) { Text(title) }
     }
+
 }
 
 /// One choice in a `Picker`.
@@ -497,6 +513,7 @@ public struct PickerOption: Sendable, Hashable, ExpressibleByStringLiteral {
     public init(stringLiteral value: String) {
         self.init(value)
     }
+
 }
 
 /// How a `Picker` presents its choices.
@@ -507,6 +524,7 @@ public enum PickerStyle: Sendable {
 
     /// A `<fieldset>` of radio buttons, all visible at once.
     case radioGroup
+
 }
 
 /// A labelled choice from a list, in the style of SwiftUI's `Picker`.
@@ -586,6 +604,7 @@ public struct Picker: View {
             .class("svui-radio-group")
         }
     }
+
 }
 
 /// A labelled slider, in the style of SwiftUI's `Slider`.
@@ -662,6 +681,7 @@ public struct Slider: View {
             titleFirst: true
         )
     }
+
 }
 
 /// A labelled whole-number field with up and down buttons, in the style of
@@ -722,6 +742,7 @@ public struct Stepper: View {
             titleFirst: true
         )
     }
+
 }
 
 /// The parts of a date a `DatePicker` asks for.
@@ -745,6 +766,7 @@ public struct DatePickerComponents: OptionSet, Sendable, Hashable {
     /// Creates components from a bit mask.
     /// - Parameter rawValue: The bit mask of components.
     public init(rawValue: Int) { self.rawValue = rawValue }
+
 }
 
 /// A labelled date and/or time field, in the style of SwiftUI's `DatePicker`.
@@ -854,6 +876,7 @@ public struct DatePicker: View {
             titleFirst: true
         )
     }
+
 }
 
 /// Progress through a task, in the style of SwiftUI's `ProgressView`
@@ -923,4 +946,5 @@ public struct ProgressView: View {
             bar
         }
     }
+
 }

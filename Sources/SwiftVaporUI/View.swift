@@ -35,6 +35,7 @@ public protocol View: AsyncResponseEncodable, Sendable {
     /// override it.
     /// - Parameter renderer: The renderer that collects the page's HTML.
     func _render(into renderer: inout HTMLRenderer)
+
 }
 
 /// Rendering for every view: composite views render their `body`.
@@ -53,6 +54,7 @@ extension View {
     public func _render(into renderer: inout HTMLRenderer) {
         body._render(into: &renderer)
     }
+
 }
 
 /// Primitive views have no body.
@@ -62,6 +64,7 @@ extension View where Body == Never {
     public var body: Never {
         fatalError("\(Self.self) is a primitive view and has no body.")
     }
+
 }
 
 /// `Never` is the body of primitive views, so it must be encodable like every view.
@@ -76,6 +79,7 @@ extension Never: View {
     /// Writes this view's HTML into `renderer`.
     /// - Parameter renderer: The renderer that collects the page's HTML.
     public func _render(into renderer: inout HTMLRenderer) {}
+
 }
 
 // MARK: - Vapor integration
@@ -88,6 +92,7 @@ extension View {
     public func encodeResponse(for request: Request) async throws -> Response {
         try await HTMLResponse(self).encodeResponse(for: request)
     }
+
 }
 
 /// Wraps a view so a route can choose the response status and headers.
@@ -147,4 +152,5 @@ public struct HTMLResponse<Content: View>: AsyncResponseEncodable {
         }
         return Response(status: status, headers: headers, body: .init(string: content.render()))
     }
+
 }

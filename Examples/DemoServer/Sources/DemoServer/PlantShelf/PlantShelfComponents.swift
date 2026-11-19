@@ -54,6 +54,7 @@ struct SiteLayout<Content: View>: View {
             .class("site-footer")
         }
     }
+
 }
 
 /// A small pill showing a plant's light needs.
@@ -70,6 +71,7 @@ struct LightBadge: View {
     var body: some View {
         Span(light.label).class("badge", "badge-\(light.rawValue)")
     }
+
 }
 
 /// A summary card for one plant, linking to its page.
@@ -93,6 +95,7 @@ struct PlantCard: View {
         }
         .class("card")
     }
+
 }
 
 /// A fragment that can be returned on its own from a route.
@@ -113,6 +116,7 @@ struct PlantCount: View {
         }
         .id("plant-count")
     }
+
 }
 
 /// A list of validation messages, or nothing when there are none.
@@ -140,6 +144,7 @@ struct ErrorSummary: View {
             .role("alert")
         }
     }
+
 }
 
 /// The Plant Shelf app's stylesheet.

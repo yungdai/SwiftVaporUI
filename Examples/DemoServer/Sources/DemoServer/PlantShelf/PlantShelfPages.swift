@@ -33,6 +33,7 @@ struct HomePage: View {
             }
         }
     }
+
 }
 
 /// One plant's details.
@@ -72,6 +73,7 @@ struct PlantPage: View {
             Link("← Back to all plants", destination: "/plants")
         }
     }
+
 }
 
 /// The form for adding a plant, with any errors from the last attempt.
@@ -131,6 +133,7 @@ struct NewPlantPage: View {
             }
         }
     }
+
 }
 
 /// Shown, with a 404 status, for a plant that does not exist.
@@ -147,4 +150,5 @@ struct NotFoundPage: View {
             }
         }
     }
+
 }

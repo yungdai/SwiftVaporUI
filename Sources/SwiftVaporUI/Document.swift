@@ -95,6 +95,7 @@ public struct HTMLDocument<HeadContent: View, Content: View>: View {
         ._render(into: &renderer)
         renderer.writtenSupportStyles.formUnion(bodyRenderer.writtenSupportStyles)
     }
+
 }
 
 /// Documents with nothing extra in the head.
@@ -108,6 +109,7 @@ extension HTMLDocument where HeadContent == EmptyView {
     public init(title: String, language: String = "en", @ViewBuilder body: () -> Content) {
         self.init(title: title, language: language, head: { EmptyView() }, body: body)
     }
+
 }
 
 /// A page with only a title and body content: shorthand for an
@@ -143,6 +145,7 @@ public struct Document<Content: View>: View {
         RawHTML("<!DOCTYPE html>")
         content
     }
+
 }
 
 /// The root `<html>` element.
@@ -175,6 +178,7 @@ public struct HTMLRoot<Content: View>: View {
         attributes["lang"] = language
         return Element("html", attributes: attributes, wrapping: content)
     }
+
 }
 
 /// The document `<title>`. The text is escaped.
@@ -199,6 +203,7 @@ public struct Title: View {
     public var body: Element<Text> {
         Element("title", wrapping: Text(text))
     }
+
 }
 
 /// A `<link>` relating the document to another resource, such as an icon
@@ -230,6 +235,7 @@ public struct ResourceLink: View {
     public var body: VoidElement {
         VoidElement("link", attributes: ["rel": relationship, "href": destination])
     }
+
 }
 
 /// A `<meta>` tag for the document head.
@@ -268,6 +274,7 @@ public struct Meta: View {
 
     /// The elements this view is made of.
     public var body: VoidElement { VoidElement("meta", attributes: attributes) }
+
 }
 
 /// Links an external stylesheet (`<link rel="stylesheet">`).
@@ -292,6 +299,7 @@ public struct Stylesheet: View {
     public var body: VoidElement {
         VoidElement("link", attributes: ["rel": "stylesheet", "href": href])
     }
+
 }
 
 /// Inline CSS (`<style>`). The CSS is not escaped, but any `</style` inside
@@ -317,6 +325,7 @@ public struct Style: View {
     public var body: Element<RawHTML> {
         Element("style", wrapping: RawHTML(css.replacingOccurrences(of: "</", with: "<\\/")))
     }
+
 }
 
 /// A script, either external (`src`) or inline. Inline code is not escaped,
@@ -367,4 +376,5 @@ public struct Script: View {
     public var body: Element<RawHTML> {
         Element("script", attributes: attributes, wrapping: RawHTML(code))
     }
+
 }

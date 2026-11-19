@@ -68,6 +68,7 @@ public struct Color: Sendable, Hashable {
     public static func rgb(_ red: Int, _ green: Int, _ blue: Int, opacity: Double = 1) -> Color {
         Color(css: "rgb(\(red) \(green) \(blue) / \(cssNumber(opacity * 100))%)")
     }
+
 }
 
 /// A text style, in the spirit of SwiftUI's built-in fonts.
@@ -95,6 +96,7 @@ public struct Font: Sendable, Hashable {
 
         /// Heavy (800).
         case heavy = 800
+
     }
 
     // MARK: - Static Properties
@@ -146,6 +148,7 @@ public struct Font: Sendable, Hashable {
     public static func system(size: Double, weight: Weight = .regular) -> Font {
         Font(css: "font-size: \(cssNumber(size))px; font-weight: \(weight.rawValue)")
     }
+
 }
 
 /// The edges `padding(_:_:)` can apply to.
@@ -186,6 +189,7 @@ public struct Edge: OptionSet, Sendable, Hashable {
     public init(rawValue: Int) {
         self.rawValue = rawValue
     }
+
 }
 
 /// SwiftUI-style styling modifiers. Each one adds inline CSS to the view's
@@ -326,4 +330,5 @@ extension View {
         if let maxHeight { declarations.append("max-height: \(cssNumber(maxHeight))px") }
         return style(declarations.joined(separator: "; "))
     }
+
 }

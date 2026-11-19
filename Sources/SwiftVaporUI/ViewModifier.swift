@@ -41,6 +41,7 @@ public protocol ViewModifier: Sendable {
     /// - Parameter content: The view the modifier is applied to.
     /// - Returns: The modified view.
     @ViewBuilder func body(content: Content) -> Body
+
 }
 
 /// The view a ``ViewModifier`` is applied to, passed to its
@@ -70,6 +71,7 @@ public struct ViewModifierContent: View {
     public func _render(into renderer: inout HTMLRenderer) {
         view._render(into: &renderer)
     }
+
 }
 
 /// A view with a ``ViewModifier`` applied.
@@ -100,6 +102,7 @@ public struct ModifiedContent<Content: View, Modifier: ViewModifier>: View {
     public var body: Modifier.Body {
         modifier.body(content: ViewModifierContent(AnyView(content)))
     }
+
 }
 
 /// Applying a custom modifier.
@@ -111,4 +114,5 @@ extension View {
     public func modifier<Modifier: ViewModifier>(_ modifier: Modifier) -> ModifiedContent<Self, Modifier> {
         ModifiedContent(content: self, modifier: modifier)
     }
+
 }

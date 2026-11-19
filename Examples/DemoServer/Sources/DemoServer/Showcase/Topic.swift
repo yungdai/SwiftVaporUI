@@ -24,6 +24,7 @@ struct Topic: Sendable {
 
     /// The page's URL path, such as `/text`.
     var path: String { "/\(slug)" }
+
 }
 
 /// Every showcase page, in sidebar order.
@@ -59,4 +60,5 @@ enum Topics {
     static func topic(slug: String) -> Topic? {
         all.first { $0.slug == slug }
     }
+
 }

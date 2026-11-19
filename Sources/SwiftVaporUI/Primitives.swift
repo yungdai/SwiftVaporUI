@@ -14,6 +14,7 @@ public struct EmptyView: View {
     /// Writes this view's HTML into `renderer`.
     /// - Parameter renderer: The renderer that collects the page's HTML.
     public func _render(into renderer: inout HTMLRenderer) {}
+
 }
 
 /// Plain text. The string is HTML-escaped when rendered.
@@ -55,6 +56,7 @@ public struct Text: View {
             Element("span", wrapping: Text(content))._render(into: &renderer)
         }
     }
+
 }
 
 /// HTML that is written to the output exactly as given, with no escaping.
@@ -86,6 +88,7 @@ public struct RawHTML: View {
     public func _render(into renderer: inout HTMLRenderer) {
         renderer.write(html)
     }
+
 }
 
 /// A type-erased view.
@@ -118,6 +121,7 @@ public struct AnyView: View {
     public func _render(into renderer: inout HTMLRenderer) {
         view._render(into: &renderer)
     }
+
 }
 
 /// Groups views without adding an element around them.
@@ -140,6 +144,7 @@ public struct Group<Content: View>: View {
 
     /// The elements this view is made of.
     public var body: Content { content }
+
 }
 
 /// Renders a view for each element of a sequence.
@@ -186,6 +191,7 @@ public struct ForEach<Content: View>: View {
             view._render(into: &renderer)
         }
     }
+
 }
 
 /// Any HTML element with an opening and closing tag.
@@ -252,6 +258,7 @@ public struct Element<Content: View>: View {
         content._render(into: &renderer)
         renderer.write("</\(tag)>")
     }
+
 }
 
 /// Initializers for an element with no content.
@@ -264,6 +271,7 @@ extension Element where Content == EmptyView {
     public init(_ tag: String, attributes: HTMLAttributes = [:]) {
         self.init(tag, attributes: attributes, wrapping: EmptyView())
     }
+
 }
 
 /// An HTML element with no content and no closing tag, such as `<img>`.
@@ -304,4 +312,5 @@ public struct VoidElement: View {
         renderer.takePending(applyingTo: &attributes)
         renderer.writeOpeningTag(tag, attributes: attributes)
     }
+
 }

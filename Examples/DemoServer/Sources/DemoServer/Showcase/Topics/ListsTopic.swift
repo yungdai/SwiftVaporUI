@@ -12,8 +12,10 @@ struct Seedling: Sendable {
 
     /// Whether it has been sown yet.
     let sown: Bool
+
 }
 
+/// Seedlings in the propagator, some sown and some waiting.
 let seedlings = [
     Seedling(name: "Basil", daysToSprout: 7, sown: true),
     Seedling(name: "Chilli", daysToSprout: 14, sown: false),
@@ -147,4 +149,5 @@ enum ListsTopic {
             },
         ]
     )
+
 }

@@ -10,6 +10,7 @@ private struct Theme: Sendable, Equatable {
 
     /// The accent colour's name.
     var accent: String
+
 }
 
 /// The environment key for `Theme`.
@@ -17,6 +18,7 @@ private struct ThemeKey: EnvironmentKey {
 
     /// The theme when none is set.
     static let defaultValue = Theme(accent: "blue")
+
 }
 
 /// The `theme` environment value used by the tests.
@@ -27,6 +29,7 @@ extension EnvironmentValues {
         get { self[ThemeKey.self] }
         set { self[ThemeKey.self] = newValue }
     }
+
 }
 
 /// An environment key whose default value is not `nil`.
@@ -34,6 +37,7 @@ private struct GreetingKey: EnvironmentKey {
 
     /// The greeting when none is set.
     static let defaultValue: String? = "Hello"
+
 }
 
 /// Shows the theme's accent, read from the environment.
@@ -50,6 +54,7 @@ private struct AccentLabel: View {
     var body: some View {
         Span(theme.accent)
     }
+
 }
 
 /// Wraps content in a classed box, for the ViewModifier tests.
@@ -68,6 +73,7 @@ private struct Boxed: ViewModifier {
     func body(content: Self.Content) -> some View {
         Div { content }.class("box", tone)
     }
+
 }
 
 /// Tests for the HTML5 elements, inputs and attributes.
@@ -214,6 +220,7 @@ final class HTML5ElementTests: XCTestCase {
                        "<a href=\"/a\" target=\"_blank\" rel=\"external nofollow\">A</a>")
         XCTAssertEqual(Link("A", destination: "/a", relationship: "me").render(), "<a href=\"/a\" rel=\"me\">A</a>")
     }
+
 }
 
 /// Tests for the SwiftUI-style containers, controls and modifiers.
@@ -318,7 +325,8 @@ final class SwiftUIStyleTests: XCTestCase {
     func testSliderAndStepper() {
         let slider = Slider("Volume", name: "v", value: 40, showsValue: true).render()
         XCTAssertTrue(slider.contains(
-            "<input type=\"range\" name=\"v\" min=\"0\" max=\"100\" value=\"40\" oninput=\"this.nextElementSibling.value=this.value\"><output>40</output>"
+            "<input type=\"range\" name=\"v\" min=\"0\" max=\"100\" value=\"40\" "
+                + "oninput=\"this.nextElementSibling.value=this.value\"><output>40</output>"
         ))
         let stepper = Stepper("Guests", name: "g", value: 2, in: 1...12, step: 2).render()
         XCTAssertTrue(stepper.contains("<input type=\"number\" name=\"g\" value=\"2\" min=\"1\" max=\"12\" step=\"2\">"))
@@ -332,7 +340,8 @@ final class SwiftUIStyleTests: XCTestCase {
         XCTAssertTrue(DatePicker("At", name: "t", selection: date, displayedComponents: .hourAndMinute).render()
             .contains("<input type=\"time\" name=\"t\" value=\"18:05\">"))
         XCTAssertTrue(DatePicker("When", name: "w", selection: date, in: date...date, displayedComponents: [.date, .hourAndMinute]).render()
-            .contains("<input type=\"datetime-local\" name=\"w\" value=\"2026-11-21T18:05\" min=\"2026-11-21T18:05\" max=\"2026-11-21T18:05\">"))
+            .contains("<input type=\"datetime-local\" name=\"w\" value=\"2026-11-21T18:05\" "
+                + "min=\"2026-11-21T18:05\" max=\"2026-11-21T18:05\">"))
     }
 
     /// Checks progress view.
@@ -348,7 +357,8 @@ final class SwiftUIStyleTests: XCTestCase {
         XCTAssertEqual(DisclosureGroup("More", isExpanded: true) { "x" }.render(),
                        "<details open=\"\"><summary>More</summary>x</details>")
         XCTAssertTrue(Menu("Share") { Link("A", destination: "/a") }.render().hasSuffix(
-            "<details class=\"svui-menu\"><summary>Share</summary><div class=\"svui-menu-items\" role=\"menu\"><a href=\"/a\">A</a></div></details>"
+            "<details class=\"svui-menu\"><summary>Share</summary>"
+                + "<div class=\"svui-menu-items\" role=\"menu\"><a href=\"/a\">A</a></div></details>"
         ))
         XCTAssertEqual(NavigationLink("Map", destination: "/map", isActive: true).render(),
                        "<a href=\"/map\" aria-current=\"page\">Map</a>")
@@ -403,6 +413,7 @@ final class SwiftUIStyleTests: XCTestCase {
     func testOpacity() {
         XCTAssertEqual(Span("x").opacity(0.5).render(), "<span style=\"opacity: 0.5\">x</span>")
     }
+
 }
 
 /// Tests for ViewModifier, AnyView and the environment.
@@ -454,6 +465,7 @@ final class CompositionTests: XCTestCase {
         values[GreetingKey.self] = nil
         XCTAssertNil(values[GreetingKey.self])
     }
+
 }
 
 /// Tests for the fixes from code review.
@@ -517,4 +529,5 @@ final class ReviewFixTests: XCTestCase {
         .render()
         XCTAssertEqual(html.components(separatedBy: "<style>").count - 1, 2)
     }
+
 }

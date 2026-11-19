@@ -91,6 +91,7 @@ struct ShowcaseLayout<Content: View>: View {
             .class("shell")
         }
     }
+
 }
 
 /// One example: the Swift source on the left, the live result on the
@@ -142,6 +143,7 @@ struct ExampleView: View {
         .class("example")
         .id(example.id)
     }
+
 }
 
 /// Highlighted Swift source with a copy button and the file it came from.
@@ -175,6 +177,7 @@ struct CodePanel: View {
         }
         .class("panel", "code-panel")
     }
+
 }
 
 /// A topic page: introduction, contents, every example, and links to the
@@ -240,6 +243,7 @@ struct TopicPage: View {
             Script(copyScript)
         }
     }
+
 }
 
 /// The landing page.
@@ -299,6 +303,7 @@ struct ShowcaseHomePage: View {
             Script(copyScript)
         }
     }
+
 }
 
 /// The examples shown on the home page.
@@ -314,6 +319,7 @@ enum HomeExamples {
         Greeting(name: "Ada", unread: 3)
         // end-snippet
     }
+
 }
 
 // snippet: quick-start
@@ -340,6 +346,7 @@ struct Greeting: View {
             }
         }
     }
+
 }
 
 // In main.swift:
@@ -348,6 +355,7 @@ struct Greeting: View {
 // }
 // end-snippet
 
+/// The script behind the Copy buttons on code panels.
 let copyScript = """
 function copyCode(button) {
   const code = button.closest('.panel').querySelector('pre code').innerText;

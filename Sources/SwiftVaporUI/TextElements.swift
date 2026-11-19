@@ -22,6 +22,7 @@ public struct Mark<Content: View>: View {
     public var body: Element<Content> {
         Element("mark", wrapping: content)
     }
+
 }
 
 /// Initializers that take plain text.
@@ -32,6 +33,7 @@ extension Mark where Content == Text {
     public init(_ text: String) {
         self.init { Text(text) }
     }
+
 }
 
 /// Keyboard input, such as a key or shortcut (`<kbd>`).
@@ -56,6 +58,7 @@ public struct Keyboard<Content: View>: View {
     public var body: Element<Content> {
         Element("kbd", wrapping: content)
     }
+
 }
 
 /// Initializers that take plain text.
@@ -66,6 +69,7 @@ extension Keyboard where Content == Text {
     public init(_ text: String) {
         self.init { Text(text) }
     }
+
 }
 
 /// Subscript text, such as the 2 in H₂O (`<sub>`).
@@ -90,6 +94,7 @@ public struct Subscript<Content: View>: View {
     public var body: Element<Content> {
         Element("sub", wrapping: content)
     }
+
 }
 
 /// Initializers that take plain text.
@@ -100,6 +105,7 @@ extension Subscript where Content == Text {
     public init(_ text: String) {
         self.init { Text(text) }
     }
+
 }
 
 /// Superscript text, such as an exponent (`<sup>`).
@@ -124,6 +130,7 @@ public struct Superscript<Content: View>: View {
     public var body: Element<Content> {
         Element("sup", wrapping: content)
     }
+
 }
 
 /// Initializers that take plain text.
@@ -134,6 +141,7 @@ extension Superscript where Content == Text {
     public init(_ text: String) {
         self.init { Text(text) }
     }
+
 }
 
 /// An abbreviation, with its expansion as the `title` (`<abbr>`).
@@ -170,6 +178,7 @@ public struct Abbreviation: View {
         attributes["title"] = expansion
         return Element("abbr", attributes: attributes, wrapping: Text(text))
     }
+
 }
 
 /// A date or time, readable by people and machines (`<time>`).
@@ -207,6 +216,7 @@ public struct Time<Content: View>: View {
         attributes["datetime"] = dateTime
         return Element("time", attributes: attributes, wrapping: content)
     }
+
 }
 
 /// Initializers that take plain text.
@@ -219,6 +229,7 @@ extension Time where Content == Text {
     public init(_ text: String, dateTime: String? = nil) {
         self.init(dateTime: dateTime) { Text(text) }
     }
+
 }
 
 /// A dialog box (`<dialog>`).
@@ -256,6 +267,7 @@ public struct Dialog<Content: View>: View {
         if isPresented { attributes.setFlag("open") }
         return Element("dialog", attributes: attributes, wrapping: content)
     }
+
 }
 
 /// The title of a `Table` (`<caption>`). Put it first inside the table.
@@ -280,6 +292,7 @@ public struct TableCaption<Content: View>: View {
     public var body: Element<Content> {
         Element("caption", wrapping: content)
     }
+
 }
 
 /// Initializers that take plain text.
@@ -290,6 +303,7 @@ extension TableCaption where Content == Text {
     public init(_ text: String) {
         self.init { Text(text) }
     }
+
 }
 
 /// A labelled group of options in a `Select` (`<optgroup>`).
@@ -320,6 +334,7 @@ public struct OptionGroup<Content: View>: View {
     public var body: Element<Content> {
         Element("optgroup", attributes: ["label": label], wrapping: content)
     }
+
 }
 
 /// Suggested values for a text field (`<datalist>`).
@@ -361,6 +376,7 @@ public struct DataList<Content: View>: View {
     public var body: Element<Content> {
         Element("datalist", attributes: ["id": id], wrapping: content)
     }
+
 }
 
 /// A measurement within a known range, such as disk usage (`<meter>`).
@@ -428,6 +444,7 @@ public struct Meter: View {
         attributes["optimum"] = optimum.map(cssNumber)
         return Element("meter", attributes: attributes, wrapping: Text(label))
     }
+
 }
 
 /// The result of a calculation or user action (`<output>`).
@@ -468,6 +485,7 @@ public struct Output<Content: View>: View {
         }
         return Element("output", attributes: attributes, wrapping: content)
     }
+
 }
 
 /// Initializers that take plain text.
@@ -481,4 +499,5 @@ extension Output where Content == Text {
     public init(_ text: String, name: String? = nil, for sources: [String] = []) {
         self.init(name: name, for: sources) { Text(text) }
     }
+
 }

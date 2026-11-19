@@ -117,6 +117,7 @@ enum SwiftHighlighter {
         }
         return html
     }
+
 }
 
 /// Indents rendered HTML so it is readable on the page: each block-level
@@ -239,4 +240,5 @@ enum HTMLFormatter {
         flush()
         return lines.joined(separator: "\n")
     }
+
 }

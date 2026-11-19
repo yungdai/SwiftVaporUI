@@ -18,6 +18,7 @@ public enum HeadingLevel: Int, Sendable, CaseIterable {
 
     /// A sixth-level heading (`<h6>`).
     case h6
+
 }
 
 /// A section heading (`<h1>` to `<h6>`).
@@ -53,6 +54,7 @@ public struct Heading<Content: View>: View {
     public var body: Element<Content> {
         Element("h\(level.rawValue)", wrapping: content)
     }
+
 }
 
 /// Initializers that take plain text.
@@ -65,6 +67,7 @@ extension Heading where Content == Text {
     public init(_ text: String, level: HeadingLevel = .h1) {
         self.init(level: level) { Text(text) }
     }
+
 }
 
 /// A hyperlink (`<a>`).
@@ -119,6 +122,7 @@ public struct Link<Label: View>: View {
         attributes["rel"] = relationship ?? (target == .blank ? "noopener" : nil)
         return Element("a", attributes: attributes, wrapping: label)
     }
+
 }
 
 /// Initializers that take plain text.
@@ -133,6 +137,7 @@ extension Link where Label == Text {
     public init(_ title: String, destination: String, target: LinkTarget? = nil, relationship: String? = nil) {
         self.init(destination: destination, target: target, relationship: relationship) { Text(title) }
     }
+
 }
 
 /// Where a `Link` opens (the `target` attribute).
@@ -166,6 +171,7 @@ public struct LinkTarget: RawRepresentable, Sendable, Hashable, ExpressibleByStr
     /// Creates a target from a string literal.
     /// - Parameter value: The target name.
     public init(stringLiteral value: String) { self.rawValue = value }
+
 }
 
 /// A `<ul>` with one `<li>` per element of a collection.
@@ -202,6 +208,7 @@ public struct List<Row: View>: View {
             }
         }
     }
+
 }
 
 /// An image (`<img>`). `alt` is required to encourage accessible markup;
@@ -247,6 +254,7 @@ public struct Image: View {
         attributes["height"] = height.map(String.init)
         return VoidElement("img", attributes: attributes)
     }
+
 }
 
 /// A line break (`<br>`).
@@ -261,6 +269,7 @@ public struct LineBreak: View {
 
     /// The elements this view is made of.
     public var body: VoidElement { VoidElement("br") }
+
 }
 
 /// A thematic break (`<hr>`).
@@ -275,4 +284,5 @@ public struct Divider: View {
 
     /// The elements this view is made of.
     public var body: VoidElement { VoidElement("hr") }
+
 }

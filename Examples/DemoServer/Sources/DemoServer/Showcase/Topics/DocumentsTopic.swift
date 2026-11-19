@@ -99,6 +99,7 @@ enum DocumentsTopic {
             },
         ]
     )
+
 }
 
 // snippet: layout
@@ -142,6 +143,7 @@ struct SiteShell<Content: View>: View {
             .foregroundColor(.gray)
         }
     }
+
 }
 // end-snippet
 
@@ -169,6 +171,7 @@ struct MissingPage: View {
                 .attribute("target", "_top")
         }
     }
+
 }
 
 /// Registers the routes the document examples link to.

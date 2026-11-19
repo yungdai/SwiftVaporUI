@@ -12,8 +12,8 @@ public enum HorizontalAlignment: String, Sendable {
 
     /// Stretches children to fill the stack.
     case stretch = "stretch"
-}
 
+}
 
 /// Vertical alignment of the children of an `HStack`.
 public enum VerticalAlignment: String, Sendable {
@@ -32,6 +32,7 @@ public enum VerticalAlignment: String, Sendable {
 
     /// Lines up the first line of text in each child.
     case baseline = "baseline"
+
 }
 
 /// Arranges its children in a vertical column.
@@ -74,6 +75,7 @@ public struct VStack<Content: View>: View {
         }
         return Element("div", attributes: ["style": stackStyle("column", alignment?.rawValue, spacing)], wrapping: content)
     }
+
 }
 
 /// Arranges its children in a horizontal row, using a flexbox `<div>`.
@@ -109,6 +111,7 @@ public struct HStack<Content: View>: View {
     public var body: Element<Content> {
         Element("div", attributes: ["style": stackStyle("row", alignment.rawValue, spacing)], wrapping: content)
     }
+
 }
 
 /// Expands to fill the free space along the main axis of an `HStack` or `VStack`.
@@ -125,6 +128,7 @@ public struct Spacer: View {
     public var body: Element<EmptyView> {
         Element("div", attributes: ["style": "flex: 1"])
     }
+
 }
 
 /// A `<nav>` landmark that lays its links out in a row.
@@ -155,6 +159,7 @@ public struct NavigationBar<Content: View>: View {
     public var body: Element<Content> {
         Element("nav", attributes: ["style": stackStyle("row", VerticalAlignment.center.rawValue, spacing)], wrapping: content)
     }
+
 }
 
 /// The inline CSS for a flexbox stack.

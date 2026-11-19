@@ -159,6 +159,7 @@ enum FormsTopic {
             },
         ]
     )
+
 }
 
 // snippet: handling
@@ -192,6 +193,7 @@ struct FormEcho: View {
             .class("data-table")
         }
     }
+
 }
 
 /// Registers the routes the form examples submit to.
@@ -238,4 +240,5 @@ struct FormEchoPage: View {
             .padding(.top, 16)
         }
     }
+
 }

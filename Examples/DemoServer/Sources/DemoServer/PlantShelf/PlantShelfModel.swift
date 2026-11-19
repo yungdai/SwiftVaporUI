@@ -20,6 +20,7 @@ enum Light: String, CaseIterable, Codable, Sendable {
         case .bright: "Bright light"
         }
     }
+
 }
 
 /// A plant on the shelf.
@@ -39,10 +40,15 @@ struct Plant: Sendable {
 
     /// Care notes.
     let notes: String
+
 }
 
 /// An in-memory store, so the demo has some state to show.
 actor PlantShelf {
+
+    // MARK: - Properties
+
+    /// The plants on the shelf, seeded with a few examples.
     private var plants: [Plant] = [
         Plant(slug: "pothos", name: "Golden pothos", light: .low, waterEveryDays: 7,
               notes: "Trails happily off a bookshelf. Let the top inch of soil dry out."),
@@ -51,6 +57,8 @@ actor PlantShelf {
         Plant(slug: "snake-plant", name: "Snake plant", light: .medium, waterEveryDays: 21,
               notes: "Very forgiving. Overwatering is the main risk."),
     ]
+
+    // MARK: - Methods
 
     /// Every plant, in the order they were added.
     /// - Returns: The plants.
@@ -84,6 +92,7 @@ actor PlantShelf {
         plants.append(plant)
         return plant
     }
+
 }
 
 /// The values posted by the "add a plant" form.
@@ -138,4 +147,5 @@ struct PlantForm: Content {
         }
         return errors
     }
+
 }

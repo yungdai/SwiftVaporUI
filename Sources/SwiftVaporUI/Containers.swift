@@ -64,6 +64,7 @@ struct SupportStyle: Sendable {
         guard !styles.isEmpty else { return "" }
         return "<style>" + styles.map(\.css).joined() + "</style>"
     }
+
 }
 
 /// The CSS that `ZStack`, `Grid`, `TabView` and `Menu` rely on, as one
@@ -97,6 +98,7 @@ public struct SupportStyles: View {
         }
         renderer.write(SupportStyle.styleElement(for: missing))
     }
+
 }
 
 /// Writes a support style, then renders `content`.
@@ -121,6 +123,7 @@ struct WithSupportStyle<Content: View>: View {
         renderer.writeSupportStyle(style)
         content._render(into: &renderer)
     }
+
 }
 
 // MARK: - ZStack
@@ -171,6 +174,7 @@ public enum Alignment: Sendable, CaseIterable {
         }
         return "\(vertical) \(horizontal)"
     }
+
 }
 
 /// Layers its children on top of each other, like SwiftUI's `ZStack`.
@@ -218,6 +222,7 @@ public struct ZStack<Content: View>: View {
             )
         )
     }
+
 }
 
 // MARK: - Grid
@@ -282,6 +287,7 @@ public struct Grid<Content: View>: View {
             content: Element("div", attributes: ["class": "svui-grid", "style": style], wrapping: content)
         )
     }
+
 }
 
 /// One row of a `Grid`. Each child is one cell.
@@ -316,6 +322,7 @@ public struct GridRow<Content: View>: View {
         }
         return Element("div", attributes: attributes, wrapping: content)
     }
+
 }
 
 /// Table-cell alignment for `Grid`.
@@ -330,6 +337,7 @@ extension VerticalAlignment {
         case .baseline: "baseline"
         }
     }
+
 }
 
 /// The size of one column of a `LazyVGrid`.
@@ -351,6 +359,7 @@ public struct GridItem: Sendable, Hashable {
         /// with other columns, it is one column of that size instead, because
         /// CSS cannot repeat it alongside them.
         case adaptive(minimum: Double, maximum: Double = .infinity)
+
     }
 
     // MARK: - Properties
@@ -397,6 +406,7 @@ public struct GridItem: Sendable, Hashable {
     private static func maximum(_ value: Double) -> String {
         value.isFinite ? "\(cssNumber(value))px" : "1fr"
     }
+
 }
 
 /// A grid that flows its children into columns, like SwiftUI's
@@ -466,6 +476,7 @@ public struct LazyVGrid<Content: View>: View {
         if let alignment { style += "; justify-items: \(alignment.rawValue)" }
         return Element("div", attributes: ["style": style], wrapping: content)
     }
+
 }
 
 // MARK: - ScrollView
@@ -494,6 +505,7 @@ public enum Axis: Sendable, Hashable {
         /// Creates a set of directions from a bit mask.
         /// - Parameter rawValue: The bit mask of directions.
         public init(rawValue: Int) { self.rawValue = rawValue }
+
     }
 
     /// Left and right.
@@ -501,6 +513,7 @@ public enum Axis: Sendable, Hashable {
 
     /// Up and down.
     case vertical
+
 }
 
 /// A region that scrolls when its content is too big, like SwiftUI's
@@ -554,6 +567,7 @@ public struct ScrollView<Content: View>: View {
         if !showsIndicators { style += "; scrollbar-width: none" }
         return Element("div", attributes: ["style": style, "tabindex": "0"], wrapping: content)
     }
+
 }
 
 // MARK: - TabView
@@ -570,6 +584,7 @@ struct TabGroupState: Sendable {
 
     /// How many tabs have been written so far.
     var count = 0
+
 }
 
 /// Tabs that switch between panels, like SwiftUI's `TabView`, with no
@@ -633,6 +648,7 @@ public struct TabView<Content: View>: View {
         renderer.tabGroup = outer
         renderer.write("</div>")
     }
+
 }
 
 /// One tab of a `TabView`: its label and its panel.
@@ -709,6 +725,7 @@ public struct Tab<TabLabel: View, Content: View>: View {
         ._render(into: &renderer)
         renderer.tabGroup = group
     }
+
 }
 
 /// Initializers that take plain text.
@@ -721,6 +738,7 @@ extension Tab where TabLabel == Text {
     public init(_ title: String, @ViewBuilder content: () -> Content) {
         self.init(content: content) { Text(title) }
     }
+
 }
 
 // MARK: - Disclosure, menu and navigation
@@ -769,6 +787,7 @@ public struct DisclosureGroup<TitleLabel: View, Content: View>: View {
             content
         }
     }
+
 }
 
 /// Initializers that take plain text.
@@ -782,6 +801,7 @@ extension DisclosureGroup where TitleLabel == Text {
     public init(_ title: String, isExpanded: Bool = false, @ViewBuilder content: () -> Content) {
         self.init(isExpanded: isExpanded, content: content) { Text(title) }
     }
+
 }
 
 /// A button that opens a list of actions, like SwiftUI's `Menu`.
@@ -828,6 +848,7 @@ public struct Menu<MenuLabel: View, Content: View>: View {
             }
         )
     }
+
 }
 
 /// Initializers that take plain text.
@@ -840,6 +861,7 @@ extension Menu where MenuLabel == Text {
     public init(_ title: String, @ViewBuilder content: () -> Content) {
         self.init(content: content) { Text(title) }
     }
+
 }
 
 /// A link to another page of your site, like SwiftUI's `NavigationLink`.
@@ -888,6 +910,7 @@ public struct NavigationLink<LinkLabel: View>: View {
         if isActive { attributes["aria-current"] = "page" }
         return Element("a", attributes: attributes, wrapping: label)
     }
+
 }
 
 /// Initializers that take plain text.
@@ -901,4 +924,5 @@ extension NavigationLink where LinkLabel == Text {
     public init(_ title: String, destination: String, isActive: Bool = false) {
         self.init(destination: destination, isActive: isActive) { Text(title) }
     }
+
 }

@@ -12,8 +12,10 @@ struct HarvestRow: Sendable {
 
     /// How much was harvested, in kilograms.
     let kilograms: Double
+
 }
 
+/// This season's harvest, one row per crop and bed.
 let harvest = [
     HarvestRow(crop: "Tomatoes", bed: "South", kilograms: 12.5),
     HarvestRow(crop: "Courgettes", bed: "East", kilograms: 8),
@@ -183,4 +185,5 @@ enum TablesTopic {
             },
         ]
     )
+
 }

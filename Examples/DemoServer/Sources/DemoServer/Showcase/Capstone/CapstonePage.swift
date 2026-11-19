@@ -23,6 +23,7 @@ struct CapstonePage: View {
 
         /// The file the code is in.
         let file: String
+
     }
 
     // MARK: - Static Properties
@@ -126,4 +127,5 @@ struct CapstonePage: View {
             Script(copyScript)
         }
     }
+
 }

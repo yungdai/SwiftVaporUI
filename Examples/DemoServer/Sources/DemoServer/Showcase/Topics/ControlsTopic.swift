@@ -159,6 +159,7 @@ enum ControlsTopic {
             },
         ]
     )
+
 }
 
 /// The next market night, used as the date picker's starting value.

@@ -9,6 +9,7 @@ struct Visitor: Sendable {
 
     /// How many unread messages they have.
     var unread: Int
+
 }
 // end-snippet
 
@@ -24,6 +25,7 @@ enum SoilMoisture: Sendable, CaseIterable {
 
     /// The soil is too wet.
     case soaked
+
 }
 
 /// A soil reading, with advice that depends on it.
@@ -50,6 +52,7 @@ struct MoistureReading: View {
             }
         }
     }
+
 }
 // end-snippet
 
@@ -159,4 +162,5 @@ enum ConditionalsTopic {
             },
         ]
     )
+
 }

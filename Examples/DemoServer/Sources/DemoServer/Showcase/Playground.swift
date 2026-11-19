@@ -23,6 +23,7 @@ struct PlaygroundView: View {
             }
         }
     }
+
 }
 // end-snippet
 
@@ -56,4 +57,5 @@ struct PlaygroundPage: View {
             Script(copyScript)
         }
     }
+
 }

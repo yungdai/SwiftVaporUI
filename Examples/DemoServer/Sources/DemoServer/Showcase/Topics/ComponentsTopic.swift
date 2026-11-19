@@ -82,6 +82,7 @@ enum ComponentsTopic {
             },
         ]
     )
+
 }
 
 // snippet: properties
@@ -114,6 +115,7 @@ struct StatTile: View {
         .class("card")
         .frame(width: 140)
     }
+
 }
 // end-snippet
 
@@ -160,6 +162,7 @@ struct Panel<Content: View, FooterContent: View>: View {
         }
         .class("card")
     }
+
 }
 
 /// Initializers for an element with no content.
@@ -172,6 +175,7 @@ extension Panel where FooterContent == EmptyView {
     init(title: String, @ViewBuilder content: () -> Content) {
         self.init(title: title, content: content, footer: { EmptyView() })
     }
+
 }
 // end-snippet
 
@@ -190,6 +194,7 @@ enum PlantStatus: Sendable {
 
     /// The CSS class for the status badge.
     var badgeClass: String { self == .happy ? "badge-green" : "badge-orange" }
+
 }
 
 /// A coloured badge for a plant's status.
@@ -206,6 +211,7 @@ struct StatusBadge: View {
     var body: some View {
         Span(status.label).class("badge", status.badgeClass)
     }
+
 }
 
 /// A plant's name, status and when it was last watered.
@@ -234,6 +240,7 @@ struct PlantSummary: View {
             }
         }
     }
+
 }
 // end-snippet
 

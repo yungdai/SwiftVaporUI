@@ -14,6 +14,7 @@ public struct HTMLAttributes: Sendable, Equatable, ExpressibleByDictionaryLitera
 
         /// The value, or `nil` for a boolean attribute.
         public var value: String?
+
     }
 
     // MARK: - Properties
@@ -122,6 +123,7 @@ public struct HTMLAttributes: Sendable, Equatable, ExpressibleByDictionaryLitera
         case let .addStyle(css): addStyle(css)
         }
     }
+
 }
 
 /// A change a modifier makes to the attributes of the element it wraps.
@@ -138,6 +140,7 @@ enum AttributeChange: Sendable, Equatable {
 
     /// Appends CSS declarations to `style`.
     case addStyle(String)
+
 }
 
 /// String helpers for building attribute values.
@@ -152,4 +155,5 @@ private extension String {
         while let last = slice.last, set.contains(last) { slice.removeLast() }
         return String(slice)
     }
+
 }

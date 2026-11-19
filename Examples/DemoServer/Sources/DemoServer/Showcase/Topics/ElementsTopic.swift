@@ -130,6 +130,7 @@ enum ElementsTopic {
             },
         ]
     )
+
 }
 
 /// A small leaf illustration for the images example.

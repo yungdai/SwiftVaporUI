@@ -22,6 +22,7 @@ struct CardStyle: ViewModifier {
             .cornerRadius(12)
             .shadow(color: .rgb(20, 24, 43, opacity: 0.08), radius: 12, y: 4)
     }
+
 }
 
 /// The card modifier, written like a built-in one.
@@ -33,6 +34,7 @@ extension View {
     func cardStyle(highlighted isHighlighted: Bool = false) -> some View {
         modifier(CardStyle(isHighlighted: isHighlighted))
     }
+
 }
 // end-snippet
 
@@ -45,6 +47,7 @@ struct ShowcaseTheme: Sendable {
 
     /// The colour of quiet, secondary text.
     var muted: Color
+
 }
 
 /// The environment key for `ShowcaseTheme`.
@@ -52,6 +55,7 @@ private struct ShowcaseThemeKey: EnvironmentKey {
 
     /// The theme views see when nobody has set one.
     static let defaultValue = ShowcaseTheme(accent: .hex("e8590c"), muted: .gray)
+
 }
 
 /// The `theme` environment value.
@@ -62,6 +66,7 @@ extension EnvironmentValues {
         get { self[ShowcaseThemeKey.self] }
         set { self[ShowcaseThemeKey.self] = newValue }
     }
+
 }
 
 /// A heading in the theme's accent colour, with a caption under it.
@@ -87,6 +92,7 @@ struct ThemedTitle: View {
             Small(caption).foregroundColor(theme.muted)
         }
     }
+
 }
 // end-snippet
 
@@ -170,4 +176,5 @@ enum CompositionTopic {
             },
         ]
     )
+
 }

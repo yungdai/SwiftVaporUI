@@ -125,6 +125,7 @@ enum NavigationTopic {
             },
         ]
     )
+
 }
 
 // snippet: breadcrumbs
@@ -156,6 +157,7 @@ struct Breadcrumbs: View {
         .class("breadcrumbs")
         .aria("label", "Breadcrumb")
     }
+
 }
 // end-snippet
 
@@ -187,5 +189,6 @@ struct GreetingPage: View {
             Link("← Back to navigation", destination: "/navigation#routes")
         }
     }
+
 }
 // end-snippet

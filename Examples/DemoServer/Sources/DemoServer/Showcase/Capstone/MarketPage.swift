@@ -15,6 +15,7 @@ enum VisitState: Sendable {
 
     /// The form had a problem; show it again with the message.
     case failed(message: String, form: VisitForm)
+
 }
 
 /// The colours of the market, passed to every view through the environment.
@@ -25,6 +26,7 @@ struct MarketTheme: Sendable {
 
     /// The dark background of the header and footer.
     var night: Color
+
 }
 
 /// The environment key for `MarketTheme`.
@@ -32,6 +34,7 @@ private struct MarketThemeKey: EnvironmentKey {
 
     /// The market's usual colours.
     static let defaultValue = MarketTheme(lantern: .hex("ffb347"), night: .hex("14182b"))
+
 }
 
 /// The `marketTheme` environment value.
@@ -42,6 +45,7 @@ extension EnvironmentValues {
         get { self[MarketThemeKey.self] }
         set { self[MarketThemeKey.self] = newValue }
     }
+
 }
 
 /// The night market page: the whole document.
@@ -86,6 +90,7 @@ struct MarketPage: View {
         }
         .environment(\.marketTheme, MarketTheme(lantern: .hex("ffb347"), night: .hex("14182b")))
     }
+
 }
 // end-snippet
 
@@ -107,6 +112,7 @@ struct LanternIcon: View {
             Element("ellipse", attributes: ["cx": "32", "cy": "50", "rx": "14", "ry": "38", "fill": theme.lantern.css])
         }
     }
+
 }
 
 /// The sticky top bar: the market's name, its sections and a share menu.
@@ -144,6 +150,7 @@ struct MarketHeader: View {
         }
         .class("market-header")
     }
+
 }
 
 /// The big opening banner with the date, a call to action and three numbers.
@@ -179,6 +186,7 @@ struct MarketHero: View {
         }
         .class("hero")
     }
+
 }
 
 /// One big number in the hero, in the theme's lantern colour.
@@ -204,6 +212,7 @@ struct HeroStat: View {
             Small(label)
         }
     }
+
 }
 // end-snippet
 
@@ -227,6 +236,7 @@ struct MarketCard: ViewModifier {
             .shadow(color: .rgb(20, 24, 43, opacity: 0.06), radius: 24, y: 8)
             .opacity(isDimmed ? 0.55 : 1)
     }
+
 }
 
 /// The stalls, with links to filter them by category.
@@ -275,6 +285,7 @@ struct StallSection: View {
         }
         .id("stalls")
     }
+
 }
 
 /// One stall: its category, a badge, its name, a blurb and tags.
@@ -310,6 +321,7 @@ struct StallCard: View {
         .class("stall")
         .modifier(MarketCard(isDimmed: stall.isSoldOut))
     }
+
 }
 // end-snippet
 
@@ -363,6 +375,7 @@ struct ScheduleSection: View {
         }
         .id("schedule")
     }
+
 }
 
 /// Common questions, each one opening to show its answer.
@@ -388,6 +401,7 @@ struct FAQSection: View {
             }
         }
     }
+
 }
 // end-snippet
 
@@ -424,6 +438,7 @@ struct VisitSection: View {
         .id("visit")
         .class("visit")
     }
+
 }
 
 /// The form, filled in with the visitor's earlier values when shown again.
@@ -447,6 +462,7 @@ struct VisitFormView: View {
             Button("I'm coming").class("market-button")
         }
     }
+
 }
 // end-snippet
 
@@ -480,6 +496,7 @@ func registerMarketRoutes(_ app: Application) {
 }
 // end-snippet
 
+/// The night market page's stylesheet.
 let marketCSS = """
 :root { --night: #14182b; --night-2: #1d2340; --lantern: #ffb347; --ember: #ff6b4a; --paper: #fdf8ef; --ink: #23263a; --soft: #6b6f85; }
 * { box-sizing: border-box; }

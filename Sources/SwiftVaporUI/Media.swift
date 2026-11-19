@@ -11,6 +11,7 @@ public enum MediaPreload: String, Sendable {
 
     /// Let the browser load the whole file.
     case auto
+
 }
 
 /// Playback options shared by `Video` and `Audio`.
@@ -58,6 +59,7 @@ public struct MediaOptions: OptionSet, Sendable, Hashable {
     public init(rawValue: Int) {
         self.rawValue = rawValue
     }
+
 }
 
 /// A video player (`<video>`).
@@ -125,6 +127,7 @@ public struct Video<Content: View>: View {
         for flag in options.flags { attributes.setFlag(flag) }
         return Element("video", attributes: attributes, wrapping: content)
     }
+
 }
 
 /// Initializers for a video with a single file and no fallback content.
@@ -139,6 +142,7 @@ extension Video where Content == EmptyView {
     public init(src: String, poster: String? = nil, options: MediaOptions = .controls, preload: MediaPreload? = nil) {
         self.init(src: src, poster: poster, options: options, preload: preload) { EmptyView() }
     }
+
 }
 
 /// An audio player (`<audio>`).
@@ -190,6 +194,7 @@ public struct Audio<Content: View>: View {
         for flag in options.flags where flag != "playsinline" { attributes.setFlag(flag) }
         return Element("audio", attributes: attributes, wrapping: content)
     }
+
 }
 
 /// Initializers for audio with a single file and no fallback content.
@@ -203,6 +208,7 @@ extension Audio where Content == EmptyView {
     public init(src: String, options: MediaOptions = .controls, preload: MediaPreload? = nil) {
         self.init(src: src, options: options, preload: preload) { EmptyView() }
     }
+
 }
 
 /// One media resource for a `Video`, `Audio` or `Picture` (`<source>`).
@@ -247,6 +253,7 @@ public struct Source: View {
     public var body: VoidElement {
         VoidElement("source", attributes: attributes)
     }
+
 }
 
 /// A timed text track, such as captions, for a `Video` (`<track>`).
@@ -271,6 +278,7 @@ public struct Track: View {
 
         /// Data for scripts, not shown to viewers.
         case metadata
+
     }
 
     // MARK: - Properties
@@ -317,6 +325,7 @@ public struct Track: View {
         if isDefault { attributes.setFlag("default") }
         return VoidElement("track", attributes: attributes)
     }
+
 }
 
 /// A responsive image: `Source`s the browser chooses from, then an `Image`
@@ -353,6 +362,7 @@ public struct Picture<Content: View>: View {
     public var body: Element<Content> {
         Element("picture", wrapping: content)
     }
+
 }
 
 /// Another page embedded in this one (`<iframe>`).
@@ -426,6 +436,7 @@ public struct IFrame: View {
         attributes["allow"] = allow
         return Element("iframe", attributes: attributes)
     }
+
 }
 
 /// An inline SVG drawing (`<svg>`).
@@ -497,4 +508,5 @@ public struct SVG<Content: View>: View {
         }
         return Element("svg", attributes: attributes, wrapping: content)
     }
+
 }

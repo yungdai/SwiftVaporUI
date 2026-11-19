@@ -21,6 +21,7 @@ enum StallCategory: String, CaseIterable, Sendable {
 
     /// The category's name as shown to people.
     var title: String { rawValue.capitalized }
+
 }
 
 /// One stall at the market.
@@ -43,6 +44,7 @@ struct Stall: Sendable {
 
     /// Whether the stall has sold out.
     var isSoldOut = false
+
 }
 
 /// One event in tonight's programme.
@@ -69,6 +71,7 @@ struct ScheduleSlot: Sendable {
         let hour = clock[0] % 12 + (parts.last == "pm" ? 12 : 0)
         return String(format: "%02d:%02d", hour, clock[1])
     }
+
 }
 
 /// Everything the page shows. In a real app this would come from a database.
@@ -119,6 +122,7 @@ struct NightMarket: Sendable {
         guard let category else { return stalls }
         return stalls.filter { $0.category == category }
     }
+
 }
 
 /// The values posted by the "I'm coming" form.
@@ -147,5 +151,6 @@ struct VisitForm: Content {
         }
         return nil
     }
+
 }
 // end-snippet

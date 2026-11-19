@@ -26,6 +26,7 @@ public protocol EnvironmentKey {
 
     /// The value views read when no ancestor has set one.
     static var defaultValue: Value { get }
+
 }
 
 /// Values that flow down the view tree, like SwiftUI's environment.
@@ -66,6 +67,7 @@ public struct EnvironmentValues: Sendable {
         }
         set { values[ObjectIdentifier(key)] = newValue }
     }
+
 }
 
 /// Reads a value from the environment inside a view's `body`.
@@ -106,6 +108,7 @@ public struct ViewEnvironment<Value>: @unchecked Sendable {
     public init(_ keyPath: KeyPath<EnvironmentValues, Value>) {
         self.keyPath = keyPath
     }
+
 }
 
 /// Builds content from an environment value, without declaring a view type.
@@ -146,6 +149,7 @@ public struct EnvironmentReader<Value, Content: View>: View, @unchecked Sendable
     public func _render(into renderer: inout HTMLRenderer) {
         content(EnvironmentValues.current[keyPath: keyPath])._render(into: &renderer)
     }
+
 }
 
 /// A view whose subtree sees a changed environment value.
@@ -189,6 +193,7 @@ public struct EnvironmentModifiedView<Content: View, Value: Sendable>: View, @un
             content._render(into: &renderer)
         }
     }
+
 }
 
 /// The environment modifier.
@@ -210,4 +215,5 @@ extension View {
     ) -> EnvironmentModifiedView<Self, Value> {
         EnvironmentModifiedView(content: self, keyPath: keyPath, value: value)
     }
+
 }

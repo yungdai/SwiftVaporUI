@@ -46,6 +46,7 @@ struct MarketLayout<Content: View>: View {
             Footer { Small("Every Friday by the river.") }
         }
     }
+
 }
 // end-snippet
 
@@ -133,4 +134,5 @@ enum PageSetupTopic {
             },
         ]
     )
+
 }

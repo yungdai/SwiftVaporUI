@@ -14,17 +14,6 @@ public struct ModifiedView<Content: View>: View {
     /// The attribute changes, innermost first.
     let changes: [AttributeChange]
 
-    // MARK: - Initializer
-
-    /// Creates a view with attribute changes.
-    /// - Parameters:
-    ///   - content: The view the changes apply to.
-    ///   - changes: The attribute changes.
-    init(content: Content, changes: [AttributeChange]) {
-        self.content = content
-        self.changes = changes
-    }
-
     // MARK: - View
 
     /// A primitive view writes its own HTML, so it has no `body`.
@@ -43,6 +32,7 @@ public struct ModifiedView<Content: View>: View {
             renderer.pending = outer
         }
     }
+
 }
 
 /// Modifiers that set the attributes of the element a view renders.
@@ -196,4 +186,5 @@ extension View {
     public func autofocus(_ isOn: Bool = true) -> ModifiedView<Self> {
         flag("autofocus", if: isOn)
     }
+
 }

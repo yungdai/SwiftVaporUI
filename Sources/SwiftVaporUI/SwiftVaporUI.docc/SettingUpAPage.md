@@ -50,7 +50,7 @@ Put stylesheets in the `<head>`. The browser waits for them before drawing, so t
 - ``Style`` embeds CSS in the page. Use it for small, page-specific rules.
 - Styling modifiers such as ``View/padding(_:_:)`` and ``View/foregroundColor(_:)`` write inline `style` attributes. They are handy for one-off tweaks; use classes and a stylesheet for anything you repeat.
 
-``ZStack``, ``Grid``, ``TabView`` and ``Menu`` need a few CSS rules of their own. They write them in a small `<style>` element the first time they appear. To keep every style in the head instead, put ``SupportStyles`` in the head; views rendered after it then write nothing.
+``ZStack``, ``Grid``, ``TabView`` and ``Menu`` need a few CSS rules of their own. Inside an ``HTMLDocument`` they are written in the `<head>` for you, only for the views the page uses. If you build the document yourself from ``Head`` and ``DocumentBody``, put ``SupportStyles`` in the head; otherwise each view writes its rules inline in a small `<style>` element the first time it appears.
 
 ### Scripts: defer them, or put them last
 

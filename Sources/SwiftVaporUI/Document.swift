@@ -63,6 +63,38 @@ public struct HTMLDocument<HeadContent: View, Content: View>: View {
             }
         }
     }
+
+    /// Writes the document, with the CSS that the body's views need in the head.
+    ///
+    /// The head and body are rendered first, so the support styles that
+    /// views such as `ZStack` and `TabView` use can go in `<head>` rather
+    /// than inline in the body.
+    /// - Parameter renderer: The renderer that collects the page's HTML.
+    public func _render(into renderer: inout HTMLRenderer) {
+        var headRenderer = HTMLRenderer()
+        headRenderer.writtenSupportStyles = renderer.writtenSupportStyles
+        head._render(into: &headRenderer)
+
+        var bodyRenderer = HTMLRenderer()
+        bodyRenderer.writtenSupportStyles = headRenderer.writtenSupportStyles
+        bodyRenderer.collectedSupportStyles = []
+        DocumentBody { content }._render(into: &bodyRenderer)
+
+        let headHTML = headRenderer.output + SupportStyle.styleElement(for: bodyRenderer.collectedSupportStyles ?? [])
+        Document {
+            HTMLRoot(language: language) {
+                Head {
+                    Meta(charset: "utf-8")
+                    Meta(name: "viewport", content: "width=device-width, initial-scale=1")
+                    Title(title)
+                    RawHTML(headHTML)
+                }
+                RawHTML(bodyRenderer.output)
+            }
+        }
+        ._render(into: &renderer)
+        renderer.writtenSupportStyles.formUnion(bodyRenderer.writtenSupportStyles)
+    }
 }
 
 /// Documents with nothing extra in the head.

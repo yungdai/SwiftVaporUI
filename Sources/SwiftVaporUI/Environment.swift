@@ -56,7 +56,14 @@ public struct EnvironmentValues: Sendable {
     /// Gets or sets the value for `key`.
     /// - Parameter key: The key whose value to get or set.
     public subscript<Key: EnvironmentKey>(key: Key.Type) -> Key.Value {
-        get { values[ObjectIdentifier(key)] as? Key.Value ?? Key.defaultValue }
+        get {
+            // Look the key up first: casting a missing entry to an optional
+            // value type would succeed with `nil` and skip the default.
+            guard let stored = values[ObjectIdentifier(key)], let value = stored as? Key.Value else {
+                return Key.defaultValue
+            }
+            return value
+        }
         set { values[ObjectIdentifier(key)] = newValue }
     }
 }
@@ -116,7 +123,7 @@ public struct EnvironmentReader<Value, Content: View>: View, @unchecked Sendable
     private let keyPath: KeyPath<EnvironmentValues, Value>
 
     /// Builds the content from the value.
-    private let content: (Value) -> Content
+    private let content: @Sendable (Value) -> Content
 
     // MARK: - Initializer
 
@@ -124,7 +131,7 @@ public struct EnvironmentReader<Value, Content: View>: View, @unchecked Sendable
     /// - Parameters:
     ///   - keyPath: The key path of the environment value to read.
     ///   - content: A view builder that creates the content from the value.
-    public init(_ keyPath: KeyPath<EnvironmentValues, Value>, @ViewBuilder content: @escaping (Value) -> Content) {
+    public init(_ keyPath: KeyPath<EnvironmentValues, Value>, @ViewBuilder content: @escaping @Sendable (Value) -> Content) {
         self.keyPath = keyPath
         self.content = content
     }

@@ -63,7 +63,7 @@ The `id` names the radio group, so it must be unique in the page.
 
 ### The CSS these views need
 
-``ZStack``, ``Grid``, ``TabView`` and ``Menu`` each write a few CSS rules in a `<style>` element the first time they appear in a page. Put ``SupportStyles`` in your head to write them all there instead. See <doc:SettingUpAPage>.
+``ZStack``, ``Grid``, ``TabView`` and ``Menu`` need a few CSS rules. Inside an ``HTMLDocument`` they go in the `<head>` automatically. In a fragment rendered on its own, each view writes its rules in a small `<style>` element the first time it appears; put ``SupportStyles`` in your head if you build the document by hand. See <doc:SettingUpAPage>.
 
 ## Topics
 

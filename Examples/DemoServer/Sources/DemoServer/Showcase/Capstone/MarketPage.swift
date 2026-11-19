@@ -65,7 +65,6 @@ struct MarketPage: View {
         HTMLDocument(title: market.name) {
             Meta(name: "description", content: "Street food, makers and music by the river.")
             ResourceLink(relationship: "icon", destination: "/images/leaf.svg")
-            SupportStyles()
             Style(marketCSS)
         } body: {
             MarketHeader(name: market.name)
@@ -508,7 +507,6 @@ h2 { font-size: 1.6rem; margin: 0 0 16px; }
 .section-head { flex-wrap: wrap; margin-bottom: 16px; } .section-head h2 { margin: 0; }
 .filters a { text-decoration: none; color: var(--soft); padding: 4px 12px; border-radius: 999px; font-size: .9rem; }
 .filters a[aria-current=page] { background: var(--night); color: #fff; }
-.stall-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 16px; }
 .market-card { background: #fff; border-radius: 16px; }
 .stall { padding: 16px 18px; }
 .stall h3 { margin: 10px 0 4px; font-size: 1.1rem; }

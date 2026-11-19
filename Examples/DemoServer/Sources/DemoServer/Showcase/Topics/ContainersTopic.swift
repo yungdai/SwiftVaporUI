@@ -11,7 +11,7 @@ enum ContainersTopic {
         tagline: "ZStack, Grid, LazyVGrid, ScrollView, TabView, DisclosureGroup and Menu.",
         intro: [
             "These containers follow their SwiftUI namesakes and turn into plain HTML and CSS. None of them needs JavaScript: tabs are radio buttons, disclosure groups and menus are <details> elements.",
-            "ZStack, Grid, TabView and Menu need a few CSS rules. Each writes a small <style> element the first time it appears on a page, or you can put SupportStyles() in the <head> once.",
+            "ZStack, Grid, TabView and Menu need a few CSS rules. Inside an HTMLDocument they are written in the <head> for you. In a fragment, like the results on this page, each writes a small <style> element the first time it appears.",
         ],
         examples: [
             Example(

@@ -54,16 +54,27 @@ struct SupportStyle: Sendable {
 
     /// The CSS rules.
     let css: String
+
+    // MARK: - Methods
+
+    /// Builds one `<style>` element holding several support styles.
+    /// - Parameter styles: The styles to write.
+    /// - Returns: The `<style>` element, or an empty string when there are no styles.
+    static func styleElement(for styles: [SupportStyle]) -> String {
+        guard !styles.isEmpty else { return "" }
+        return "<style>" + styles.map(\.css).joined() + "</style>"
+    }
 }
 
 /// The CSS that `ZStack`, `Grid`, `TabView` and `Menu` rely on, as one
 /// `<style>` element.
 ///
-/// You do not need this: each of those views writes the CSS it needs, once,
-/// the first time it appears in a page. Put `SupportStyles()` in your
-/// `<head>` instead if you prefer all styles in the head, for example for a
-/// strict Content Security Policy with a hash. Views rendered after it then
-/// write no styles of their own.
+/// You rarely need this. Inside an `HTMLDocument`, the styles those views use
+/// are written in the `<head>` for you. In a fragment rendered on its own,
+/// each view writes the CSS it needs inline, once, the first time it appears.
+/// Use `SupportStyles()` when you build the document yourself from `Head`
+/// and want every support style in the head, or when you need a fixed style
+/// sheet, for example for a Content Security Policy hash.
 public struct SupportStyles: View {
 
     // MARK: - Initializer
@@ -79,15 +90,12 @@ public struct SupportStyles: View {
     /// Writes this view's HTML into `renderer`.
     /// - Parameter renderer: The renderer that collects the page's HTML.
     public func _render(into renderer: inout HTMLRenderer) {
-        renderer.pending.removeAll()
+        // Modifiers pass on to the next element, as with `RawHTML`.
         let missing = SupportStyle.all.filter { !renderer.writtenSupportStyles.contains($0.key) }
-        guard !missing.isEmpty else { return }
-        renderer.write("<style>")
         for style in missing {
             renderer.writtenSupportStyles.insert(style.key)
-            renderer.write(style.css)
         }
-        renderer.write("</style>")
+        renderer.write(SupportStyle.styleElement(for: missing))
     }
 }
 
@@ -110,11 +118,7 @@ struct WithSupportStyle<Content: View>: View {
     /// Writes this view's HTML into `renderer`.
     /// - Parameter renderer: The renderer that collects the page's HTML.
     func _render(into renderer: inout HTMLRenderer) {
-        // Keep the pending modifiers for the content, not the <style>.
-        let pending = renderer.pending
-        renderer.pending = []
         renderer.writeSupportStyle(style)
-        renderer.pending = pending
         content._render(into: &renderer)
     }
 }
@@ -340,7 +344,9 @@ public struct GridItem: Sendable, Hashable {
         /// A share of the free space, at least `minimum` pixels and at most
         /// `maximum` pixels wide.
         case flexible(minimum: Double = 0, maximum: Double = .infinity)
-        /// As many columns as fit, each at least `minimum` pixels wide.
+        /// As many columns as fit, each at least `minimum` pixels wide. Used
+        /// with other columns, it is one column of that size instead, because
+        /// CSS cannot repeat it alongside them.
         case adaptive(minimum: Double, maximum: Double = .infinity)
     }
 
@@ -350,6 +356,15 @@ public struct GridItem: Sendable, Hashable {
     public let size: Size
 
     // MARK: - Computed Properties
+
+    /// The track size for a column used with other columns: an adaptive
+    /// column becomes one flexible track.
+    var singleTrackCSS: String {
+        if case let .adaptive(minimum, maximum) = size {
+            return "minmax(\(cssNumber(minimum))px, \(Self.maximum(maximum)))"
+        }
+        return css
+    }
 
     /// The CSS track size for `grid-template-columns`.
     var css: String {
@@ -433,7 +448,16 @@ public struct LazyVGrid<Content: View>: View {
 
     /// The elements this view is made of.
     public var body: Element<Content> {
-        let template = columns.isEmpty ? "1fr" : columns.map(\.css).joined(separator: " ")
+        let template: String
+        if columns.isEmpty {
+            template = "1fr"
+        } else if columns.count == 1 {
+            template = columns[0].css
+        } else {
+            // CSS allows a repeating, as-many-as-fit track only on its own,
+            // so with several columns an adaptive one becomes a single track.
+            template = columns.map(\.singleTrackCSS).joined(separator: " ")
+        }
         var style = "display: grid; grid-template-columns: \(template)"
         if let spacing { style += "; gap: \(cssNumber(spacing))px" }
         if let alignment { style += "; justify-items: \(alignment.rawValue)" }
@@ -511,7 +535,8 @@ public struct ScrollView<Content: View>: View {
         switch (axes.contains(.horizontal), axes.contains(.vertical)) {
         case (true, true): style = "overflow: auto"
         case (true, false): style = "overflow-x: auto; overflow-y: hidden"
-        default: style = "overflow-x: hidden; overflow-y: auto"
+        case (false, true): style = "overflow-x: hidden; overflow-y: auto"
+        case (false, false): style = "overflow: hidden"
         }
         if !showsIndicators { style += "; scrollbar-width: none" }
         return Element("div", attributes: ["style": style, "tabindex": "0"], wrapping: content)
@@ -584,10 +609,7 @@ public struct TabView<Content: View>: View {
     /// Writes this view's HTML into `renderer`.
     /// - Parameter renderer: The renderer that collects the page's HTML.
     public func _render(into renderer: inout HTMLRenderer) {
-        let pending = renderer.pending
-        renderer.pending = []
         renderer.writeSupportStyle(.tabs)
-        renderer.pending = pending
 
         var attributes: HTMLAttributes = ["class": "svui-tabs", "id": id]
         renderer.takePending(applyingTo: &attributes)
@@ -657,6 +679,9 @@ public struct Tab<TabLabel: View, Content: View>: View {
         ]
         if index == group.selection { input.setFlag("checked") }
         renderer.writeOpeningTag("input", attributes: input)
+        // Tabs inside this tab's label or panel belong to no tab view of ours,
+        // so hide the group from them while they render.
+        renderer.tabGroup = nil
         renderer.writeOpeningTag("label", attributes: ["class": "svui-tab", "for": inputID])
         label._render(into: &renderer)
         renderer.pending = []
@@ -669,7 +694,7 @@ public struct Tab<TabLabel: View, Content: View>: View {
             wrapping: content
         )
         ._render(into: &renderer)
-        // A nested TabView inside the panel restores its own state, so ours is intact.
+        renderer.tabGroup = group
     }
 }
 

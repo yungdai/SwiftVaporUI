@@ -1062,6 +1062,17 @@ public struct Template<Content: View>: View {
     public var body: Element<Content> {
         Element("template", wrapping: content)
     }
+
+    /// Writes the template. Support styles written inline inside it do not
+    /// apply to the page, so they are written again where they are next needed.
+    /// - Parameter renderer: The renderer that collects the page's HTML.
+    public func _render(into renderer: inout HTMLRenderer) {
+        let written = renderer.writtenSupportStyles
+        body._render(into: &renderer)
+        if renderer.collectedSupportStyles == nil {
+            renderer.writtenSupportStyles = written
+        }
+    }
 }
 
 /// The document head (`<head>`). `HTMLDocument` writes this for you.

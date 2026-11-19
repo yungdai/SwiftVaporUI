@@ -16,6 +16,11 @@ public struct HTMLRenderer: Sendable {
     /// The `TabView` currently being rendered, if any.
     var tabGroup: TabGroupState?
 
+    /// Support styles that views asked for while rendering a document's body.
+    /// When this is set, `writeSupportStyle(_:)` collects styles here for
+    /// `HTMLDocument` to write in the head, instead of writing them inline.
+    var collectedSupportStyles: [SupportStyle]?
+
     // MARK: - Initializer
 
     /// Creates an empty renderer.
@@ -26,14 +31,19 @@ public struct HTMLRenderer: Sendable {
     /// The HTML written so far.
     public internal(set) var output = ""
 
-    /// Writes a small `<style>` element that a built-in view needs, unless a
-    /// style with the same key has already been written in this render.
-    /// - Parameter style: The style sheet to write.
+    /// Makes sure the CSS a built-in view needs is on the page, once.
+    ///
+    /// Inside an `HTMLDocument`, the style is collected and written in the
+    /// document's `<head>`. In a fragment, it is written inline as a small
+    /// `<style>` element the first time it is needed.
+    /// - Parameter style: The style sheet the view needs.
     mutating func writeSupportStyle(_ style: SupportStyle) {
         guard writtenSupportStyles.insert(style.key).inserted else { return }
-        output += "<style>"
-        output += style.css
-        output += "</style>"
+        if collectedSupportStyles != nil {
+            collectedSupportStyles?.append(style)
+        } else {
+            output += SupportStyle.styleElement(for: [style])
+        }
     }
 
     /// Writes markup exactly as given.

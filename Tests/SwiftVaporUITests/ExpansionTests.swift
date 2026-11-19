@@ -29,6 +29,13 @@ extension EnvironmentValues {
     }
 }
 
+/// An environment key whose default value is not `nil`.
+private struct GreetingKey: EnvironmentKey {
+
+    /// The greeting when none is set.
+    static let defaultValue: String? = "Hello"
+}
+
 /// Shows the theme's accent, read from the environment.
 private struct AccentLabel: View {
 
@@ -252,6 +259,10 @@ final class SwiftUIStyleTests: XCTestCase {
 
     /// Checks lazy v grid.
     func testLazyVGrid() {
+        XCTAssertEqual(
+            LazyVGrid(columns: [GridItem(.adaptive(minimum: 120, maximum: 200))]) { "a" }.render(),
+            "<div style=\"display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 200px)); gap: 8px\">a</div>"
+        )
         let html = LazyVGrid(columns: [GridItem(.fixed(100)), GridItem(), GridItem(.adaptive(minimum: 120, maximum: 200))]) {
             "a"
         }
@@ -259,7 +270,7 @@ final class SwiftUIStyleTests: XCTestCase {
         XCTAssertEqual(
             html,
             "<div style=\"display: grid; grid-template-columns: 100px minmax(0px, 1fr) "
-                + "repeat(auto-fill, minmax(120px, 200px)); gap: 8px\">a</div>"
+                + "minmax(120px, 200px); gap: 8px\">a</div>"
         )
     }
 
@@ -434,5 +445,76 @@ final class CompositionTests: XCTestCase {
     func testEnvironmentModifierKeepsAttributeModifiers() {
         XCTAssertEqual(AccentLabel().environment(\.theme, Theme(accent: "red")).class("x").render(),
                        "<span class=\"x\">red</span>")
+    }
+
+    /// Checks an optional environment value falls back to its default.
+    func testOptionalEnvironmentDefault() {
+        XCTAssertEqual(EnvironmentValues()[GreetingKey.self], "Hello")
+        var values = EnvironmentValues()
+        values[GreetingKey.self] = nil
+        XCTAssertNil(values[GreetingKey.self])
+    }
+}
+
+/// Tests for the fixes from code review.
+final class ReviewFixTests: XCTestCase {
+
+    /// Checks a tab inside another tab's panel does not join the outer tab view.
+    func testTabInsidePanelDoesNotJoinOuterGroup() {
+        let html = TabView(id: "outer") {
+            Tab("A") { Tab("Inner") { "i" } }
+            Tab("B") { "b" }
+        }
+        .render()
+        XCTAssertTrue(html.contains("<section><h3>Inner</h3>i</section>"))
+        XCTAssertTrue(html.contains("id=\"outer-tab-1\""))
+        XCTAssertFalse(html.contains("outer-tab-2"))
+    }
+
+    /// Checks an adaptive column used with other columns becomes one valid track.
+    func testLazyVGridMixedAdaptiveColumns() {
+        let html = LazyVGrid(columns: [GridItem(.adaptive(minimum: 100)), GridItem()]) { "a" }.render()
+        XCTAssertTrue(html.contains("grid-template-columns: minmax(100px, 1fr) minmax(0px, 1fr)"))
+        XCTAssertFalse(html.contains("repeat("))
+    }
+
+    /// Checks a scroll view with no axes does not scroll.
+    func testScrollViewWithNoAxes() {
+        XCTAssertTrue(ScrollView([]) { "a" }.render().contains("style=\"overflow: hidden\""))
+    }
+
+    /// Checks SupportStyles passes modifiers on to the next element.
+    func testSupportStylesKeepsModifiers() {
+        let html = Group {
+            SupportStyles()
+            Div { "x" }
+        }
+        .class("page")
+        .render()
+        XCTAssertTrue(html.hasSuffix("<div class=\"page\">x</div>"))
+    }
+
+    /// Checks a document puts the support styles its body needs in the head.
+    func testDocumentWritesSupportStylesInHead() {
+        let html = Page(title: "T") {
+            ZStack { "a" }
+            ZStack { "b" }
+        }
+        .render()
+        let head = html.components(separatedBy: "</head>")[0]
+        let body = html.components(separatedBy: "</head>")[1]
+        XCTAssertTrue(head.contains(".svui-zstack{display:grid}"))
+        XCTAssertFalse(body.contains("<style>"))
+        XCTAssertEqual(html.components(separatedBy: "<style>").count - 1, 1)
+    }
+
+    /// Checks support styles written inside a template are written again outside it.
+    func testTemplateDoesNotUseUpSupportStyles() {
+        let html = Div {
+            Template { ZStack { "a" } }
+            ZStack { "b" }
+        }
+        .render()
+        XCTAssertEqual(html.components(separatedBy: "<style>").count - 1, 2)
     }
 }

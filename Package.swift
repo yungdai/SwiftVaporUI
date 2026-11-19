@@ -2,6 +2,12 @@
 import Foundation
 import PackageDescription
 
+// One package holds both the SwiftVaporUI library, which is released from
+// this repository, and the showcase website in Examples/DemoServer, which
+// you can run with `swift run DemoServer`. Apps that depend on SwiftVaporUI
+// only build the library product; the website is not a product, so it is
+// never built for them.
+//
 // SwiftLint runs as a build tool plugin, but only in a checkout that has
 // opted in with an untracked `.enable-swiftlint` file (see the README). The
 // file is git-ignored, so it never exists where SwiftPM or Xcode resolve
@@ -44,6 +50,26 @@ let package = Package(
                 "SwiftVaporUI",
                 .product(name: "XCTVapor", package: "vapor"),
             ],
+            plugins: lintPlugins
+        ),
+        // The showcase website. Run it with `swift run DemoServer`, or pick the
+        // DemoServer scheme in Xcode.
+        .executableTarget(
+            name: "DemoServer",
+            dependencies: [
+                "SwiftVaporUI",
+                .product(name: "Vapor", package: "vapor"),
+            ],
+            path: "Examples/DemoServer/Sources/DemoServer",
+            plugins: lintPlugins
+        ),
+        .testTarget(
+            name: "DemoServerTests",
+            dependencies: [
+                "DemoServer",
+                .product(name: "XCTVapor", package: "vapor"),
+            ],
+            path: "Examples/DemoServer/Tests/DemoServerTests",
             plugins: lintPlugins
         ),
     ]

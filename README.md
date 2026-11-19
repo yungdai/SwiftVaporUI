@@ -99,7 +99,7 @@ cd SwiftVaporUI
 
 ### Run in Xcode
 
-1. Open `Examples/DemoServer/Package.swift` in Xcode (`open Examples/DemoServer/Package.swift`).
+1. Open the repository's `Package.swift` in Xcode (`open Package.swift`).
 2. Wait for the Swift packages to resolve.
 3. Choose the **DemoServer** scheme and **My Mac** as the destination.
 4. Press **⌘R**.
@@ -110,9 +110,10 @@ The server logs the address in Xcode's console when it starts. Press **⌘.** to
 ### Run from a terminal
 
 ```bash
-cd Examples/DemoServer
 swift run DemoServer
 ```
+
+Run it from the repository folder. `swift test` there runs the library's tests and the showcase's tests.
 
 Then open http://127.0.0.1:8080. To use another port, run `PORT=9000 swift run DemoServer` or `swift run DemoServer serve --port 9000`.
 
@@ -146,7 +147,9 @@ The library has DocC documentation: a getting-started guide, an article per feat
 - `Sources/SwiftVaporUI`: the library.
 - `Sources/SwiftVaporUI/SwiftVaporUI.docc`: the DocC catalog.
 - `Tests/SwiftVaporUITests`: unit tests.
-- `Examples/DemoServer`: the showcase server, a separate Vapor package that depends on the library by path.
+- `Examples/DemoServer`: the showcase server. It is the `DemoServer` executable target of the same package, so one `Package.swift` releases the library and runs the website. It is not a product, so apps that depend on SwiftVaporUI never build it.
+  - `Public`: CSS and JavaScript served by `FileMiddleware`.
+  - `Tests/DemoServerTests`: the showcase's tests.
   - `Sources/DemoServer/Showcase/Topics`: one file per feature page.
   - `Sources/DemoServer/Showcase/Capstone`: the night market page and the page that explains it.
   - `Sources/DemoServer/Showcase/Playground.swift`: the playground.
@@ -168,9 +171,9 @@ The page shows the code between the markers next to the rendered result and the 
 
 ## Linting
 
-[SwiftLint](https://github.com/realm/SwiftLint) runs on every build of the library, its tests and the showcase server, through the [SwiftLintPlugins](https://github.com/SimplyDanny/SwiftLintPlugins) build tool plugin. Violations show up in Xcode's issue navigator and in `swift build` output. The rules live in [`.swiftlint.yml`](.swiftlint.yml); the showcase adds [`Examples/DemoServer/.swiftlint.yml`](Examples/DemoServer/.swiftlint.yml) on top of them. House style: every type, property and function, at any access level, has a `///` doc comment, and `missing_docs` warns when one is missing.
+[SwiftLint](https://github.com/realm/SwiftLint) runs on every build of the library, its tests and the showcase server, through the [SwiftLintPlugins](https://github.com/SimplyDanny/SwiftLintPlugins) build tool plugin. Violations show up in Xcode's issue navigator and in `swift build` output. The rules live in [`.swiftlint.yml`](.swiftlint.yml); the showcase folder adds a nested [`Examples/DemoServer/.swiftlint.yml`](Examples/DemoServer/.swiftlint.yml) on top of them. House style: every type, property and function, at any access level, has a `///` doc comment, and `missing_docs` warns when one is missing.
 
-- **Turn it on for the library (once per clone):** run `touch .enable-swiftlint` in the repository root. The file is git-ignored. Without it the library builds without SwiftLint; the showcase server always lints.
+- **Turn it on (once per clone):** run `touch .enable-swiftlint` in the repository root. The file is git-ignored. Without it the library, its tests and the showcase build without SwiftLint, which is also how apps that depend on SwiftVaporUI see it.
 - **Xcode:** the first time you build with linting on, Xcode asks you to trust `SwiftLintBuildToolPlugin`. Choose **Trust & Enable All**. SwiftPM and Xcode cache the evaluated manifest, so after creating or deleting the file run `swift package reset` in a terminal, or use **File › Packages › Reset Package Caches** in Xcode.
 - **Terminal:** `swift build` lints as it builds. To lint without compiling (needs the opt-in file), run `swift package plugin --allow-writing-to-package-directory swiftlint`.
 

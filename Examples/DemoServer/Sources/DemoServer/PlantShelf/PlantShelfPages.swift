@@ -51,7 +51,7 @@ struct PlantPage: View {
                     Paragraph(plant.notes)
                 }
             }
-            Link("← Back to all plants", destination: "/")
+            Link("← Back to all plants", destination: "/plants")
         }
     }
 }
@@ -97,7 +97,7 @@ struct NewPlantPage: View {
                     }
                     HStack(spacing: 12) {
                         Button("Add to shelf")
-                        Button("Cancel", action: .navigate(to: "/")).class("button-secondary")
+                        Button("Cancel", action: .navigate(to: "/plants")).class("button-secondary")
                     }
                 }
             }
@@ -111,7 +111,7 @@ struct NotFoundPage: View {
             Heading("No plant by that name")
             Paragraph {
                 "It may have wilted. "
-                Link("See all plants", destination: "/")
+                Link("See all plants", destination: "/plants")
                 "."
             }
         }

@@ -3,6 +3,7 @@ public struct Color: Sendable, Hashable {
     /// The CSS value, such as `#2f6b3a` or `rgb(0 0 0 / 50%)`.
     public let css: String
 
+    /// Creates a color from any CSS color value.
     public init(css: String) {
         self.css = css
     }
@@ -17,15 +18,25 @@ public struct Color: Sendable, Hashable {
         Color(css: "rgb(\(red) \(green) \(blue) / \(cssNumber(opacity * 100))%)")
     }
 
+    /// Black.
     public static let black = Color(css: "black")
+    /// White.
     public static let white = Color(css: "white")
+    /// Gray.
     public static let gray = Color(css: "gray")
+    /// Red (CSS `crimson`).
     public static let red = Color(css: "crimson")
+    /// Orange (CSS `darkorange`).
     public static let orange = Color(css: "darkorange")
+    /// Yellow (CSS `gold`).
     public static let yellow = Color(css: "gold")
+    /// Green (CSS `seagreen`).
     public static let green = Color(css: "seagreen")
+    /// Blue (CSS `royalblue`).
     public static let blue = Color(css: "royalblue")
+    /// Purple (CSS `rebeccapurple`).
     public static let purple = Color(css: "rebeccapurple")
+    /// Fully transparent.
     public static let clear = Color(css: "transparent")
     /// The surrounding text color (`currentColor`).
     public static let current = Color(css: "currentColor")
@@ -36,6 +47,7 @@ public struct Font: Sendable, Hashable {
     /// The CSS declarations for this style.
     public let css: String
 
+    /// Creates a font from CSS declarations, such as `"font: 600 15px/1.4 Georgia"`.
     public init(css: String) {
         self.css = css
     }
@@ -45,13 +57,21 @@ public struct Font: Sendable, Hashable {
         Font(css: "font-size: \(cssNumber(size))px; font-weight: \(weight.rawValue)")
     }
 
+    /// 34 pixels, bold.
     public static let largeTitle = system(size: 34, weight: .bold)
+    /// 28 pixels, bold.
     public static let title = system(size: 28, weight: .bold)
+    /// 22 pixels, bold.
     public static let title2 = system(size: 22, weight: .bold)
+    /// 17 pixels, semibold.
     public static let headline = system(size: 17, weight: .semibold)
+    /// 17 pixels, regular.
     public static let body = system(size: 17)
+    /// 16 pixels, regular.
     public static let callout = system(size: 16)
+    /// 13 pixels, regular.
     public static let footnote = system(size: 13)
+    /// 12 pixels, regular.
     public static let caption = system(size: 12)
 
     /// A CSS font weight.
@@ -62,18 +82,27 @@ public struct Font: Sendable, Hashable {
 
 /// The edges `padding(_:_:)` can apply to.
 public struct Edge: OptionSet, Sendable, Hashable {
+    /// The bit mask of edges.
     public let rawValue: Int
 
+    /// Creates a set of edges from a bit mask.
     public init(rawValue: Int) {
         self.rawValue = rawValue
     }
 
+    /// The top edge.
     public static let top = Edge(rawValue: 1)
+    /// The bottom edge.
     public static let bottom = Edge(rawValue: 2)
+    /// The leading edge: left in left-to-right text, right in right-to-left text.
     public static let leading = Edge(rawValue: 4)
+    /// The trailing edge: right in left-to-right text, left in right-to-left text.
     public static let trailing = Edge(rawValue: 8)
+    /// The leading and trailing edges.
     public static let horizontal: Edge = [.leading, .trailing]
+    /// The top and bottom edges.
     public static let vertical: Edge = [.top, .bottom]
+    /// Every edge.
     public static let all: Edge = [.horizontal, .vertical]
 }
 

@@ -6,6 +6,7 @@
 /// attribute, the last one in the chain wins; `class` and `style` accumulate.
 public struct ModifiedView<Content: View>: View {
     public typealias Body = Never
+    /// The view the modifier's attribute changes apply to.
     public let content: Content
     let changes: [AttributeChange]
 

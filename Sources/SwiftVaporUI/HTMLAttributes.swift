@@ -3,21 +3,28 @@
 /// A `nil` value renders a boolean attribute with no value, such as
 /// `disabled`. Attribute names that are not safe to emit are ignored.
 public struct HTMLAttributes: Sendable, Equatable, ExpressibleByDictionaryLiteral {
+    /// One attribute: a name and an optional value.
     public struct Attribute: Sendable, Equatable {
+        /// The attribute name.
         public var name: String
+        /// The value, or `nil` for a boolean attribute.
         public var value: String?
     }
 
+    /// The attributes, in the order they were first set.
     public private(set) var storage: [Attribute] = []
 
+    /// Creates an empty set of attributes.
     public init() {}
 
+    /// Creates attributes from a dictionary literal, keeping the literal's order.
     public init(dictionaryLiteral elements: (String, String)...) {
         for (name, value) in elements {
             self[name] = value
         }
     }
 
+    /// Whether there are no attributes.
     public var isEmpty: Bool { storage.isEmpty }
 
     /// Gets or sets an attribute's value. Setting `nil` removes it.
@@ -32,6 +39,7 @@ public struct HTMLAttributes: Sendable, Equatable, ExpressibleByDictionaryLitera
         }
     }
 
+    /// Whether an attribute called `name` is set.
     public func contains(_ name: String) -> Bool {
         storage.contains(where: { $0.name == name })
     }
@@ -51,6 +59,7 @@ public struct HTMLAttributes: Sendable, Equatable, ExpressibleByDictionaryLitera
         set(name, nil)
     }
 
+    /// Removes the attribute called `name`, if it is set.
     public mutating func remove(_ name: String) {
         storage.removeAll(where: { $0.name == name })
     }

@@ -79,16 +79,21 @@ extension View {
 /// }
 /// ```
 public struct HTMLResponse<Content: View>: AsyncResponseEncodable {
+    /// The response status. Defaults to `200 OK`.
     public var status: HTTPResponseStatus
+    /// Extra response headers. `Content-Type` defaults to `text/html; charset=utf-8`.
     public var headers: HTTPHeaders
+    /// The view rendered as the response body.
     public var content: Content
 
+    /// Creates a response that renders `content`.
     public init(status: HTTPResponseStatus = .ok, headers: HTTPHeaders = [:], _ content: Content) {
         self.status = status
         self.headers = headers
         self.content = content
     }
 
+    /// Creates a response that renders the view built by `content`.
     public init(
         status: HTTPResponseStatus = .ok,
         headers: HTTPHeaders = [:],
@@ -97,6 +102,7 @@ public struct HTMLResponse<Content: View>: AsyncResponseEncodable {
         self.init(status: status, headers: headers, content())
     }
 
+    /// Renders the view and builds the Vapor response.
     public func encodeResponse(for request: Request) async throws -> Response {
         var headers = headers
         if headers.contentType == nil {

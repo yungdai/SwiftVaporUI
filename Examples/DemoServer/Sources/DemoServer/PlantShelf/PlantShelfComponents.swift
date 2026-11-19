@@ -17,11 +17,12 @@ struct SiteLayout<Content: View>: View {
         } body: {
             Header {
                 HStack(spacing: 16) {
-                    Link("🌿 Plant Shelf", destination: "/").class("brand")
+                    Link("🌿 Plant Shelf", destination: "/plants").class("brand")
                     Spacer()
                     NavigationBar {
-                        Link("All plants", destination: "/")
+                        Link("All plants", destination: "/plants")
                         Link("Add a plant", destination: "/plants/new")
+                        Link("Showcase", destination: "/")
                     }
                     .aria("label", "Primary")
                 }

@@ -142,6 +142,7 @@ struct ErrorSummary: View {
     }
 }
 
+/// The Plant Shelf app's stylesheet.
 let siteCSS = """
 :root { --green: #2f6b3a; --ink: #1d2420; --muted: #5d6b62; --line: #dfe6e0; }
 * { box-sizing: border-box; }

@@ -166,6 +166,16 @@ Example("greeting", title: "A greeting") {
 
 The page shows the code between the markers next to the rendered result and the HTML it produced. A snippet id can appear more than once in a file, for example around a helper view defined further down, and the regions are shown together.
 
+## Linting
+
+[SwiftLint](https://github.com/realm/SwiftLint) runs on every build of the library, its tests and the showcase server, through the [SwiftLintPlugins](https://github.com/SimplyDanny/SwiftLintPlugins) build tool plugin. Violations show up in Xcode's issue navigator and in `swift build` output. The rules live in [`.swiftlint.yml`](.swiftlint.yml); the showcase adds [`Examples/DemoServer/.swiftlint.yml`](Examples/DemoServer/.swiftlint.yml) on top of them. House style: every type, property and function, at any access level, has a `///` doc comment, and `missing_docs` warns when one is missing.
+
+- **Turn it on for the library (once per clone):** run `touch .enable-swiftlint` in the repository root. The file is git-ignored. Without it the library builds without SwiftLint; the showcase server always lints.
+- **Xcode:** the first time you build with linting on, Xcode asks you to trust `SwiftLintBuildToolPlugin`. Choose **Trust & Enable All**. SwiftPM and Xcode cache the evaluated manifest, so after creating or deleting the file run `swift package reset` in a terminal, or use **File › Packages › Reset Package Caches** in Xcode.
+- **Terminal:** `swift build` lints as it builds. To lint without compiling (needs the opt-in file), run `swift package plugin --allow-writing-to-package-directory swiftlint`.
+
+Projects that depend on SwiftVaporUI by URL never fetch or run SwiftLint, because the opt-in file only exists in your own clone. A project that depends on a local clone with `.package(path:)` does pick it up while that clone has the file.
+
 ## Requirements
 
 - Swift 6.0+

@@ -97,7 +97,7 @@ struct StatTile: View {
     let value: String
 
     /// An optional note on the trend, such as `+3 this week`.
-    var trend: String? = nil
+    var trend: String?
 
     // MARK: - View
 

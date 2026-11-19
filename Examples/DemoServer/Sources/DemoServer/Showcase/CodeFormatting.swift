@@ -20,7 +20,7 @@ enum SwiftHighlighter {
     /// Colours Swift source with `<span>`s.
     /// - Parameter code: The Swift source.
     /// - Returns: Escaped HTML with token spans.
-    static func highlight(_ code: String) -> String {
+    static func highlight(_ code: String) -> String { // swiftlint:disable:this cyclomatic_complexity
         let chars = Array(code)
         var html = ""
         var index = 0
@@ -149,7 +149,7 @@ enum HTMLFormatter {
     /// Indents HTML so it is readable.
     /// - Parameter html: The HTML on one line.
     /// - Returns: The HTML on several indented lines.
-    static func format(_ html: String) -> String {
+    static func format(_ html: String) -> String { // swiftlint:disable:this cyclomatic_complexity
         var lines: [String] = []
         var line = ""
         var depth = 0

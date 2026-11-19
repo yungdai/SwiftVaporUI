@@ -1,6 +1,6 @@
 import SwiftVaporUI
-import XCTVapor
 import XCTest
+import XCTVapor
 
 // This file imports XCTVapor, which brings in `Vapor.View` too. One
 // module-level typealias settles which `View` the module means. Files that

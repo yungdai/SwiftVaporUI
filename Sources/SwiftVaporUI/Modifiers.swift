@@ -10,11 +10,6 @@ public struct ModifiedView<Content: View>: View {
     public let content: Content
     let changes: [AttributeChange]
 
-    init(content: Content, changes: [AttributeChange]) {
-        self.content = content
-        self.changes = changes
-    }
-
     public func _render(into renderer: inout HTMLRenderer) {
         let outer = renderer.pending
         // Inner modifiers apply first, so the outermost (last written) wins.

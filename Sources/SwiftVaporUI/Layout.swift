@@ -6,7 +6,6 @@ public enum HorizontalAlignment: String, Sendable {
     case stretch = "stretch"
 }
 
-
 /// Vertical alignment of the children of an `HStack`.
 public enum VerticalAlignment: String, Sendable {
     case top = "flex-start"

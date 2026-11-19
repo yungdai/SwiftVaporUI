@@ -9,6 +9,7 @@ let package = Package(
     dependencies: [
         .package(path: "../.."),
         .package(url: "https://github.com/vapor/vapor.git", from: "4.100.0"),
+        .package(url: "https://github.com/SimplyDanny/SwiftLintPlugins.git", from: "0.65.1"),
     ],
     targets: [
         .executableTarget(
@@ -16,6 +17,9 @@ let package = Package(
             dependencies: [
                 .product(name: "SwiftVaporUI", package: "SwiftVaporUI"),
                 .product(name: "Vapor", package: "vapor"),
+            ],
+            plugins: [
+                .plugin(name: "SwiftLintBuildToolPlugin", package: "SwiftLintPlugins"),
             ]
         ),
     ]

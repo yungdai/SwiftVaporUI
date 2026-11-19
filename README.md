@@ -166,6 +166,16 @@ Example("greeting", title: "A greeting") {
 
 The page shows the code between the markers next to the rendered result and the HTML it produced. A snippet id can appear more than once in a file, for example around a helper view defined further down, and the regions are shown together.
 
+## Linting
+
+[SwiftLint](https://github.com/realm/SwiftLint) runs automatically on every build of the library, its tests and the showcase server, through the [SwiftLintPlugins](https://github.com/SimplyDanny/SwiftLintPlugins) build tool plugin. Violations show up as warnings and errors in Xcode's issue navigator and in `swift build` output. The rules live in [`.swiftlint.yml`](.swiftlint.yml); the showcase adds [`Examples/DemoServer/.swiftlint.yml`](Examples/DemoServer/.swiftlint.yml) on top of them.
+
+- **Xcode:** the first time you build, Xcode asks you to trust the `SwiftLintBuildToolPlugin`. Choose **Trust & Enable All**.
+- **Terminal:** `swift build` lints as it builds. To lint without compiling, run `swift package plugin --allow-writing-to-package-directory swiftlint`.
+- **Turning it off locally:** `SWIFTVAPORUI_LINT=0 swift build`.
+
+Projects that depend on SwiftVaporUI don't download or run SwiftLint. The manifest only adds the plugin when the package is built from its own checkout, not when it is resolved as a dependency.
+
 ## Requirements
 
 - Swift 6.0+

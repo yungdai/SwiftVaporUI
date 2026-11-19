@@ -85,7 +85,7 @@ enum ComponentsTopic {
 struct StatTile: View {
     let label: String
     let value: String
-    var trend: String? = nil
+    var trend: String?
 
     var body: some View {
         VStack(spacing: 2) {

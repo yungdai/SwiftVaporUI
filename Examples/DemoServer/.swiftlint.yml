@@ -1,0 +1,7 @@
+# The DemoServer package lints with the repo-wide rules.
+parent_config: ../../.swiftlint.yml
+
+# The showcase is mostly prose, sample data and CSS in string literals,
+# so long lines are expected here.
+disabled_rules:
+  - line_length

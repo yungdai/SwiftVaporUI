@@ -11,6 +11,8 @@ enum SwiftHighlighter {
         "typealias", "associatedtype", "break", "continue", "mutating", "inout", "let",
     ]
 
+    // A single-pass tokenizer reads best as one switch.
+    // swiftlint:disable:next cyclomatic_complexity
     static func highlight(_ code: String) -> String {
         let chars = Array(code)
         var html = ""
@@ -124,6 +126,8 @@ enum HTMLFormatter {
         "figcaption", "summary", "legend", "label", "option", "textarea", "button", "pre",
     ]
 
+    // A single-pass tokenizer reads best as one switch.
+    // swiftlint:disable:next cyclomatic_complexity
     static func format(_ html: String) -> String {
         var lines: [String] = []
         var line = ""

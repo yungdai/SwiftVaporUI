@@ -1,0 +1,58 @@
+# SwiftLint configuration for SwiftVaporUI.
+# Runs automatically through the SwiftLint build tool plugin on every build.
+# The plugin passes its own file list, so `included` is mostly for CLI runs.
+
+included:
+  - Sources
+  - Tests
+  - Examples/DemoServer/Sources
+
+excluded:
+  - .build
+  - .swiftpm
+  - Examples/DemoServer/.build
+  - "**/.build"
+
+analyzer_rules:
+  - unused_import
+
+disabled_rules:
+  # Trailing commas are this codebase's style for multi-line literals.
+  - trailing_comma
+
+opt_in_rules:
+  - closure_spacing
+  - empty_count
+  - first_where
+  - modifier_order
+  - sorted_imports
+  - toggle_bool
+  - vertical_whitespace_closing_braces
+
+line_length:
+  warning: 140
+  error: 200
+  ignores_comments: true
+  ignores_urls: true
+  ignores_multiline_strings: true
+
+identifier_name:
+  # `_render(into:)` is the DSL's underscored internal hook, as in SwiftUI.
+  allowed_symbols: ["_"]
+  min_length: 1
+  max_length: 50
+
+type_name:
+  max_length: 50
+
+file_length:
+  warning: 1000
+  error: 1500
+
+type_body_length:
+  warning: 400
+  error: 600
+
+function_body_length:
+  warning: 80
+  error: 150

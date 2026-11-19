@@ -20,8 +20,10 @@
 /// }
 /// ```
 public protocol EnvironmentKey {
+
     /// The type of value the key stores.
     associatedtype Value: Sendable
+
     /// The value views read when no ancestor has set one.
     static var defaultValue: Value { get }
 }
@@ -44,7 +46,7 @@ public struct EnvironmentValues: Sendable {
     /// The values that have been set, by key type.
     private var values: [ObjectIdentifier: any Sendable] = [:]
 
-    // MARK: - Initializers
+    // MARK: - Initializer
 
     /// Creates environment values where every key has its default value.
     public init() {}
@@ -52,13 +54,11 @@ public struct EnvironmentValues: Sendable {
     // MARK: - Subscripts
 
     /// Gets or sets the value for `key`.
-    ///
     /// - Parameter key: The key whose value to get or set.
     public subscript<Key: EnvironmentKey>(key: Key.Type) -> Key.Value {
         get { values[ObjectIdentifier(key)] as? Key.Value ?? Key.defaultValue }
         set { values[ObjectIdentifier(key)] = newValue }
     }
-
 }
 
 /// Reads a value from the environment inside a view's `body`.
@@ -92,15 +92,13 @@ public struct ViewEnvironment<Value>: @unchecked Sendable {
         EnvironmentValues.current[keyPath: keyPath]
     }
 
-    // MARK: - Initializers
+    // MARK: - Initializer
 
     /// Creates a property that reads the value at `keyPath`.
-    ///
     /// - Parameter keyPath: The key path of the environment value to read.
     public init(_ keyPath: KeyPath<EnvironmentValues, Value>) {
         self.keyPath = keyPath
     }
-
 }
 
 /// Builds content from an environment value, without declaring a view type.
@@ -120,10 +118,9 @@ public struct EnvironmentReader<Value, Content: View>: View, @unchecked Sendable
     /// Builds the content from the value.
     private let content: (Value) -> Content
 
-    // MARK: - Initializers
+    // MARK: - Initializer
 
     /// Creates a view whose content is built from the value at `keyPath`.
-    ///
     /// - Parameters:
     ///   - keyPath: The key path of the environment value to read.
     ///   - content: A view builder that creates the content from the value.
@@ -138,12 +135,10 @@ public struct EnvironmentReader<Value, Content: View>: View, @unchecked Sendable
     public typealias Body = Never
 
     /// Writes this view's HTML into `renderer`.
-    ///
     /// - Parameter renderer: The renderer that collects the page's HTML.
     public func _render(into renderer: inout HTMLRenderer) {
         content(EnvironmentValues.current[keyPath: keyPath])._render(into: &renderer)
     }
-
 }
 
 /// A view whose subtree sees a changed environment value.
@@ -160,10 +155,9 @@ public struct EnvironmentModifiedView<Content: View, Value: Sendable>: View, @un
     /// The new value.
     private let value: Value
 
-    // MARK: - Initializers
+    // MARK: - Initializer
 
     /// Creates a view whose subtree sees `value` at `keyPath`.
-    ///
     /// - Parameters:
     ///   - content: The view that sees the changed value.
     ///   - keyPath: The key path of the value to change.
@@ -180,7 +174,6 @@ public struct EnvironmentModifiedView<Content: View, Value: Sendable>: View, @un
     public typealias Body = Never
 
     /// Writes this view's HTML into `renderer`.
-    ///
     /// - Parameter renderer: The renderer that collects the page's HTML.
     public func _render(into renderer: inout HTMLRenderer) {
         var environment = EnvironmentValues.current
@@ -189,12 +182,10 @@ public struct EnvironmentModifiedView<Content: View, Value: Sendable>: View, @un
             content._render(into: &renderer)
         }
     }
-
 }
 
+/// The environment modifier.
 extension View {
-
-    // MARK: - Modifiers
 
     /// Sets an environment value for this view and everything inside it.
     ///
@@ -202,7 +193,6 @@ extension View {
     /// ProductPage()
     ///     .environment(\.theme, Theme(accent: .purple))
     /// ```
-    ///
     /// - Parameters:
     ///   - keyPath: The key path of the environment value to set.
     ///   - value: The value to set.
@@ -213,5 +203,4 @@ extension View {
     ) -> EnvironmentModifiedView<Self, Value> {
         EnvironmentModifiedView(content: self, keyPath: keyPath, value: value)
     }
-
 }

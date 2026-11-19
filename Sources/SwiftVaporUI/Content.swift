@@ -18,7 +18,6 @@ public enum HeadingLevel: Int, Sendable, CaseIterable {
 
     /// A sixth-level heading (`<h6>`).
     case h6
-
 }
 
 /// A section heading (`<h1>` to `<h6>`).
@@ -37,10 +36,9 @@ public struct Heading<Content: View>: View {
     /// The element's content.
     public let content: Content
 
-    // MARK: - Initializers
+    // MARK: - Initializer
 
     /// Creates a heading of the given level from the views built by `content`.
-    ///
     /// - Parameters:
     ///   - level: The heading level, from `.h1` to `.h6`.
     ///   - content: The element's content.
@@ -55,22 +53,18 @@ public struct Heading<Content: View>: View {
     public var body: Element<Content> {
         Element("h\(level.rawValue)", wrapping: content)
     }
-
 }
 
+/// Initializers that take plain text.
 extension Heading where Content == Text {
 
-    // MARK: - Initializers
-
     /// Creates a heading of the given level containing escaped `text`.
-    ///
     /// - Parameters:
     ///   - text: The text, which is escaped when rendered.
     ///   - level: The heading level, from `.h1` to `.h6`.
     public init(_ text: String, level: HeadingLevel = .h1) {
         self.init(level: level) { Text(text) }
     }
-
 }
 
 /// A hyperlink (`<a>`).
@@ -95,10 +89,9 @@ public struct Link<Label: View>: View {
     /// The link's visible content.
     public let label: Label
 
-    // MARK: - Initializers
+    // MARK: - Initializer
 
     /// Creates a link to `destination` whose visible content is built by `label`.
-    ///
     /// - Parameters:
     ///   - destination: The URL.
     ///   - target: Where to open it. `.blank` opens a new tab and, unless you
@@ -126,15 +119,12 @@ public struct Link<Label: View>: View {
         attributes["rel"] = relationship ?? (target == .blank ? "noopener" : nil)
         return Element("a", attributes: attributes, wrapping: label)
     }
-
 }
 
+/// Initializers that take plain text.
 extension Link where Label == Text {
 
-    // MARK: - Initializers
-
     /// Creates a link to `destination` with escaped `title` as its text.
-    ///
     /// - Parameters:
     ///   - title: The link text, which is escaped when rendered.
     ///   - destination: The URL the link points to. It is escaped but not validated.
@@ -143,7 +133,6 @@ extension Link where Label == Text {
     public init(_ title: String, destination: String, target: LinkTarget? = nil, relationship: String? = nil) {
         self.init(destination: destination, target: target, relationship: relationship) { Text(title) }
     }
-
 }
 
 /// Where a `Link` opens (the `target` attribute).
@@ -171,15 +160,12 @@ public struct LinkTarget: RawRepresentable, Sendable, Hashable, ExpressibleByStr
     // MARK: - Initializers
 
     /// Creates a target from its value, such as the name of an `IFrame`.
-    ///
     /// - Parameter rawValue: The value written to `target`.
     public init(rawValue: String) { self.rawValue = rawValue }
 
     /// Creates a target from a string literal.
-    ///
     /// - Parameter value: The target name.
     public init(stringLiteral value: String) { self.rawValue = value }
-
 }
 
 /// A `<ul>` with one `<li>` per element of a collection.
@@ -196,10 +182,9 @@ public struct List<Row: View>: View {
     /// The rendered rows, one per element of the data.
     public let rows: [Row]
 
-    // MARK: - Initializers
+    // MARK: - Initializer
 
     /// Creates a list with one row, built by `row`, for each element of `data`.
-    ///
     /// - Parameters:
     ///   - data: The elements to render a row for.
     ///   - row: A view builder that creates the row for one element.
@@ -217,7 +202,6 @@ public struct List<Row: View>: View {
             }
         }
     }
-
 }
 
 /// An image (`<img>`). `alt` is required to encourage accessible markup;
@@ -238,11 +222,10 @@ public struct Image: View {
     /// The intrinsic height in pixels, if known.
     public var height: Int?
 
-    // MARK: - Initializers
+    // MARK: - Initializer
 
     /// Creates an image. Pass `width` and `height` when you know them, so the
     /// browser can reserve space before the image loads.
-    ///
     /// - Parameters:
     ///   - src: The image URL.
     ///   - alt: Alternative text for screen readers and when the image fails to load.
@@ -264,13 +247,12 @@ public struct Image: View {
         attributes["height"] = height.map(String.init)
         return VoidElement("img", attributes: attributes)
     }
-
 }
 
 /// A line break (`<br>`).
 public struct LineBreak: View {
 
-    // MARK: - Initializers
+    // MARK: - Initializer
 
     /// Creates a line break.
     public init() {}
@@ -279,13 +261,12 @@ public struct LineBreak: View {
 
     /// The elements this view is made of.
     public var body: VoidElement { VoidElement("br") }
-
 }
 
 /// A thematic break (`<hr>`).
 public struct Divider: View {
 
-    // MARK: - Initializers
+    // MARK: - Initializer
 
     /// Creates a thematic break.
     public init() {}
@@ -294,5 +275,4 @@ public struct Divider: View {
 
     /// The elements this view is made of.
     public var body: VoidElement { VoidElement("hr") }
-
 }

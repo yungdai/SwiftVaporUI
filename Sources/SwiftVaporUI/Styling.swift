@@ -41,10 +41,9 @@ public struct Color: Sendable, Hashable {
     /// The CSS value, such as `#2f6b3a` or `rgb(0 0 0 / 50%)`.
     public let css: String
 
-    // MARK: - Initializers
+    // MARK: - Initializer
 
     /// Creates a color from any CSS color value.
-    ///
     /// - Parameter css: The CSS value, such as `#2f6b3a` or `rgb(0 0 0 / 50%)`.
     public init(css: String) {
         self.css = css
@@ -53,7 +52,6 @@ public struct Color: Sendable, Hashable {
     // MARK: - Methods
 
     /// A color from hex digits, with or without a leading `#`.
-    ///
     /// - Parameter value: Hex digits such as `2f6b3a`, with or without a leading `#`.
     /// - Returns: The color.
     public static func hex(_ value: String) -> Color {
@@ -61,7 +59,6 @@ public struct Color: Sendable, Hashable {
     }
 
     /// A color from 0–255 red, green and blue components and a 0–1 opacity.
-    ///
     /// - Parameters:
     ///   - red: The red component, from 0 to 255.
     ///   - green: The green component, from 0 to 255.
@@ -71,7 +68,6 @@ public struct Color: Sendable, Hashable {
     public static func rgb(_ red: Int, _ green: Int, _ blue: Int, opacity: Double = 1) -> Color {
         Color(css: "rgb(\(red) \(green) \(blue) / \(cssNumber(opacity * 100))%)")
     }
-
 }
 
 /// A text style, in the spirit of SwiftUI's built-in fonts.
@@ -115,10 +111,9 @@ public struct Font: Sendable, Hashable {
     /// The CSS declarations for this style.
     public let css: String
 
-    // MARK: - Initializers
+    // MARK: - Initializer
 
     /// Creates a font from CSS declarations, such as `"font: 600 15px/1.4 Georgia"`.
-    ///
     /// - Parameter css: The CSS declarations for this style.
     public init(css: String) {
         self.css = css
@@ -127,7 +122,6 @@ public struct Font: Sendable, Hashable {
     // MARK: - Methods
 
     /// A font of a given size in pixels and optional weight.
-    ///
     /// - Parameters:
     ///   - size: The font size in pixels.
     ///   - weight: The font weight.
@@ -135,7 +129,6 @@ public struct Font: Sendable, Hashable {
     public static func system(size: Double, weight: Weight = .regular) -> Font {
         Font(css: "font-size: \(cssNumber(size))px; font-weight: \(weight.rawValue)")
     }
-
 }
 
 /// The edges `padding(_:_:)` can apply to.
@@ -169,15 +162,13 @@ public struct Edge: OptionSet, Sendable, Hashable {
     /// The bit mask of edges.
     public let rawValue: Int
 
-    // MARK: - Initializers
+    // MARK: - Initializer
 
     /// Creates a set of edges from a bit mask.
-    ///
     /// - Parameter rawValue: The bit mask of edges.
     public init(rawValue: Int) {
         self.rawValue = rawValue
     }
-
 }
 
 /// SwiftUI-style styling modifiers. Each one adds inline CSS to the view's
@@ -185,10 +176,7 @@ public struct Edge: OptionSet, Sendable, Hashable {
 /// wrapper element, so they combine with `.class` and with each other.
 extension View {
 
-    // MARK: - Modifiers
-
     /// Adds padding, in pixels, on the given edges.
-    ///
     /// - Parameters:
     ///   - edges: The edges to pad.
     ///   - length: The padding in pixels.
@@ -209,7 +197,6 @@ extension View {
     }
 
     /// Adds the same padding, in pixels, on every edge.
-    ///
     /// - Parameter length: The padding in pixels.
     /// - Returns: A view with the change applied.
     public func padding(_ length: Double) -> ModifiedView<Self> {
@@ -217,7 +204,6 @@ extension View {
     }
 
     /// Sets the text style.
-    ///
     /// - Parameter font: The text style.
     /// - Returns: A view with the change applied.
     public func font(_ font: Font) -> ModifiedView<Self> {
@@ -225,7 +211,6 @@ extension View {
     }
 
     /// Sets the font weight.
-    ///
     /// - Parameter weight: The font weight.
     /// - Returns: A view with the change applied.
     public func fontWeight(_ weight: Font.Weight) -> ModifiedView<Self> {
@@ -233,21 +218,18 @@ extension View {
     }
 
     /// Makes the text bold.
-    ///
     /// - Returns: A view with the change applied.
     public func bold() -> ModifiedView<Self> {
         fontWeight(.bold)
     }
 
     /// Makes the text italic.
-    ///
     /// - Returns: A view with the change applied.
     public func italic() -> ModifiedView<Self> {
         style("font-style", "italic")
     }
 
     /// Sets the text color.
-    ///
     /// - Parameter color: The color to use.
     /// - Returns: A view with the change applied.
     public func foregroundColor(_ color: Color) -> ModifiedView<Self> {
@@ -255,7 +237,6 @@ extension View {
     }
 
     /// Sets the background color.
-    ///
     /// - Parameter color: The color to use.
     /// - Returns: A view with the change applied.
     public func background(_ color: Color) -> ModifiedView<Self> {
@@ -263,7 +244,6 @@ extension View {
     }
 
     /// Rounds the corners, in pixels.
-    ///
     /// - Parameter radius: The radius in pixels.
     /// - Returns: A view with the change applied.
     public func cornerRadius(_ radius: Double) -> ModifiedView<Self> {
@@ -271,7 +251,6 @@ extension View {
     }
 
     /// Sets the opacity, from 0 to 1.
-    ///
     /// - Parameter value: The value to set.
     /// - Returns: A view with the change applied.
     public func opacity(_ value: Double) -> ModifiedView<Self> {
@@ -283,7 +262,6 @@ extension View {
     /// ```swift
     /// Div { "Boxed" }.border(.gray, width: 2)
     /// ```
-    ///
     /// - Parameters:
     ///   - color: The color to use.
     ///   - width: The width in pixels.
@@ -293,13 +271,11 @@ extension View {
     }
 
     /// Adds a drop shadow behind the element, like SwiftUI's `shadow`.
-    ///
     /// - Parameters:
     ///   - color: The shadow color. Defaults to black at 33% opacity.
     ///   - radius: The blur radius in pixels.
     ///   - x: The horizontal offset in pixels.
     ///   - y: The vertical offset in pixels.
-    ///
     /// - Returns: A view with the change applied.
     public func shadow(
         color: Color = .rgb(0, 0, 0, opacity: 0.33),
@@ -311,7 +287,6 @@ extension View {
     }
 
     /// Fixes the width and/or height, in pixels.
-    ///
     /// - Parameters:
     ///   - width: The width in pixels.
     ///   - height: The height in pixels, or `nil` to leave it.
@@ -324,7 +299,6 @@ extension View {
     }
 
     /// Limits the width and/or height, in pixels.
-    ///
     /// - Parameters:
     ///   - maxWidth: The largest width in pixels, or `nil` to leave it.
     ///   - maxHeight: The largest height in pixels, or `nil` to leave it.
@@ -335,5 +309,4 @@ extension View {
         if let maxHeight { declarations.append("max-height: \(cssNumber(maxHeight))px") }
         return style(declarations.joined(separator: "; "))
     }
-
 }

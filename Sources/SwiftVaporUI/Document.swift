@@ -27,7 +27,7 @@ public struct HTMLDocument<HeadContent: View, Content: View>: View {
     /// The element's content.
     public let content: Content
 
-    // MARK: - Initializers
+    // MARK: - Initializer
 
     /// Creates a document with a title, extra head content and body content.
     /// ///
@@ -64,15 +64,12 @@ public struct HTMLDocument<HeadContent: View, Content: View>: View {
             }
         }
     }
-
 }
 
+/// Initializers for an element with no content.
 extension HTMLDocument where HeadContent == EmptyView {
 
-    // MARK: - Initializers
-
     /// Creates a document with a title and body content, and nothing extra in its head.
-    ///
     /// - Parameters:
     ///   - title: The text of the document's `<title>`.
     ///   - language: The language of the page, written as the `lang` attribute of `<html>`.
@@ -80,7 +77,6 @@ extension HTMLDocument where HeadContent == EmptyView {
     public init(title: String, language: String = "en", @ViewBuilder body: () -> Content) {
         self.init(title: title, language: language, head: { EmptyView() }, body: body)
     }
-
 }
 
 /// A page with only a title and body content: shorthand for an
@@ -101,10 +97,9 @@ public struct Document<Content: View>: View {
     /// The element's content.
     public let content: Content
 
-    // MARK: - Initializers
+    // MARK: - Initializer
 
     /// Creates the element with the content built by `content`.
-    ///
     /// - Parameter content: The element's content.
     public init(@ViewBuilder content: () -> Content) {
         self.content = content()
@@ -117,7 +112,6 @@ public struct Document<Content: View>: View {
         RawHTML("<!DOCTYPE html>")
         content
     }
-
 }
 
 /// The root `<html>` element.
@@ -131,10 +125,9 @@ public struct HTMLRoot<Content: View>: View {
     /// The element's content.
     public let content: Content
 
-    // MARK: - Initializers
+    // MARK: - Initializer
 
     /// Creates the root element with the given language and content.
-    ///
     /// - Parameters:
     ///   - language: The page language, written as the `lang` attribute. `nil` leaves it out.
     ///   - content: The element's content.
@@ -151,7 +144,6 @@ public struct HTMLRoot<Content: View>: View {
         attributes["lang"] = language
         return Element("html", attributes: attributes, wrapping: content)
     }
-
 }
 
 /// The document `<title>`. The text is escaped.
@@ -162,10 +154,9 @@ public struct Title: View {
     /// The title text.
     public let text: String
 
-    // MARK: - Initializers
+    // MARK: - Initializer
 
     /// Creates a title containing escaped `text`.
-    ///
     /// - Parameter text: The title text.
     public init(_ text: String) {
         self.text = text
@@ -177,7 +168,6 @@ public struct Title: View {
     public var body: Element<Text> {
         Element("title", wrapping: Text(text))
     }
-
 }
 
 /// A `<link>` relating the document to another resource, such as an icon
@@ -192,10 +182,9 @@ public struct ResourceLink: View {
     /// The linked resource's URL.
     public let destination: String
 
-    // MARK: - Initializers
+    // MARK: - Initializer
 
     /// Creates a link to a resource with the given relationship.
-    ///
     /// - Parameters:
     ///   - relationship: The relationship, written as the `rel` attribute, such as `"icon"`.
     ///   - destination: The linked resource's URL.
@@ -210,7 +199,6 @@ public struct ResourceLink: View {
     public var body: VoidElement {
         VoidElement("link", attributes: ["rel": relationship, "href": destination])
     }
-
 }
 
 /// A `<meta>` tag for the document head.
@@ -224,14 +212,12 @@ public struct Meta: View {
     // MARK: - Initializers
 
     /// Creates `<meta charset>`. `HTMLDocument` already adds `utf-8`.
-    ///
     /// - Parameter charset: The character encoding, normally `utf-8`.
     public init(charset: String) {
         attributes = ["charset": charset]
     }
 
     /// Creates `<meta name content>`, for example a description.
-    ///
     /// - Parameters:
     ///   - name: The metadata name, such as `description` or `viewport`.
     ///   - content: The metadata value.
@@ -240,7 +226,6 @@ public struct Meta: View {
     }
 
     /// Creates `<meta property content>`, as used by Open Graph tags.
-    ///
     /// - Parameters:
     ///   - property: The Open Graph property, such as `og:title`.
     ///   - content: The metadata value.
@@ -252,7 +237,6 @@ public struct Meta: View {
 
     /// The elements this view is made of.
     public var body: VoidElement { VoidElement("meta", attributes: attributes) }
-
 }
 
 /// Links an external stylesheet (`<link rel="stylesheet">`).
@@ -263,10 +247,9 @@ public struct Stylesheet: View {
     /// The stylesheet URL.
     public let href: String
 
-    // MARK: - Initializers
+    // MARK: - Initializer
 
     /// Creates a link to the stylesheet at `href`.
-    ///
     /// - Parameter href: The stylesheet URL.
     public init(href: String) {
         self.href = href
@@ -278,7 +261,6 @@ public struct Stylesheet: View {
     public var body: VoidElement {
         VoidElement("link", attributes: ["rel": "stylesheet", "href": href])
     }
-
 }
 
 /// Inline CSS (`<style>`). The CSS is not escaped, but any `</style` inside
@@ -290,10 +272,9 @@ public struct Style: View {
     /// The CSS, after neutralising any closing tag inside it.
     public let css: String
 
-    // MARK: - Initializers
+    // MARK: - Initializer
 
     /// Creates a `<style>` element containing `css`.
-    ///
     /// - Parameter css: The CSS, after neutralising any closing tag inside it.
     public init(_ css: String) {
         self.css = css
@@ -305,7 +286,6 @@ public struct Style: View {
     public var body: Element<RawHTML> {
         Element("style", wrapping: RawHTML(css.replacingOccurrences(of: "</", with: "<\\/")))
     }
-
 }
 
 /// A script, either external (`src`) or inline. Inline code is not escaped,
@@ -337,7 +317,6 @@ public struct Script: View {
     }
 
     /// Creates an inline script. Only pass code you trust.
-    ///
     /// - Parameters:
     ///   - code: The JavaScript, written without escaping. Only pass code you trust.
     ///   - module: Whether to load the script as an ES module.
@@ -354,5 +333,4 @@ public struct Script: View {
     public var body: Element<RawHTML> {
         Element("script", attributes: attributes, wrapping: RawHTML(code))
     }
-
 }

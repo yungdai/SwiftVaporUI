@@ -31,10 +31,9 @@ public struct Checkbox: View {
     /// The element `id`, for use with `Label(for:)`.
     public let id: String?
 
-    // MARK: - Initializers
+    // MARK: - Initializer
 
     /// Creates a checkbox.
-    ///
     /// - Parameters:
     ///   - name: The field name.
     ///   - value: The value submitted when checked.
@@ -56,7 +55,6 @@ public struct Checkbox: View {
         if isChecked { attributes.setFlag("checked") }
         return VoidElement("input", attributes: attributes)
     }
-
 }
 
 /// A radio button (`<input type="radio">`). Buttons with the same `name`
@@ -77,10 +75,9 @@ public struct RadioButton: View {
     /// The element `id`, for use with `Label(for:)`.
     public let id: String?
 
-    // MARK: - Initializers
+    // MARK: - Initializer
 
     /// Creates a radio button.
-    ///
     /// - Parameters:
     ///   - name: The group's field name.
     ///   - value: The value submitted when this button is chosen.
@@ -102,7 +99,6 @@ public struct RadioButton: View {
         if isChecked { attributes.setFlag("checked") }
         return VoidElement("input", attributes: attributes)
     }
-
 }
 
 /// A number field (`<input type="number">`).
@@ -128,10 +124,9 @@ public struct NumberField: View {
     /// The element `id`, for use with `Label(for:)`.
     public let id: String?
 
-    // MARK: - Initializers
+    // MARK: - Initializer
 
     /// Creates a number field.
-    ///
     /// - Parameters:
     ///   - name: The field name.
     ///   - value: The initial value.
@@ -159,7 +154,6 @@ public struct NumberField: View {
         attributes["step"] = step.map(cssNumber)
         return VoidElement("input", attributes: attributes)
     }
-
 }
 
 /// A slider (`<input type="range">`).
@@ -182,10 +176,9 @@ public struct RangeField: View {
     /// The element `id`, for use with `Label(for:)`.
     public let id: String?
 
-    // MARK: - Initializers
+    // MARK: - Initializer
 
     /// Creates a slider.
-    ///
     /// - Parameters:
     ///   - name: The field name.
     ///   - value: The initial value.
@@ -211,7 +204,6 @@ public struct RangeField: View {
         attributes["value"] = cssNumber(value)
         return VoidElement("input", attributes: attributes)
     }
-
 }
 
 /// A date field (`<input type="date">`). Values are `yyyy-MM-dd` strings.
@@ -237,10 +229,9 @@ public struct DateField: View {
     /// The element `id`, for use with `Label(for:)`.
     public let id: String?
 
-    // MARK: - Initializers
+    // MARK: - Initializer
 
     /// Creates a date field. Pass `type` for a time, month or week instead.
-    ///
     /// - Parameters:
     ///   - name: The field name.
     ///   - value: The initial value, such as `"2026-11-21"`.
@@ -267,7 +258,6 @@ public struct DateField: View {
         attributes["max"] = max
         return VoidElement("input", attributes: attributes)
     }
-
 }
 
 /// An email address field (`<input type="email">`). The browser checks the
@@ -291,10 +281,9 @@ public struct EmailField: View {
     /// The element `id`, for use with `Label(for:)`.
     public let id: String?
 
-    // MARK: - Initializers
+    // MARK: - Initializer
 
     /// Creates an email field. Its `autocomplete` hint is `email`.
-    ///
     /// - Parameters:
     ///   - placeholder: Hint text shown while the field is empty.
     ///   - name: The field name.
@@ -320,7 +309,6 @@ public struct EmailField: View {
         if allowsMultiple { attributes.setFlag("multiple") }
         return VoidElement("input", attributes: attributes)
     }
-
 }
 
 /// A file picker (`<input type="file">`).
@@ -343,10 +331,9 @@ public struct FileField: View {
     /// The element `id`, for use with `Label(for:)`.
     public let id: String?
 
-    // MARK: - Initializers
+    // MARK: - Initializer
 
     /// Creates a file picker.
-    ///
     /// - Parameters:
     ///   - name: The field name.
     ///   - accept: Allowed file types, such as `["image/*", ".pdf"]`. Empty allows any.
@@ -368,7 +355,6 @@ public struct FileField: View {
         if allowsMultiple { attributes.setFlag("multiple") }
         return VoidElement("input", attributes: attributes)
     }
-
 }
 
 // MARK: - SwiftUI-style controls
@@ -396,7 +382,6 @@ struct LabeledControl<Title: View, Control: View>: View {
     typealias Body = Never
 
     /// Writes this view's HTML into `renderer`.
-    ///
     /// - Parameter renderer: The renderer that collects the page's HTML.
     func _render(into renderer: inout HTMLRenderer) {
         let pending = renderer.pending
@@ -416,7 +401,6 @@ struct LabeledControl<Title: View, Control: View>: View {
         renderer.pending = []
         renderer.write("</label>")
     }
-
 }
 
 /// A labelled checkbox, in the style of SwiftUI's `Toggle`.
@@ -443,10 +427,9 @@ public struct Toggle<Title: View>: View {
     /// The visible label.
     public let title: Title
 
-    // MARK: - Initializers
+    // MARK: - Initializer
 
     /// Creates a toggle whose label is built by `label`.
-    ///
     /// - Parameters:
     ///   - name: The field name.
     ///   - isOn: Whether it starts on.
@@ -465,15 +448,12 @@ public struct Toggle<Title: View>: View {
     public var body: some View {
         LabeledControl(title: title, control: Checkbox(name: name, value: value, isChecked: isOn), titleFirst: false)
     }
-
 }
 
+/// Initializers that take plain text.
 extension Toggle where Title == Text {
 
-    // MARK: - Initializers
-
     /// Creates a toggle with escaped `title` as its label.
-    ///
     /// - Parameters:
     ///   - title: The visible label.
     ///   - name: The field name.
@@ -482,7 +462,6 @@ extension Toggle where Title == Text {
     public init(_ title: String, name: String, isOn: Bool = false, value: String = "on") {
         self.init(name: name, isOn: isOn, value: value) { Text(title) }
     }
-
 }
 
 /// One choice in a `Picker`.
@@ -499,7 +478,6 @@ public struct PickerOption: Sendable, Hashable, ExpressibleByStringLiteral {
     // MARK: - Initializers
 
     /// Creates a choice. When `value` is `nil`, the title is submitted.
-    ///
     /// - Parameters:
     ///   - title: The visible text.
     ///   - value: The submitted value.
@@ -509,12 +487,10 @@ public struct PickerOption: Sendable, Hashable, ExpressibleByStringLiteral {
     }
 
     /// Creates a choice whose title is also its value.
-    ///
     /// - Parameter value: The submitted value.
     public init(stringLiteral value: String) {
         self.init(value)
     }
-
 }
 
 /// How a `Picker` presents its choices.
@@ -525,7 +501,6 @@ public enum PickerStyle: Sendable {
 
     /// A `<fieldset>` of radio buttons, all visible at once.
     case radioGroup
-
 }
 
 /// A labelled choice from a list, in the style of SwiftUI's `Picker`.
@@ -559,10 +534,9 @@ public struct Picker: View {
     /// The choices, in order.
     public let options: [PickerOption]
 
-    // MARK: - Initializers
+    // MARK: - Initializer
 
     /// Creates a picker.
-    ///
     /// - Parameters:
     ///   - title: The visible label.
     ///   - name: The field name.
@@ -606,7 +580,6 @@ public struct Picker: View {
             .class("svui-radio-group")
         }
     }
-
 }
 
 /// A labelled slider, in the style of SwiftUI's `Slider`.
@@ -639,10 +612,9 @@ public struct Slider: View {
     /// Whether to show the current value next to the slider.
     public let showsValue: Bool
 
-    // MARK: - Initializers
+    // MARK: - Initializer
 
     /// Creates a slider.
-    ///
     /// - Parameters:
     ///   - title: The visible label.
     ///   - name: The field name.
@@ -684,7 +656,6 @@ public struct Slider: View {
             titleFirst: true
         )
     }
-
 }
 
 /// A labelled whole-number field with up and down buttons, in the style of
@@ -712,10 +683,9 @@ public struct Stepper: View {
     /// The step between values.
     public let step: Int
 
-    // MARK: - Initializers
+    // MARK: - Initializer
 
     /// Creates a stepper.
-    ///
     /// - Parameters:
     ///   - title: The visible label.
     ///   - name: The field name.
@@ -746,7 +716,6 @@ public struct Stepper: View {
             titleFirst: true
         )
     }
-
 }
 
 /// The parts of a date a `DatePicker` asks for.
@@ -765,13 +734,11 @@ public struct DatePickerComponents: OptionSet, Sendable, Hashable {
     /// The bit mask of components.
     public let rawValue: Int
 
-    // MARK: - Initializers
+    // MARK: - Initializer
 
     /// Creates components from a bit mask.
-    ///
     /// - Parameter rawValue: The bit mask of components.
     public init(rawValue: Int) { self.rawValue = rawValue }
-
 }
 
 /// A labelled date and/or time field, in the style of SwiftUI's `DatePicker`.
@@ -816,10 +783,9 @@ public struct DatePicker: View {
         }
     }
 
-    // MARK: - Initializers
+    // MARK: - Initializer
 
     /// Creates a date picker.
-    ///
     /// - Parameters:
     ///   - title: The visible label.
     ///   - name: The field name.
@@ -846,7 +812,6 @@ public struct DatePicker: View {
     // MARK: - Methods
 
     /// Formats `date` the way the field's input type expects.
-    ///
     /// - Parameter date: The date to format.
     /// - Returns: The date as the field expects it, such as `2026-11-21`.
     func format(_ date: Date) -> String {
@@ -883,7 +848,6 @@ public struct DatePicker: View {
             titleFirst: true
         )
     }
-
 }
 
 /// Progress through a task, in the style of SwiftUI's `ProgressView`
@@ -925,7 +889,6 @@ public struct ProgressView: View {
     // MARK: - Initializers
 
     /// Creates an indeterminate progress bar, for work of unknown length.
-    ///
     /// - Parameter title: The visible label, if any.
     public init(_ title: String? = nil) {
         self.title = title
@@ -934,7 +897,6 @@ public struct ProgressView: View {
     }
 
     /// Creates a progress bar showing `value` out of `total`.
-    ///
     /// - Parameters:
     ///   - title: The visible label, if any.
     ///   - value: The amount done, or `nil` when unknown.
@@ -955,5 +917,4 @@ public struct ProgressView: View {
             bar
         }
     }
-
 }

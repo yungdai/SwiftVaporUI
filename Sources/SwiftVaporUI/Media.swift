@@ -11,7 +11,6 @@ public enum MediaPreload: String, Sendable {
 
     /// Let the browser load the whole file.
     case auto
-
 }
 
 /// Playback options shared by `Video` and `Audio`.
@@ -52,15 +51,13 @@ public struct MediaOptions: OptionSet, Sendable, Hashable {
         return flags
     }
 
-    // MARK: - Initializers
+    // MARK: - Initializer
 
     /// Creates options from a bit mask.
-    ///
     /// - Parameter rawValue: The bit mask of options.
     public init(rawValue: Int) {
         self.rawValue = rawValue
     }
-
 }
 
 /// A video player (`<video>`).
@@ -94,10 +91,9 @@ public struct Video<Content: View>: View {
     /// The element's content: `Source`s, `Track`s and fallback content.
     public let content: Content
 
-    // MARK: - Initializers
+    // MARK: - Initializer
 
     /// Creates a video player with sources and fallback built by `content`.
-    ///
     /// - Parameters:
     ///   - src: The video URL, when there is a single source.
     ///   - poster: An image shown before playback starts.
@@ -129,15 +125,12 @@ public struct Video<Content: View>: View {
         for flag in options.flags { attributes.setFlag(flag) }
         return Element("video", attributes: attributes, wrapping: content)
     }
-
 }
 
+/// Initializers for an element with no content.
 extension Video where Content == EmptyView {
 
-    // MARK: - Initializers
-
     /// Creates a video player for a single file.
-    ///
     /// - Parameters:
     ///   - src: The video URL, when there is a single source.
     ///   - poster: An image shown before playback starts.
@@ -146,7 +139,6 @@ extension Video where Content == EmptyView {
     public init(src: String, poster: String? = nil, options: MediaOptions = .controls, preload: MediaPreload? = nil) {
         self.init(src: src, poster: poster, options: options, preload: preload) { EmptyView() }
     }
-
 }
 
 /// An audio player (`<audio>`).
@@ -168,10 +160,9 @@ public struct Audio<Content: View>: View {
     /// The element's content: `Source`s and fallback content.
     public let content: Content
 
-    // MARK: - Initializers
+    // MARK: - Initializer
 
     /// Creates an audio player with sources and fallback built by `content`.
-    ///
     /// - Parameters:
     ///   - src: The audio URL, when there is a single source.
     ///   - options: Playback options. Defaults to showing controls.
@@ -199,15 +190,12 @@ public struct Audio<Content: View>: View {
         for flag in options.flags where flag != "playsinline" { attributes.setFlag(flag) }
         return Element("audio", attributes: attributes, wrapping: content)
     }
-
 }
 
+/// Initializers for an element with no content.
 extension Audio where Content == EmptyView {
 
-    // MARK: - Initializers
-
     /// Creates an audio player for a single file.
-    ///
     /// - Parameters:
     ///   - src: The audio URL, when there is a single source.
     ///   - options: Playback options. Defaults to showing controls.
@@ -215,7 +203,6 @@ extension Audio where Content == EmptyView {
     public init(src: String, options: MediaOptions = .controls, preload: MediaPreload? = nil) {
         self.init(src: src, options: options, preload: preload) { EmptyView() }
     }
-
 }
 
 /// One media resource for a `Video`, `Audio` or `Picture` (`<source>`).
@@ -230,7 +217,6 @@ public struct Source: View {
 
     /// A media file for a `Video` or `Audio`, with its MIME type such as
     /// `"video/webm"` so the browser can skip formats it cannot play.
-    ///
     /// - Parameters:
     ///   - src: The media file URL.
     ///   - type: The MIME type, such as `"video/webm"` or `"image/avif"`.
@@ -241,7 +227,6 @@ public struct Source: View {
     }
 
     /// An image candidate for a `Picture`.
-    ///
     /// - Parameters:
     ///   - srcset: One or more image URLs with width or density descriptors,
     ///     such as `"/img/hero-800.avif 800w, /img/hero-1600.avif 1600w"`.
@@ -262,7 +247,6 @@ public struct Source: View {
     public var body: VoidElement {
         VoidElement("source", attributes: attributes)
     }
-
 }
 
 /// A timed text track, such as captions, for a `Video` (`<track>`).
@@ -292,10 +276,9 @@ public struct Track: View {
     /// Whether this track is on by default.
     public let isDefault: Bool
 
-    // MARK: - Initializers
+    // MARK: - Initializer
 
     /// Creates a text track.
-    ///
     /// - Parameters:
     ///   - src: The WebVTT file URL.
     ///   - kind: What kind of text the track holds.
@@ -320,7 +303,6 @@ public struct Track: View {
         if isDefault { attributes.setFlag("default") }
         return VoidElement("track", attributes: attributes)
     }
-
 }
 
 /// A responsive image: `Source`s the browser chooses from, then an `Image`
@@ -343,10 +325,9 @@ public struct Picture<Content: View>: View {
     /// The element's content.
     public let content: Content
 
-    // MARK: - Initializers
+    // MARK: - Initializer
 
     /// Creates the element with the content built by `content`.
-    ///
     /// - Parameter content: The element's content.
     public init(@ViewBuilder content: () -> Content) {
         self.content = content()
@@ -358,7 +339,6 @@ public struct Picture<Content: View>: View {
     public var body: Element<Content> {
         Element("picture", wrapping: content)
     }
-
 }
 
 /// Another page embedded in this one (`<iframe>`).
@@ -391,10 +371,9 @@ public struct IFrame: View {
     /// The permissions policy, such as `"fullscreen; picture-in-picture"`.
     public let allow: String?
 
-    // MARK: - Initializers
+    // MARK: - Initializer
 
     /// Creates an embedded page.
-    ///
     /// - Parameters:
     ///   - src: The URL of the embedded page.
     ///   - title: A description of the frame for screen readers.
@@ -433,7 +412,6 @@ public struct IFrame: View {
         attributes["allow"] = allow
         return Element("iframe", attributes: attributes)
     }
-
 }
 
 /// An inline SVG drawing (`<svg>`).
@@ -467,10 +445,9 @@ public struct SVG<Content: View>: View {
     /// The shapes.
     public let content: Content
 
-    // MARK: - Initializers
+    // MARK: - Initializer
 
     /// Creates an inline drawing whose shapes are built by `content`.
-    ///
     /// - Parameters:
     ///   - viewBox: The coordinate system, such as `"0 0 24 24"`.
     ///   - width: The drawn width in pixels, if fixed.
@@ -506,5 +483,4 @@ public struct SVG<Content: View>: View {
         }
         return Element("svg", attributes: attributes, wrapping: content)
     }
-
 }

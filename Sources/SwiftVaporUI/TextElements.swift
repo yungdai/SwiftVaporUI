@@ -8,10 +8,9 @@ public struct Mark<Content: View>: View {
     /// The element's content.
     public let content: Content
 
-    // MARK: - Initializers
+    // MARK: - Initializer
 
     /// Creates the element with the content built by `content`.
-    ///
     /// - Parameter content: The element's content.
     public init(@ViewBuilder content: () -> Content) {
         self.content = content()
@@ -23,20 +22,16 @@ public struct Mark<Content: View>: View {
     public var body: Element<Content> {
         Element("mark", wrapping: content)
     }
-
 }
 
+/// Initializers that take plain text.
 extension Mark where Content == Text {
 
-    // MARK: - Initializers
-
     /// Creates the element containing escaped `text`.
-    ///
     /// - Parameter text: The text, which is escaped when rendered.
     public init(_ text: String) {
         self.init { Text(text) }
     }
-
 }
 
 /// Keyboard input, such as a key or shortcut (`<kbd>`).
@@ -47,10 +42,9 @@ public struct Keyboard<Content: View>: View {
     /// The element's content.
     public let content: Content
 
-    // MARK: - Initializers
+    // MARK: - Initializer
 
     /// Creates the element with the content built by `content`.
-    ///
     /// - Parameter content: The element's content.
     public init(@ViewBuilder content: () -> Content) {
         self.content = content()
@@ -62,20 +56,16 @@ public struct Keyboard<Content: View>: View {
     public var body: Element<Content> {
         Element("kbd", wrapping: content)
     }
-
 }
 
+/// Initializers that take plain text.
 extension Keyboard where Content == Text {
 
-    // MARK: - Initializers
-
     /// Creates the element containing escaped `text`.
-    ///
     /// - Parameter text: The text, which is escaped when rendered.
     public init(_ text: String) {
         self.init { Text(text) }
     }
-
 }
 
 /// Subscript text, such as the 2 in H₂O (`<sub>`).
@@ -86,10 +76,9 @@ public struct Subscript<Content: View>: View {
     /// The element's content.
     public let content: Content
 
-    // MARK: - Initializers
+    // MARK: - Initializer
 
     /// Creates the element with the content built by `content`.
-    ///
     /// - Parameter content: The element's content.
     public init(@ViewBuilder content: () -> Content) {
         self.content = content()
@@ -101,20 +90,16 @@ public struct Subscript<Content: View>: View {
     public var body: Element<Content> {
         Element("sub", wrapping: content)
     }
-
 }
 
+/// Initializers that take plain text.
 extension Subscript where Content == Text {
 
-    // MARK: - Initializers
-
     /// Creates the element containing escaped `text`.
-    ///
     /// - Parameter text: The text, which is escaped when rendered.
     public init(_ text: String) {
         self.init { Text(text) }
     }
-
 }
 
 /// Superscript text, such as an exponent (`<sup>`).
@@ -125,10 +110,9 @@ public struct Superscript<Content: View>: View {
     /// The element's content.
     public let content: Content
 
-    // MARK: - Initializers
+    // MARK: - Initializer
 
     /// Creates the element with the content built by `content`.
-    ///
     /// - Parameter content: The element's content.
     public init(@ViewBuilder content: () -> Content) {
         self.content = content()
@@ -140,20 +124,16 @@ public struct Superscript<Content: View>: View {
     public var body: Element<Content> {
         Element("sup", wrapping: content)
     }
-
 }
 
+/// Initializers that take plain text.
 extension Superscript where Content == Text {
 
-    // MARK: - Initializers
-
     /// Creates the element containing escaped `text`.
-    ///
     /// - Parameter text: The text, which is escaped when rendered.
     public init(_ text: String) {
         self.init { Text(text) }
     }
-
 }
 
 /// An abbreviation, with its expansion as the `title` (`<abbr>`).
@@ -171,10 +151,9 @@ public struct Abbreviation: View {
     /// The full expansion, shown as a tooltip.
     public let expansion: String?
 
-    // MARK: - Initializers
+    // MARK: - Initializer
 
     /// Creates an abbreviation with an optional expansion.
-    ///
     /// - Parameters:
     ///   - text: The abbreviation as written.
     ///   - expansion: The full expansion, shown as a tooltip.
@@ -191,7 +170,6 @@ public struct Abbreviation: View {
         attributes["title"] = expansion
         return Element("abbr", attributes: attributes, wrapping: Text(text))
     }
-
 }
 
 /// A date or time, readable by people and machines (`<time>`).
@@ -210,10 +188,9 @@ public struct Time<Content: View>: View {
     /// The element's content.
     public let content: Content
 
-    // MARK: - Initializers
+    // MARK: - Initializer
 
     /// Creates the element with the content built by `content`.
-    ///
     /// - Parameters:
     ///   - dateTime: The machine-readable value written to `datetime`, such as `2026-11-21` or `18:00`.
     ///   - content: The element's content.
@@ -230,22 +207,18 @@ public struct Time<Content: View>: View {
         attributes["datetime"] = dateTime
         return Element("time", attributes: attributes, wrapping: content)
     }
-
 }
 
+/// Initializers that take plain text.
 extension Time where Content == Text {
 
-    // MARK: - Initializers
-
     /// Creates the element containing escaped `text`.
-    ///
     /// - Parameters:
     ///   - text: The text, which is escaped when rendered.
     ///   - dateTime: The machine-readable value written to `datetime`, such as `2026-11-21` or `18:00`.
     public init(_ text: String, dateTime: String? = nil) {
         self.init(dateTime: dateTime) { Text(text) }
     }
-
 }
 
 /// A dialog box (`<dialog>`).
@@ -264,10 +237,9 @@ public struct Dialog<Content: View>: View {
     /// The element's content.
     public let content: Content
 
-    // MARK: - Initializers
+    // MARK: - Initializer
 
     /// Creates a dialog whose content is built by `content`.
-    ///
     /// - Parameters:
     ///   - isPresented: Whether the dialog renders open (the `open` attribute).
     ///   - content: The element's content.
@@ -284,7 +256,6 @@ public struct Dialog<Content: View>: View {
         if isPresented { attributes.setFlag("open") }
         return Element("dialog", attributes: attributes, wrapping: content)
     }
-
 }
 
 /// The title of a `Table` (`<caption>`). Put it first inside the table.
@@ -295,10 +266,9 @@ public struct TableCaption<Content: View>: View {
     /// The element's content.
     public let content: Content
 
-    // MARK: - Initializers
+    // MARK: - Initializer
 
     /// Creates the element with the content built by `content`.
-    ///
     /// - Parameter content: The element's content.
     public init(@ViewBuilder content: () -> Content) {
         self.content = content()
@@ -310,20 +280,16 @@ public struct TableCaption<Content: View>: View {
     public var body: Element<Content> {
         Element("caption", wrapping: content)
     }
-
 }
 
+/// Initializers that take plain text.
 extension TableCaption where Content == Text {
 
-    // MARK: - Initializers
-
     /// Creates the element containing escaped `text`.
-    ///
     /// - Parameter text: The text, which is escaped when rendered.
     public init(_ text: String) {
         self.init { Text(text) }
     }
-
 }
 
 /// A labelled group of options in a `Select` (`<optgroup>`).
@@ -337,10 +303,9 @@ public struct OptionGroup<Content: View>: View {
     /// The element's content.
     public let content: Content
 
-    // MARK: - Initializers
+    // MARK: - Initializer
 
     /// Creates a group whose options are built by `content`.
-    ///
     /// - Parameters:
     ///   - label: The group's visible heading.
     ///   - content: The element's content.
@@ -355,7 +320,6 @@ public struct OptionGroup<Content: View>: View {
     public var body: Element<Content> {
         Element("optgroup", attributes: ["label": label], wrapping: content)
     }
-
 }
 
 /// Suggested values for a text field (`<datalist>`).
@@ -380,10 +344,9 @@ public struct DataList<Content: View>: View {
     /// The element's content.
     public let content: Content
 
-    // MARK: - Initializers
+    // MARK: - Initializer
 
     /// Creates a list of suggestions built by `content`.
-    ///
     /// - Parameters:
     ///   - id: The element `id` that text fields refer to.
     ///   - content: The element's content.
@@ -398,7 +361,6 @@ public struct DataList<Content: View>: View {
     public var body: Element<Content> {
         Element("datalist", attributes: ["id": id], wrapping: content)
     }
-
 }
 
 /// A measurement within a known range, such as disk usage (`<meter>`).
@@ -426,10 +388,9 @@ public struct Meter: View {
     /// Text for browsers that cannot draw a meter.
     public let label: String
 
-    // MARK: - Initializers
+    // MARK: - Initializer
 
     /// Creates a meter.
-    ///
     /// - Parameters:
     ///   - value: The measured value.
     ///   - range: The lowest and highest possible values.
@@ -467,7 +428,6 @@ public struct Meter: View {
         attributes["optimum"] = optimum.map(cssNumber)
         return Element("meter", attributes: attributes, wrapping: Text(label))
     }
-
 }
 
 /// The result of a calculation or user action (`<output>`).
@@ -484,10 +444,9 @@ public struct Output<Content: View>: View {
     /// The element's content.
     public let content: Content
 
-    // MARK: - Initializers
+    // MARK: - Initializer
 
     /// Creates an output whose initial content is built by `content`.
-    ///
     /// - Parameters:
     ///   - name: The field name, for forms and for scripts.
     ///   - sources: The `id`s of the controls the result comes from, written as `for`.
@@ -509,15 +468,12 @@ public struct Output<Content: View>: View {
         }
         return Element("output", attributes: attributes, wrapping: content)
     }
-
 }
 
+/// Initializers that take plain text.
 extension Output where Content == Text {
 
-    // MARK: - Initializers
-
     /// Creates an output containing escaped `text`.
-    ///
     /// - Parameters:
     ///   - text: The text, which is escaped when rendered.
     ///   - name: The field name, for forms and for scripts.
@@ -525,5 +481,4 @@ extension Output where Content == Text {
     public init(_ text: String, name: String? = nil, for sources: [String] = []) {
         self.init(name: name, for: sources) { Text(text) }
     }
-
 }

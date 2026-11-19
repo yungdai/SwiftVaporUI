@@ -12,7 +12,6 @@ public enum HorizontalAlignment: String, Sendable {
 
     /// Stretches children to fill the stack.
     case stretch = "stretch"
-
 }
 
 
@@ -33,7 +32,6 @@ public enum VerticalAlignment: String, Sendable {
 
     /// Lines up the first line of text in each child.
     case baseline = "baseline"
-
 }
 
 /// Arranges its children in a vertical column.
@@ -54,10 +52,9 @@ public struct VStack<Content: View>: View {
     /// The element's content.
     public let content: Content
 
-    // MARK: - Initializers
+    // MARK: - Initializer
 
     /// Creates a vertical stack.
-    ///
     /// - Parameters:
     ///   - alignment: How children are aligned across the column, or `nil` to leave it to CSS.
     ///   - spacing: The gap between children in pixels, or `nil` to leave it to CSS.
@@ -77,7 +74,6 @@ public struct VStack<Content: View>: View {
         }
         return Element("div", attributes: ["style": stackStyle("column", alignment?.rawValue, spacing)], wrapping: content)
     }
-
 }
 
 /// Arranges its children in a horizontal row, using a flexbox `<div>`.
@@ -94,10 +90,9 @@ public struct HStack<Content: View>: View {
     /// The element's content.
     public let content: Content
 
-    // MARK: - Initializers
+    // MARK: - Initializer
 
     /// Creates a horizontal stack. Children are vertically centred with an 8 pixel gap unless you say otherwise.
-    ///
     /// - Parameters:
     ///   - alignment: How children are aligned across the row.
     ///   - spacing: The gap between children in pixels. `nil` leaves it to CSS.
@@ -114,13 +109,12 @@ public struct HStack<Content: View>: View {
     public var body: Element<Content> {
         Element("div", attributes: ["style": stackStyle("row", alignment.rawValue, spacing)], wrapping: content)
     }
-
 }
 
 /// Expands to fill the free space along the main axis of an `HStack` or `VStack`.
 public struct Spacer: View {
 
-    // MARK: - Initializers
+    // MARK: - Initializer
 
     /// Creates a spacer.
     public init() {}
@@ -131,7 +125,6 @@ public struct Spacer: View {
     public var body: Element<EmptyView> {
         Element("div", attributes: ["style": "flex: 1"])
     }
-
 }
 
 /// A `<nav>` landmark that lays its links out in a row.
@@ -145,10 +138,9 @@ public struct NavigationBar<Content: View>: View {
     /// The element's content.
     public let content: Content
 
-    // MARK: - Initializers
+    // MARK: - Initializer
 
     /// Creates a navigation bar whose links are built by `content`.
-    ///
     /// - Parameters:
     ///   - spacing: The gap between links in pixels.
     ///   - content: The element's content.
@@ -163,7 +155,6 @@ public struct NavigationBar<Content: View>: View {
     public var body: Element<Content> {
         Element("nav", attributes: ["style": stackStyle("row", VerticalAlignment.center.rawValue, spacing)], wrapping: content)
     }
-
 }
 
 func stackStyle(_ direction: String, _ alignment: String?, _ spacing: Double?) -> String {

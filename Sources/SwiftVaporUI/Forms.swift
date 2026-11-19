@@ -9,7 +9,6 @@ public enum FormMethod: String, Sendable {
 
     /// Closes the enclosing `Dialog` instead of submitting to the server.
     case dialog
-
 }
 
 /// A form (`<form>`).
@@ -26,10 +25,9 @@ public struct Form<Content: View>: View {
     /// The element's content.
     public let content: Content
 
-    // MARK: - Initializers
+    // MARK: - Initializer
 
     /// Creates a form that submits to `action` with `method`.
-    ///
     /// - Parameters:
     ///   - action: The URL the form submits to. `nil` submits to the current URL.
     ///   - method: The HTTP method the form submits with.
@@ -48,7 +46,6 @@ public struct Form<Content: View>: View {
         attributes["action"] = action
         return Element("form", attributes: attributes, wrapping: content)
     }
-
 }
 
 /// What a `Button` does when it is pressed.
@@ -72,7 +69,6 @@ public enum ButtonAction: Sendable, Equatable {
     /// Runs inline JavaScript from an `onclick` attribute. The code is
     /// attribute-escaped but otherwise trusted, so never build it from user input.
     case script(String)
-
 }
 
 /// A button, in the style of SwiftUI's `Button`.
@@ -92,10 +88,9 @@ public struct Button<Label: View>: View {
     /// The button's visible content.
     public let label: Label
 
-    // MARK: - Initializers
+    // MARK: - Initializer
 
     /// Creates a button whose visible content is built by `label`.
-    ///
     /// - Parameters:
     ///   - action: What the button does when pressed.
     ///   - label: The button's visible content.
@@ -121,22 +116,18 @@ public struct Button<Label: View>: View {
             Element("button", attributes: ["type": "button", "onclick": code], wrapping: label)
         }
     }
-
 }
 
+/// Initializers that take plain text.
 extension Button where Label == Text {
 
-    // MARK: - Initializers
-
     /// Creates a button with escaped `title` as its text.
-    ///
     /// - Parameters:
     ///   - title: The visible text, which is escaped when rendered.
     ///   - action: What the button does when pressed.
     public init(_ title: String, action: ButtonAction = .submit) {
         self.init(action: action) { Text(title) }
     }
-
 }
 
 /// A caption for a form control (`<label>`).
@@ -150,10 +141,9 @@ public struct Label<Content: View>: View {
     /// The element's content.
     public let content: Content
 
-    // MARK: - Initializers
+    // MARK: - Initializer
 
     /// Creates a label for the control with the given `id`.
-    ///
     /// - Parameters:
     ///   - id: The `id` of the control the label describes.
     ///   - content: The element's content.
@@ -170,22 +160,18 @@ public struct Label<Content: View>: View {
         attributes["for"] = forID
         return Element("label", attributes: attributes, wrapping: content)
     }
-
 }
 
+/// Initializers that take plain text.
 extension Label where Content == Text {
 
-    // MARK: - Initializers
-
     /// Creates a label with escaped `title` as its text.
-    ///
     /// - Parameters:
     ///   - title: The label text, which is escaped when rendered.
     ///   - id: The `id` of the control the label describes.
     public init(_ title: String, for id: String? = nil) {
         self.init(for: id) { Text(title) }
     }
-
 }
 
 /// The `type` of an `Input`.
@@ -264,15 +250,12 @@ public struct InputType: RawRepresentable, Sendable, Hashable, ExpressibleByStri
     // MARK: - Initializers
 
     /// Creates an input type from its HTML name.
-    ///
     /// - Parameter rawValue: The value written to the `type` attribute.
     public init(rawValue: String) { self.rawValue = rawValue }
 
     /// Creates an input type from a string literal, such as `"color"`.
-    ///
     /// - Parameter value: The HTML name of the input type.
     public init(stringLiteral value: String) { self.rawValue = value }
-
 }
 
 /// A form input (`<input>`).
@@ -292,10 +275,9 @@ public struct Input: View {
     /// Hint text shown while the input is empty.
     public var placeholder: String?
 
-    // MARK: - Initializers
+    // MARK: - Initializer
 
     /// Creates an input.
-    ///
     /// - Parameters:
     ///   - type: The input type.
     ///   - name: The field name the value is submitted under.
@@ -318,7 +300,6 @@ public struct Input: View {
         attributes["placeholder"] = placeholder
         return VoidElement("input", attributes: attributes)
     }
-
 }
 
 /// A single-line text field, in the style of SwiftUI's `TextField`.
@@ -351,10 +332,9 @@ public struct TextField: View {
     /// The `id` of a `DataList` of suggested values.
     public let list: String?
 
-    // MARK: - Initializers
+    // MARK: - Initializer
 
     /// Creates a text field.
-    ///
     /// - Parameters:
     ///   - placeholder: Hint text shown while the field is empty.
     ///   - name: The field name the value is submitted under.
@@ -393,7 +373,6 @@ public struct TextField: View {
         attributes["list"] = list
         return VoidElement("input", attributes: attributes)
     }
-
 }
 
 /// A password field, in the style of SwiftUI's `SecureField`. It never
@@ -414,10 +393,9 @@ public struct SecureField: View {
     /// The `autocomplete` hint, such as `"current-password"`.
     public let autocomplete: String?
 
-    // MARK: - Initializers
+    // MARK: - Initializer
 
     /// Creates a password field.
-    ///
     /// - Parameters:
     ///   - placeholder: Hint text shown while the field is empty.
     ///   - name: The field name the value is submitted under.
@@ -440,7 +418,6 @@ public struct SecureField: View {
         attributes["autocomplete"] = autocomplete
         return VoidElement("input", attributes: attributes)
     }
-
 }
 
 /// A multi-line text field (`<textarea>`). The text is escaped.
@@ -460,10 +437,9 @@ public struct TextArea: View {
     /// Hint text shown while the field is empty.
     public let placeholder: String?
 
-    // MARK: - Initializers
+    // MARK: - Initializer
 
     /// Creates a multi-line text field.
-    ///
     /// - Parameters:
     ///   - name: The field name the value is submitted under.
     ///   - text: The initial text. It is escaped.
@@ -485,7 +461,6 @@ public struct TextArea: View {
         attributes["placeholder"] = placeholder
         return Element("textarea", attributes: attributes, wrapping: Text(text))
     }
-
 }
 
 /// A drop-down list (`<select>`). Fill it with `Option`s.
@@ -499,10 +474,9 @@ public struct Select<Content: View>: View {
     /// The element's content.
     public let content: Content
 
-    // MARK: - Initializers
+    // MARK: - Initializer
 
     /// Creates a drop-down list whose options are built by `content`.
-    ///
     /// - Parameters:
     ///   - name: The field name the selection is submitted under.
     ///   - content: The element's content.
@@ -517,7 +491,6 @@ public struct Select<Content: View>: View {
     public var body: Element<Content> {
         Element("select", attributes: ["name": name], wrapping: content)
     }
-
 }
 
 /// An entry in a `Select` (`<option>`).
@@ -534,10 +507,9 @@ public struct Option: View {
     /// Whether the option starts selected.
     public let isSelected: Bool
 
-    // MARK: - Initializers
+    // MARK: - Initializer
 
     /// Creates an option. When `value` is `nil`, the title is submitted.
-    ///
     /// - Parameters:
     ///   - title: The visible text.
     ///   - value: The value submitted when this option is selected.
@@ -556,5 +528,4 @@ public struct Option: View {
         if isSelected { attributes.setFlag("selected") }
         return Element("option", attributes: attributes, wrapping: Text(title))
     }
-
 }

@@ -29,6 +29,7 @@
 /// }
 /// ```
 public protocol ViewModifier: Sendable {
+
     /// The type of view the modifier produces.
     associatedtype Body: View
 
@@ -37,6 +38,8 @@ public protocol ViewModifier: Sendable {
     typealias Content = ViewModifierContent
 
     /// Builds the modified view from `content`.
+    /// - Parameter content: The view the modifier is applied to.
+    /// - Returns: The modified view.
     @ViewBuilder func body(content: Content) -> Body
 }
 
@@ -49,10 +52,9 @@ public struct ViewModifierContent: View {
     /// The view the modifier is applied to.
     let view: AnyView
 
-    // MARK: - Initializers
+    // MARK: - Initializer
 
     /// Wraps the view a modifier is applied to.
-    ///
     /// - Parameter view: The view, type-erased.
     init(_ view: AnyView) {
         self.view = view
@@ -64,12 +66,10 @@ public struct ViewModifierContent: View {
     public typealias Body = Never
 
     /// Writes this view's HTML into `renderer`.
-    ///
     /// - Parameter renderer: The renderer that collects the page's HTML.
     public func _render(into renderer: inout HTMLRenderer) {
         view._render(into: &renderer)
     }
-
 }
 
 /// A view with a ``ViewModifier`` applied.
@@ -83,10 +83,9 @@ public struct ModifiedContent<Content: View, Modifier: ViewModifier>: View {
     /// The modifier applied to it.
     public let modifier: Modifier
 
-    // MARK: - Initializers
+    // MARK: - Initializer
 
     /// Applies `modifier` to `content`.
-    ///
     /// - Parameters:
     ///   - content: The original view.
     ///   - modifier: The modifier applied to it.
@@ -101,19 +100,15 @@ public struct ModifiedContent<Content: View, Modifier: ViewModifier>: View {
     public var body: Modifier.Body {
         modifier.body(content: ViewModifierContent(AnyView(content)))
     }
-
 }
 
+/// Applying a custom modifier.
 extension View {
 
-    // MARK: - Modifiers
-
     /// Applies a ``ViewModifier``.
-    ///
     /// - Parameter modifier: The modifier to apply.
     /// - Returns: A view with the change applied.
     public func modifier<Modifier: ViewModifier>(_ modifier: Modifier) -> ModifiedContent<Self, Modifier> {
         ModifiedContent(content: self, modifier: modifier)
     }
-
 }

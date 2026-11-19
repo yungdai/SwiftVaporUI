@@ -22,29 +22,59 @@ public struct Form<Content: View>: View {
     }
 }
 
-/// The `type` of a `Button`.
-public enum ButtonType: String, Sendable {
-    case submit, button, reset
+/// What a `Button` does when it is pressed.
+public enum ButtonAction: Sendable, Equatable {
+    /// Submits the enclosing form (`<button type="submit">`). This is the
+    /// default, as in HTML.
+    case submit
+    /// Resets the enclosing form (`<button type="reset">`).
+    case reset
+    /// Does nothing by itself (`<button type="button">`). Attach behaviour
+    /// with your own script or attributes.
+    case plain
+    /// Goes to a URL. Renders an `<a href>` so it works without JavaScript;
+    /// style it like a button with a class.
+    case navigate(to: String)
+    /// Runs inline JavaScript from an `onclick` attribute. The code is
+    /// attribute-escaped but otherwise trusted, so never build it from user input.
+    case script(String)
 }
 
-/// A button (`<button>`).
-public struct Button<Content: View>: View {
-    public let type: ButtonType
-    public let content: Content
+/// A button, in the style of SwiftUI's `Button`.
+///
+/// ```swift
+/// Button("Save")                                   // submits its form
+/// Button("Cancel", action: .navigate(to: "/"))     // a link
+/// Button("Close", action: .script("dialog.close()"))
+/// ```
+public struct Button<Label: View>: View {
+    public let action: ButtonAction
+    public let label: Label
 
-    public init(type: ButtonType = .button, @ViewBuilder content: () -> Content) {
-        self.type = type
-        self.content = content()
+    public init(action: ButtonAction = .submit, @ViewBuilder label: () -> Label) {
+        self.action = action
+        self.label = label()
     }
 
-    public var body: Element<Content> {
-        Element("button", attributes: ["type": type.rawValue], wrapping: content)
+    public var body: some View {
+        switch action {
+        case .submit:
+            Element("button", attributes: ["type": "submit"], wrapping: label)
+        case .reset:
+            Element("button", attributes: ["type": "reset"], wrapping: label)
+        case .plain:
+            Element("button", attributes: ["type": "button"], wrapping: label)
+        case let .navigate(destination):
+            Element("a", attributes: ["href": destination], wrapping: label)
+        case let .script(code):
+            Element("button", attributes: ["type": "button", "onclick": code], wrapping: label)
+        }
     }
 }
 
-extension Button where Content == Text {
-    public init(_ title: String, type: ButtonType = .button) {
-        self.init(type: type) { Text(title) }
+extension Button where Label == Text {
+    public init(_ title: String, action: ButtonAction = .submit) {
+        self.init(action: action) { Text(title) }
     }
 }
 
@@ -118,39 +148,63 @@ public struct Input: View {
 /// A single-line text field, in the style of SwiftUI's `TextField`.
 ///
 /// ```swift
-/// TextField("Your name", name: "name", text: form.name)
+/// TextField("Your name", name: "name", id: "name", text: form.name, autocomplete: "name")
 /// ```
 public struct TextField: View {
-    public let placeholder: String
+    public let placeholder: String?
     public let name: String
+    public let id: String?
     public let text: String?
     public let type: InputType
+    public let autocomplete: String?
 
-    public init(_ placeholder: String, name: String, text: String? = nil, type: InputType = .text) {
+    public init(
+        _ placeholder: String? = nil,
+        name: String,
+        id: String? = nil,
+        text: String? = nil,
+        type: InputType = .text,
+        autocomplete: String? = nil
+    ) {
         self.placeholder = placeholder
         self.name = name
+        self.id = id
         self.text = text
         self.type = type
+        self.autocomplete = autocomplete
     }
 
-    public var body: Input {
-        Input(type: type, name: name, value: text, placeholder: placeholder)
+    public var body: VoidElement {
+        var attributes: HTMLAttributes = ["type": type.rawValue, "name": name]
+        attributes["id"] = id
+        attributes["value"] = text
+        attributes["placeholder"] = placeholder
+        attributes["autocomplete"] = autocomplete
+        return VoidElement("input", attributes: attributes)
     }
 }
 
 /// A password field, in the style of SwiftUI's `SecureField`. It never
 /// renders a value back into the page.
 public struct SecureField: View {
-    public let placeholder: String
+    public let placeholder: String?
     public let name: String
+    public let id: String?
+    public let autocomplete: String?
 
-    public init(_ placeholder: String, name: String) {
+    public init(_ placeholder: String? = nil, name: String, id: String? = nil, autocomplete: String? = nil) {
         self.placeholder = placeholder
         self.name = name
+        self.id = id
+        self.autocomplete = autocomplete
     }
 
-    public var body: Input {
-        Input(type: .password, name: name, placeholder: placeholder)
+    public var body: VoidElement {
+        var attributes: HTMLAttributes = ["type": "password", "name": name]
+        attributes["id"] = id
+        attributes["placeholder"] = placeholder
+        attributes["autocomplete"] = autocomplete
+        return VoidElement("input", attributes: attributes)
     }
 }
 

@@ -6,13 +6,14 @@ public enum HeadingLevel: Int, Sendable, CaseIterable {
 /// A section heading (`<h1>` to `<h6>`).
 ///
 /// ```swift
-/// Heading(.h2, "Getting started")
+/// Heading("Getting started", level: .h2)
+/// Heading(level: .h3) { "Step "; Strong("one") }
 /// ```
 public struct Heading<Content: View>: View {
     public let level: HeadingLevel
     public let content: Content
 
-    public init(_ level: HeadingLevel = .h1, @ViewBuilder content: () -> Content) {
+    public init(level: HeadingLevel = .h1, @ViewBuilder content: () -> Content) {
         self.level = level
         self.content = content()
     }
@@ -23,34 +24,57 @@ public struct Heading<Content: View>: View {
 }
 
 extension Heading where Content == Text {
-    public init(_ level: HeadingLevel = .h1, _ text: String) {
-        self.init(level) { Text(text) }
+    public init(_ text: String, level: HeadingLevel = .h1) {
+        self.init(level: level) { Text(text) }
     }
 }
 
 /// A hyperlink (`<a>`).
 ///
 /// ```swift
-/// Link("Docs", href: "/docs")
-/// Link(href: "/") { Image(src: "/logo.svg", alt: "Home") }
+/// Link("Docs", destination: "/docs")
+/// Link(destination: "/") { Image(src: "/logo.svg", alt: "Home") }
 /// ```
-public struct Link<Content: View>: View {
-    public let href: String
-    public let content: Content
+public struct Link<Label: View>: View {
+    public let destination: String
+    public let label: Label
 
-    public init(href: String, @ViewBuilder content: () -> Content) {
-        self.href = href
-        self.content = content()
+    public init(destination: String, @ViewBuilder label: () -> Label) {
+        self.destination = destination
+        self.label = label()
     }
 
-    public var body: Element<Content> {
-        Element("a", attributes: ["href": href], wrapping: content)
+    public var body: Element<Label> {
+        Element("a", attributes: ["href": destination], wrapping: label)
     }
 }
 
-extension Link where Content == Text {
-    public init(_ title: String, href: String) {
-        self.init(href: href) { Text(title) }
+extension Link where Label == Text {
+    public init(_ title: String, destination: String) {
+        self.init(destination: destination) { Text(title) }
+    }
+}
+
+/// A `<ul>` with one `<li>` per element of a collection.
+///
+/// ```swift
+/// List(plants) { plant in
+///     Link(plant.name, destination: "/plants/\(plant.slug)")
+/// }
+/// ```
+public struct List<Row: View>: View {
+    public let rows: [Row]
+
+    public init<Data: Sequence>(_ data: Data, @ViewBuilder row: (Data.Element) throws -> Row) rethrows {
+        self.rows = try data.map(row)
+    }
+
+    public var body: some View {
+        UnorderedList {
+            ForEach(rows) { row in
+                ListItem { row }
+            }
+        }
     }
 }
 

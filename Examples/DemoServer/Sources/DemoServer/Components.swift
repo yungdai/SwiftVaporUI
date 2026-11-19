@@ -17,11 +17,11 @@ struct SiteLayout<Content: View>: View {
         } body: {
             Header {
                 HStack(spacing: 16) {
-                    Link("🌿 Plant Shelf", href: "/").class("brand")
+                    Link("🌿 Plant Shelf", destination: "/").class("brand")
                     Spacer()
-                    Nav {
-                        Link("All plants", href: "/")
-                        Link("Add a plant", href: "/plants/new")
+                    NavigationBar {
+                        Link("All plants", destination: "/")
+                        Link("Add a plant", destination: "/plants/new")
                     }
                     .aria("label", "Primary")
                 }
@@ -32,7 +32,9 @@ struct SiteLayout<Content: View>: View {
 
             Footer {
                 Small("Rendered with SwiftVaporUI, no templates involved.")
+                    .foregroundColor(.gray)
             }
+            .padding(24)
             .class("site-footer")
         }
     }
@@ -53,8 +55,8 @@ struct PlantCard: View {
 
     var body: some View {
         Article {
-            Heading(.h3) {
-                Link(plant.name, href: "/plants/\(plant.slug)")
+            Heading(level: .h3) {
+                Link(plant.name, destination: "/plants/\(plant.slug)")
             }
             LightBadge(light: plant.light)
             Paragraph("Water every \(plant.waterEveryDays) days")
@@ -102,10 +104,9 @@ let siteCSS = """
 body { margin: 0; font: 16px/1.5 system-ui, sans-serif; color: var(--ink); background: #f7faf7; }
 a { color: var(--green); }
 .site-header { background: #fff; border-bottom: 1px solid var(--line); padding: 12px 24px; }
-.site-header nav { display: flex; gap: 16px; }
 .brand { font-weight: 700; text-decoration: none; font-size: 1.1rem; }
 .container { max-width: 880px; margin: 0 auto; padding: 24px; }
-.site-footer { text-align: center; color: var(--muted); padding: 24px; }
+.site-footer { text-align: center; }
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
 .card { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 16px; }
 .card h3 { margin: 0 0 8px; }
@@ -116,6 +117,7 @@ a { color: var(--green); }
 form label { font-weight: 600; }
 form input, form select, form textarea { width: 100%; padding: 8px; border: 1px solid var(--line); border-radius: 6px; font: inherit; }
 button { background: var(--green); color: #fff; border: 0; border-radius: 6px; padding: 10px 18px; font: inherit; cursor: pointer; }
+.button-secondary { display: inline-block; padding: 10px 18px; border-radius: 6px; border: 1px solid var(--line); text-decoration: none; }
 dl { display: grid; grid-template-columns: max-content 1fr; gap: 4px 16px; }
 dt { color: var(--muted); }
 dd { margin: 0; }

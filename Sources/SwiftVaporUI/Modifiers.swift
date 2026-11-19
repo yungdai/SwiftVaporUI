@@ -62,10 +62,10 @@ extension View {
         modifier(value.map { .set(name, $0) } ?? .remove(name))
     }
 
-    /// Adds a boolean attribute such as `novalidate` when `isOn` is true,
-    /// and removes it otherwise.
-    public func attribute(_ name: String, isOn: Bool = true) -> ModifiedView<Self> {
-        modifier(isOn ? .set(name, nil) : .remove(name))
+    /// Adds a boolean attribute with no value, such as `novalidate`, when
+    /// `condition` is true, and removes it otherwise.
+    public func flag(_ name: String, if condition: Bool = true) -> ModifiedView<Self> {
+        modifier(condition ? .set(name, nil) : .remove(name))
     }
 
     /// Sets a `data-*` attribute.
@@ -90,21 +90,21 @@ extension View {
 
     /// Adds the `hidden` attribute when `isHidden` is true.
     public func hidden(_ isHidden: Bool = true) -> ModifiedView<Self> {
-        attribute("hidden", isOn: isHidden)
+        flag("hidden", if: isHidden)
     }
 
     /// Adds the `disabled` attribute when `isDisabled` is true.
     public func disabled(_ isDisabled: Bool = true) -> ModifiedView<Self> {
-        attribute("disabled", isOn: isDisabled)
+        flag("disabled", if: isDisabled)
     }
 
     /// Adds the `required` attribute when `isRequired` is true.
     public func required(_ isRequired: Bool = true) -> ModifiedView<Self> {
-        attribute("required", isOn: isRequired)
+        flag("required", if: isRequired)
     }
 
     /// Sets `autofocus`.
     public func autofocus(_ isOn: Bool = true) -> ModifiedView<Self> {
-        attribute("autofocus", isOn: isOn)
+        flag("autofocus", if: isOn)
     }
 }

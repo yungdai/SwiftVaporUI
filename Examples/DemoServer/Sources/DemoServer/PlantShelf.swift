@@ -64,6 +64,18 @@ struct PlantForm: Content {
     var waterEveryDays = "7"
     var notes = ""
 
+    init() {}
+
+    /// Missing fields decode as empty, so validation can report them
+    /// instead of the request failing with a 400.
+    init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        name = try container.decodeIfPresent(String.self, forKey: .name) ?? ""
+        light = try container.decodeIfPresent(String.self, forKey: .light) ?? ""
+        waterEveryDays = try container.decodeIfPresent(String.self, forKey: .waterEveryDays) ?? ""
+        notes = try container.decodeIfPresent(String.self, forKey: .notes) ?? ""
+    }
+
     func validate() -> [String] {
         var errors: [String] = []
         if name.trimmingCharacters(in: .whitespaces).isEmpty {

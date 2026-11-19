@@ -15,7 +15,7 @@ struct Greeting: View {
 
     var body: some View {
         Section {
-            Heading(.h1, "Hello, \(name)")
+            Heading("Hello, \(name)")
             if unread > 0 {
                 Paragraph("You have \(unread) new messages").class("notice")
             }
@@ -43,11 +43,14 @@ Any `View` can be returned from a route. It is sent as `text/html; charset=utf-8
 
 - **Views.** Conform to `View` and implement `var body: some View`. Views compose like SwiftUI views and can take `@ViewBuilder` content.
 - **Result builder.** `@ViewBuilder` blocks support `if`/`else`, `if let`, `switch`, `for` loops, and bare string literals, which render as escaped `Text`. `ForEach(collection) { ... }` and `Group { ... }` are available too.
-- **Elements.** `Div`, `Span`, `Section`, `Header`, `Footer`, `Nav`, `Main`, `Article`, `Aside`, `Heading`, `Paragraph`, `Strong`, `Emphasis`, `Small`, `Code`, `Preformatted`, `Blockquote`, `Link`, `Image`, `LineBreak`, `Divider`, lists, tables, `Figure`, `Details`/`Summary`, and form controls (`Form`, `Label`, `Input`, `TextField`, `SecureField`, `TextArea`, `Select`/`Option`, `Button`, `Fieldset`/`Legend`). Use `Element("tag") { ... }` or `VoidElement("tag")` for anything else.
-- **Layout.** `VStack`, `HStack` and `Spacer` render flexbox `div`s with inline styles.
-- **Documents.** `HTMLDocument(title:head:body:)` writes the doctype, `<head>` (charset, viewport, title) and `<body>`. `Meta`, `Stylesheet`, `Style` and `Script` go in the head.
-- **Modifiers.** `.class(_:)`, `.class(_:when:)`, `.id(_:)`, `.role(_:)`, `.attribute(_:_:)`, `.attribute(_:isOn:)`, `.data(_:_:)`, `.aria(_:_:)`, `.style(_:)`, `.style(_:_:)`, `.tooltip(_:)`, `.hidden()`, `.disabled()`, `.required()`, `.autofocus()`.
-  A modifier applies to the first HTML element its view renders, so modifiers on your own views reach the element inside them. If the same attribute is set twice, the last modifier in the chain wins; classes and styles accumulate. A modifier on bare `Text` wraps it in a `<span>`.
+- **Elements.** `Div`, `Span`, `Section`, `Header`, `Footer`, `Nav`, `Main`, `Article`, `Aside`, `Heading`, `Paragraph`, `Strong`, `Emphasis`, `Small`, `Code`, `Preformatted`, `Blockquote`, `Link`, `Image`, `LineBreak`, `Divider`, `UnorderedList`/`OrderedList`/`ListItem`, `List(data) { row }`, `DescriptionList`/`DescriptionTerm`/`DescriptionDetail`, tables, `Figure`, `Details`/`Summary`, `Template`, and form controls (`Form`, `Label`, `Input`, `TextField`, `SecureField`, `TextArea`, `Select`/`Option`, `Button`, `Fieldset`/`Legend`). Use `Element("tag") { ... }` or `VoidElement("tag")` for anything else.
+- **Buttons.** `Button("Save")` submits its form, as in HTML. Other actions: `.reset`, `.plain`, `.navigate(to:)` (renders a link, so it works without JavaScript) and `.script(_:)` (an `onclick` handler).
+- **Layout.** `HStack` (flex row, 8px gap by default), `VStack` (a plain `div` unless you pass `alignment` or `spacing`, so CSS can own the layout), `Spacer`, and `NavigationBar` (a `<nav>` laid out as a row).
+- **Documents.** `HTMLDocument(title:head:body:)` writes the doctype, `<head>` (charset, viewport, title) and `<body>`. `Page(title:) { ... }` is the same with an empty head. For full control, compose `Document`, `HTMLRoot`, `Head`, `Title`, `Meta`, `ResourceLink`, `Stylesheet`, `Style`, `Script` and `DocumentBody` yourself.
+- **Attribute modifiers.** `.class(_:)`, `.class(_:when:)`, `.id(_:)`, `.role(_:)`, `.attribute(_:_:)`, `.flag(_:if:)` for boolean attributes, `.data(_:_:)`, `.aria(_:_:)`, `.tooltip(_:)`, `.hidden()`, `.disabled()`, `.required()`, `.autofocus()`.
+- **Styling modifiers.** `.style(_:)`, `.style(_:_:)`, `.padding()`, `.padding(_:_:)` with `Edge`s, `.font(_:)` (`.largeTitle`, `.title`, `.headline`, `.body`, `.caption`, `.system(size:weight:)`, ...), `.fontWeight(_:)`, `.bold()`, `.italic()`, `.foregroundColor(_:)`, `.background(_:)`, `.cornerRadius(_:)`, `.opacity(_:)`, `.frame(width:height:)`, `.frame(maxWidth:maxHeight:)`. `Color` has named colors plus `.hex(_:)` and `.rgb(_:_:_:opacity:)`.
+
+Modifiers apply to the first HTML element their view renders, so modifiers on your own views reach the element inside them, and styling modifiers add to that element's `style` rather than wrapping it in another `div`. If the same attribute is set twice, the last modifier in the chain wins; classes and styles accumulate. A modifier on bare `Text` wraps it in a `<span>`.
 
 ## Safety
 

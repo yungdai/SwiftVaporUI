@@ -513,3 +513,95 @@ extension Legend where Content == Text {
         self.init { Text(text) }
     }
 }
+
+/// A list of terms and descriptions (`<dl>`).
+public struct DescriptionList<Content: View>: View {
+    public let content: Content
+
+    public init(@ViewBuilder content: () -> Content) {
+        self.content = content()
+    }
+
+    public var body: Element<Content> {
+        Element("dl", wrapping: content)
+    }
+}
+
+/// A term in a `DescriptionList` (`<dt>`).
+public struct DescriptionTerm<Content: View>: View {
+    public let content: Content
+
+    public init(@ViewBuilder content: () -> Content) {
+        self.content = content()
+    }
+
+    public var body: Element<Content> {
+        Element("dt", wrapping: content)
+    }
+}
+
+extension DescriptionTerm where Content == Text {
+    /// Creates the element containing escaped `text`.
+    public init(_ text: String) {
+        self.init { Text(text) }
+    }
+}
+
+/// The description of a term (`<dd>`).
+public struct DescriptionDetail<Content: View>: View {
+    public let content: Content
+
+    public init(@ViewBuilder content: () -> Content) {
+        self.content = content()
+    }
+
+    public var body: Element<Content> {
+        Element("dd", wrapping: content)
+    }
+}
+
+extension DescriptionDetail where Content == Text {
+    /// Creates the element containing escaped `text`.
+    public init(_ text: String) {
+        self.init { Text(text) }
+    }
+}
+
+/// Markup the browser holds but does not render (`<template>`), for use from scripts.
+public struct Template<Content: View>: View {
+    public let content: Content
+
+    public init(@ViewBuilder content: () -> Content) {
+        self.content = content()
+    }
+
+    public var body: Element<Content> {
+        Element("template", wrapping: content)
+    }
+}
+
+/// The document head (`<head>`). `HTMLDocument` writes this for you.
+public struct Head<Content: View>: View {
+    public let content: Content
+
+    public init(@ViewBuilder content: () -> Content) {
+        self.content = content()
+    }
+
+    public var body: Element<Content> {
+        Element("head", wrapping: content)
+    }
+}
+
+/// The document body (`<body>`). Named so it does not clash with `View.Body`.
+public struct DocumentBody<Content: View>: View {
+    public let content: Content
+
+    public init(@ViewBuilder content: () -> Content) {
+        self.content = content()
+    }
+
+    public var body: Element<Content> {
+        Element("body", wrapping: content)
+    }
+}

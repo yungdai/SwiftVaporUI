@@ -5,13 +5,13 @@ struct HomePage: View {
 
     var body: some View {
         SiteLayout(title: "All plants") {
-            Heading(.h1, "Your plant shelf")
+            Heading("Your plant shelf")
             PlantCount(count: plants.count)
 
             if plants.isEmpty {
                 Paragraph {
                     "Nothing here yet. "
-                    Link("Add your first plant", href: "/plants/new")
+                    Link("Add your first plant", destination: "/plants/new")
                     "."
                 }
             } else {
@@ -37,20 +37,21 @@ struct PlantPage: View {
                 Paragraph("Added \(plant.name) to your shelf.").class("notice").role("status")
             }
             Article {
-                Heading(.h1, plant.name)
+                Heading(plant.name)
                 LightBadge(light: plant.light)
-                Element("dl") {
-                    Element("dt") { "Light" }
-                    Element("dd") { plant.light.label }
-                    Element("dt") { "Watering" }
-                    Element("dd") { "Every \(plant.waterEveryDays) days" }
+                DescriptionList {
+                    DescriptionTerm("Light")
+                    DescriptionDetail(plant.light.label)
+                    DescriptionTerm("Watering")
+                    DescriptionDetail("Every \(plant.waterEveryDays) days")
                 }
+                .padding(.vertical, 8)
                 if !plant.notes.isEmpty {
-                    Heading(.h2, "Care notes")
+                    Heading("Care notes", level: .h2)
                     Paragraph(plant.notes)
                 }
             }
-            Link("← Back to all plants", href: "/")
+            Link("← Back to all plants", destination: "/")
         }
     }
 }
@@ -61,15 +62,15 @@ struct NewPlantPage: View {
 
     var body: some View {
         SiteLayout(title: "Add a plant") {
-            Heading(.h1, "Add a plant")
+            Heading("Add a plant")
+            Paragraph("Fields marked as required must be filled in.").font(.footnote).foregroundColor(.gray)
             ErrorSummary(errors: errors)
 
             Form(action: "/plants", method: .post) {
                 VStack(spacing: 16) {
                     VStack(spacing: 4) {
                         Label("Name", for: "name")
-                        TextField("e.g. Monstera", name: "name", text: form.name)
-                            .id("name")
+                        TextField("e.g. Monstera", name: "name", id: "name", text: form.name, autocomplete: "off")
                             .required()
                             .autofocus()
                     }
@@ -94,8 +95,9 @@ struct NewPlantPage: View {
                         TextArea(name: "notes", text: form.notes, rows: 4, placeholder: "Anything worth remembering")
                             .id("notes")
                     }
-                    HStack {
-                        Button("Add to shelf", type: .submit)
+                    HStack(spacing: 12) {
+                        Button("Add to shelf")
+                        Button("Cancel", action: .navigate(to: "/")).class("button-secondary")
                     }
                 }
             }
@@ -106,10 +108,10 @@ struct NewPlantPage: View {
 struct NotFoundPage: View {
     var body: some View {
         SiteLayout(title: "Not found") {
-            Heading(.h1, "No plant by that name")
+            Heading("No plant by that name")
             Paragraph {
                 "It may have wilted. "
-                Link("See all plants", href: "/")
+                Link("See all plants", destination: "/")
                 "."
             }
         }

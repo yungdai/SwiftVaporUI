@@ -26,7 +26,7 @@ private struct Card<Content: View>: View {
 
     var body: some View {
         Article {
-            Heading(.h2, title)
+            Heading(title, level: .h2)
             content
         }
         .class("card")
@@ -55,7 +55,7 @@ private struct Checklist: View {
 final class RenderingTests: XCTestCase {
     func testElementsAndText() {
         let html = Div {
-            Heading(.h1, "Title")
+            Heading("Title")
             Paragraph {
                 "Some "
                 Strong("bold")
@@ -169,17 +169,17 @@ final class ModifierTests: XCTestCase {
     func testLastModifierWins() {
         XCTAssertEqual(Div {}.id("a").id("b").render(), "<div id=\"b\"></div>")
         XCTAssertEqual(
-            Link("Home", href: "/").attribute("href", "/start").render(),
+            Link("Home", destination: "/").attribute("href", "/start").render(),
             "<a href=\"/start\">Home</a>"
         )
     }
 
     func testAttributeRemoval() {
-        XCTAssertEqual(Link("Home", href: "/").attribute("href", nil).render(), "<a>Home</a>")
+        XCTAssertEqual(Link("Home", destination: "/").attribute("href", nil).render(), "<a>Home</a>")
     }
 
     func testBooleanAttributes() {
-        let html = Button("Save", type: .submit).disabled().hidden(false).render()
+        let html = Button("Save").disabled().hidden(false).render()
         XCTAssertEqual(html, "<button type=\"submit\" disabled>Save</button>")
     }
 
@@ -236,7 +236,7 @@ final class ElementTests: XCTestCase {
                 Option("Pro", value: "pro", selected: true)
             }
             TextArea(name: "bio", text: "<hi>", rows: 3)
-            Button("Join", type: .submit)
+            Button("Join")
         }.render()
         XCTAssertEqual(
             html,
@@ -264,19 +264,86 @@ final class ElementTests: XCTestCase {
         XCTAssertEqual(
             HStack(spacing: 8) { Span("a"); Spacer(); Span("b") }.render(),
             "<div style=\"display: flex; flex-direction: row; align-items: center; gap: 8px\">"
-                + "<span>a</span><div style=\"flex: 1 1 auto\"></div><span>b</span></div>"
+                + "<span>a</span><div style=\"flex: 1\"></div><span>b</span></div>"
         )
         XCTAssertEqual(
             VStack(alignment: .leading) {}.style("padding", "4px").render(),
             "<div style=\"display: flex; flex-direction: column; align-items: flex-start; padding: 4px\"></div>"
         )
+        XCTAssertEqual(VStack { Span("a") }.class("stack").render(), "<div class=\"stack\"><span>a</span></div>")
+        XCTAssertEqual(
+            VStack(spacing: 4.5) {}.render(),
+            "<div style=\"display: flex; flex-direction: column; gap: 4.5px\"></div>"
+        )
+        XCTAssertEqual(
+            NavigationBar { Link("Home", destination: "/") }.render(),
+            "<nav style=\"display: flex; flex-direction: row; align-items: center; gap: 16px\"><a href=\"/\">Home</a></nav>"
+        )
+    }
+
+    func testButtonActions() {
+        XCTAssertEqual(Button("Go").render(), "<button type=\"submit\">Go</button>")
+        XCTAssertEqual(Button("Clear", action: .reset).render(), "<button type=\"reset\">Clear</button>")
+        XCTAssertEqual(Button("Menu", action: .plain).render(), "<button type=\"button\">Menu</button>")
+        XCTAssertEqual(
+            Button("Back", action: .navigate(to: "/?a=1&b=2")).class("btn").render(),
+            "<a href=\"/?a=1&amp;b=2\" class=\"btn\">Back</a>"
+        )
+        XCTAssertEqual(
+            Button("Hi", action: .script("alert(\"hi\")")).render(),
+            "<button type=\"button\" onclick=\"alert(&quot;hi&quot;)\">Hi</button>"
+        )
+    }
+
+    func testTextFieldWithoutPlaceholder() {
+        XCTAssertEqual(
+            TextField(name: "user", id: "user", autocomplete: "username").render(),
+            "<input type=\"text\" name=\"user\" id=\"user\" autocomplete=\"username\">"
+        )
+        XCTAssertEqual(
+            SecureField(name: "pw", id: "pw", autocomplete: "current-password").render(),
+            "<input type=\"password\" name=\"pw\" id=\"pw\" autocomplete=\"current-password\">"
+        )
+    }
+
+    func testListAndDescriptionList() {
+        XCTAssertEqual(
+            List(["a", "<b>"]) { Text($0) }.class("items").render(),
+            "<ul class=\"items\"><li>a</li><li>&lt;b&gt;</li></ul>"
+        )
+        XCTAssertEqual(
+            DescriptionList {
+                DescriptionTerm("Light")
+                DescriptionDetail("Bright")
+            }.render(),
+            "<dl><dt>Light</dt><dd>Bright</dd></dl>"
+        )
+        XCTAssertEqual(Template { Span("x") }.render(), "<template><span>x</span></template>")
+    }
+
+    func testHandBuiltDocumentAndPage() {
+        let html = Document {
+            HTMLRoot(language: "fr") {
+                Head {
+                    Title("A < B")
+                    ResourceLink(relationship: "icon", destination: "/favicon.svg")
+                }
+                DocumentBody { "Bonjour" }.class("home")
+            }
+        }.render()
+        XCTAssertEqual(
+            html,
+            "<!DOCTYPE html><html lang=\"fr\"><head><title>A &lt; B</title>"
+                + "<link rel=\"icon\" href=\"/favicon.svg\"></head><body class=\"home\">Bonjour</body></html>"
+        )
+        XCTAssertTrue(Page(title: "Hi") { Paragraph("x") }.render().hasSuffix("<body><p>x</p></body></html>"))
     }
 
     func testDocument() {
         let html = HTMLDocument(title: "Tom & Jerry") {
             Stylesheet(href: "/app.css")
         } body: {
-            Main { Heading(.h1, "Hi") }
+            Main { Heading("Hi") }
         }
         .class("dark")
         .render()
@@ -288,6 +355,47 @@ final class ElementTests: XCTestCase {
                 + "<title>Tom &amp; Jerry</title>"
                 + "<link rel=\"stylesheet\" href=\"/app.css\">"
                 + "</head><body><main><h1>Hi</h1></main></body></html>"
+        )
+    }
+}
+
+final class StylingTests: XCTestCase {
+    func testStylingModifiersAddInlineStyle() {
+        let html = Div {}
+            .padding()
+            .background(.hex("eef"))
+            .cornerRadius(8)
+            .frame(width: 120.5)
+            .render()
+        XCTAssertEqual(
+            html,
+            "<div style=\"padding: 16px; background: #eef; border-radius: 8px; width: 120.5px\"></div>"
+        )
+    }
+
+    func testPaddingEdges() {
+        XCTAssertEqual(
+            Div {}.padding(.vertical, 4).render(),
+            "<div style=\"padding-top: 4px; padding-bottom: 4px\"></div>"
+        )
+        XCTAssertEqual(
+            Div {}.padding(.leading, 2).render(),
+            "<div style=\"padding-inline-start: 2px\"></div>"
+        )
+    }
+
+    func testTextStylingWrapsInSpan() {
+        XCTAssertEqual(
+            Text("Hi").font(.headline).foregroundColor(.red).render(),
+            "<span style=\"font-size: 17px; font-weight: 600; color: crimson\">Hi</span>"
+        )
+        XCTAssertEqual(Strong("x").italic().opacity(2).render(), "<strong style=\"font-style: italic; opacity: 1\">x</strong>")
+    }
+
+    func testStylesAreAttributeEscaped() {
+        XCTAssertEqual(
+            Div {}.foregroundColor(Color(css: "red\" onclick=\"x")).render(),
+            "<div style=\"color: red&quot; onclick=&quot;x\"></div>"
         )
     }
 }

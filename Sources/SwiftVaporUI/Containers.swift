@@ -617,7 +617,9 @@ public struct Tab<TabLabel: View, Content: View>: View {
     // MARK: - Initializer
 
     /// Creates a tab with a custom label.
-    /// - Parameter content: The panel content.
+    /// - Parameters:
+    ///   - content: A view builder that creates the panel content.
+    ///   - label: A view builder that creates the tab's label.
     public init(@ViewBuilder content: () -> Content, @ViewBuilder label: () -> TabLabel) {
         self.label = label()
         self.content = content()
@@ -712,7 +714,8 @@ public struct DisclosureGroup<TitleLabel: View, Content: View>: View {
     /// Creates a disclosure group with a custom label.
     /// - Parameters:
     ///   - isExpanded: Whether it starts open.
-    ///   - content: The content shown when open.
+    ///   - content: A view builder that creates the content shown when open.
+    ///   - label: A view builder that creates the always-visible label.
     public init(isExpanded: Bool = false, @ViewBuilder content: () -> Content, @ViewBuilder label: () -> TitleLabel) {
         self.isExpanded = isExpanded
         self.label = label()
@@ -767,7 +770,9 @@ public struct Menu<MenuLabel: View, Content: View>: View {
     // MARK: - Initializer
 
     /// Creates a menu with a custom label.
-    /// - Parameter content: The menu's items.
+    /// - Parameters:
+    ///   - content: A view builder that creates the menu's items.
+    ///   - label: A view builder that creates the button that opens the menu.
     public init(@ViewBuilder content: () -> Content, @ViewBuilder label: () -> MenuLabel) {
         self.label = label()
         self.content = content()

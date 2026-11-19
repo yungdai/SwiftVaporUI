@@ -20,6 +20,22 @@ Inline text views include ``Strong``, ``Emphasis``, ``Small``, ``Code`` and ``Sp
 
 ``Text`` accepts any `CustomStringConvertible`, so numbers can be used directly: `Text(42)`.
 
+### Text-level elements
+
+``Mark`` highlights text, ``Keyboard`` shows keys, ``Subscript`` and ``Superscript`` shift text, ``Abbreviation`` carries its expansion as a tooltip, and ``Time`` gives a date or time a machine-readable value:
+
+```swift
+Paragraph {
+    "Press "; Keyboard("⌘K"); " to search. H"; Subscript("2"); "O. "
+    Abbreviation("RSVP", title: "Répondez s'il vous plaît")
+    " by "; Time("Friday", dateTime: "2026-11-27")
+}
+```
+
+### Dialogs
+
+``Dialog`` renders `<dialog>`. Open it as a modal with `Button(action: .script("document.getElementById('id').showModal()"))` and close it with a `Form(method: .dialog)`, which needs no script.
+
 ### Images and figures
 
 ``Image`` requires alt text. Pass an empty string for purely decorative images.
@@ -40,6 +56,16 @@ Figure {
 ``Element`` and ``VoidElement`` write any tag. ``RawHTML`` writes markup with no escaping at all; see <doc:Safety> before using it.
 
 ## Topics
+
+### Text-level elements
+
+- ``Mark``
+- ``Keyboard``
+- ``Subscript``
+- ``Superscript``
+- ``Abbreviation``
+- ``Time``
+- ``Dialog``
 
 - ``Heading``
 - ``Paragraph``

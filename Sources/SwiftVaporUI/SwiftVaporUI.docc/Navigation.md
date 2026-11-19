@@ -14,7 +14,14 @@ Link(destination: "/") {
 }
 ```
 
-Add other attributes with modifiers, for example `.attribute("target", "_blank")` and `.attribute("rel", "noopener")` for a link that opens a new tab.
+Pass `target: .blank` to open a new tab; ``Link`` adds `rel="noopener"` for you unless you pass your own `relationship`, such as `"nofollow"`. ``NavigationLink`` marks the link to the current page with `aria-current="page"` when `isActive` is true:
+
+```swift
+NavigationBar {
+    NavigationLink("Stalls", destination: "/stalls", isActive: path == "/stalls")
+    NavigationLink("Map", destination: "/map", isActive: path == "/map")
+}
+```
 
 ### Navigation bars
 
@@ -25,7 +32,6 @@ NavigationBar {
     ForEach(sections) { section in
         Link(section.title, destination: section.path)
             .class("active", when: section.path == currentPath)
-            .attribute("aria-current", section.path == currentPath ? "page" : nil)
     }
 }
 .aria("label", "Main")

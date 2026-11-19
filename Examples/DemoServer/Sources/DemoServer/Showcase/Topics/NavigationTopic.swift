@@ -1,6 +1,9 @@
 import SwiftVaporUI
 
+/// The "Navigation and links" showcase page.
 enum NavigationTopic {
+
+    /// The page's topic, with every example.
     static let topic = Topic(
         slug: "navigation",
         title: "Navigation and links",
@@ -85,14 +88,58 @@ enum NavigationTopic {
                 }
                 // end-snippet
             },
+
+            Example(
+                "navigation-link",
+                title: "NavigationLink and the current page",
+                summary: "NavigationLink(isActive:) marks the link to the page being shown with aria-current=\"page\", which screen readers announce and CSS can style."
+            ) {
+                // snippet: navigation-link
+                NavigationBar(spacing: 4) {
+                    NavigationLink("Stalls", destination: "#navigation-link", isActive: true)
+                    NavigationLink("Map", destination: "#navigation-link")
+                    NavigationLink("Visit", destination: "#navigation-link")
+                }
+                .class("pill-nav")
+                // end-snippet
+            },
+
+            Example(
+                "link-targets",
+                title: "Opening links elsewhere",
+                summary: "target: .blank opens a new tab and adds rel=\"noopener\" for you. Pass relationship for other rel values, such as nofollow for links you do not vouch for."
+            ) {
+                // snippet: link-targets
+                UnorderedList {
+                    ListItem {
+                        Link("Vapor documentation", destination: "https://docs.vapor.codes", target: .blank)
+                    }
+                    ListItem {
+                        Link("A visitor's blog", destination: "https://example.com", target: .blank, relationship: "nofollow noopener")
+                    }
+                    ListItem {
+                        Link("Download the menu", destination: "/images/leaf.svg").attribute("download", "menu.svg")
+                    }
+                }
+                // end-snippet
+            },
         ]
     )
+
 }
 
 // snippet: breadcrumbs
+/// A breadcrumb trail from the home page to the current one.
 struct Breadcrumbs: View {
+
+    // MARK: - Properties
+
+    /// The pages from the home page to this one.
     let trail: [(title: String, path: String)]
 
+    // MARK: - View
+
+    /// The elements this view is made of.
     var body: some View {
         Nav {
             OrderedList {
@@ -110,10 +157,13 @@ struct Breadcrumbs: View {
         .class("breadcrumbs")
         .aria("label", "Breadcrumb")
     }
+
 }
 // end-snippet
 
 // snippet: routes
+/// Registers the routes the navigation examples link to.
+/// - Parameter app: The application to add the routes to.
 func registerNavigationRoutes(_ app: Application) {
     app.get("navigation", "greet", ":name") { req in
         let name = req.parameters.get("name") ?? "friend"
@@ -121,9 +171,17 @@ func registerNavigationRoutes(_ app: Application) {
     }
 }
 
+/// A page that greets the name in its URL.
 struct GreetingPage: View {
+
+    // MARK: - Properties
+
+    /// The name from the URL.
     let name: String
 
+    // MARK: - View
+
+    /// The elements this view is made of.
     var body: some View {
         ShowcaseLayout(title: "Hello, \(name)", currentPath: "/navigation") {
             Heading("Hello, \(name)!")
@@ -131,5 +189,6 @@ struct GreetingPage: View {
             Link("← Back to navigation", destination: "/navigation#routes")
         }
     }
+
 }
 // end-snippet

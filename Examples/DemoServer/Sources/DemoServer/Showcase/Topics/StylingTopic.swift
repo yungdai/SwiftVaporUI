@@ -1,6 +1,9 @@
 import SwiftVaporUI
 
+/// The "Styling modifiers" showcase page.
 enum StylingTopic {
+
+    /// The page's topic, with every example.
     static let topic = Topic(
         slug: "styling",
         title: "Styling modifiers",
@@ -129,6 +132,33 @@ enum StylingTopic {
                     .cornerRadius(10)
                 // end-snippet
             },
+
+            Example(
+                "border-shadow",
+                title: "Border, shadow and opacity",
+                summary: "SwiftUI-style .border(_:width:), .shadow(color:radius:x:y:) and .opacity(_:) add inline CSS to the element, like the other styling modifiers."
+            ) {
+                // snippet: border-shadow
+                HStack(spacing: 16) {
+                    Div { "Border" }
+                        .padding(16)
+                        .border(.hex("1c5fd4"), width: 2)
+                        .cornerRadius(8)
+                    Div { "Shadow" }
+                        .padding(16)
+                        .background(.white)
+                        .cornerRadius(8)
+                        .shadow(radius: 12, y: 4)
+                    Div { "Half opacity" }
+                        .padding(16)
+                        .background(.hex("e8590c"))
+                        .foregroundColor(.white)
+                        .cornerRadius(8)
+                        .opacity(0.5)
+                }
+                // end-snippet
+            },
         ]
     )
+
 }

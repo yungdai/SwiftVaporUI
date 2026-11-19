@@ -37,6 +37,7 @@ The repository includes a showcase server in `Examples/DemoServer` with a page f
 ### Essentials
 
 - <doc:GettingStarted>
+- <doc:SettingUpAPage>
 - <doc:BuildingViews>
 - ``View-protocol``
 - ``ViewBuilder``
@@ -46,11 +47,15 @@ The repository includes a showcase server in `Examples/DemoServer` with a page f
 
 - <doc:TextAndElements>
 - <doc:LayoutStacks>
+- <doc:ContainersAndControls>
 - <doc:Modifiers>
+- <doc:ModifiersAndEnvironment>
 - <doc:ListsAndConditionals>
 - <doc:Tables>
 - <doc:FormsAndButtons>
+- <doc:Controls>
 - <doc:Navigation>
+- <doc:MediaAndEmbeds>
 - <doc:ComposingViews>
 - <doc:DocumentsAndResponses>
 - <doc:Safety>
@@ -63,6 +68,12 @@ The repository includes a showcase server in `Examples/DemoServer` with a page f
 - ``Paragraph``
 - ``Strong``
 - ``Emphasis``
+- ``Mark``
+- ``Keyboard``
+- ``Subscript``
+- ``Superscript``
+- ``Abbreviation``
+- ``Time``
 - ``Small``
 - ``Code``
 - ``Preformatted``
@@ -108,6 +119,7 @@ The repository includes a showcase server in `Examples/DemoServer` with a page f
 - ``TableRow``
 - ``TableHeaderCell``
 - ``TableCell``
+- ``TableCaption``
 
 ### Forms and buttons
 
@@ -129,6 +141,8 @@ The repository includes a showcase server in `Examples/DemoServer` with a page f
 ### Links, media and other elements
 
 - ``Link``
+- ``LinkTarget``
+- ``Dialog``
 - ``Image``
 - ``Figure``
 - ``FigureCaption``

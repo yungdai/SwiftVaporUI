@@ -2,14 +2,29 @@ import SwiftVaporUI
 
 /// The shared page shell: document, header, navigation and footer.
 struct SiteLayout<Content: View>: View {
+
+    // MARK: - Properties
+
+    /// The page title.
     let title: String
+
+    /// The page's own content.
     let content: Content
 
+    // MARK: - Initializer
+
+    /// Creates a page in the shared layout.
+    /// - Parameters:
+    ///   - title: The page title.
+    ///   - content: A view builder that creates the page's own content.
     init(title: String, @ViewBuilder content: () -> Content) {
         self.title = title
         self.content = content()
     }
 
+    // MARK: - View
+
+    /// The elements this view is made of.
     var body: some View {
         HTMLDocument(title: "\(title) · Plant Shelf") {
             Meta(name: "description", content: "A SwiftVaporUI demo")
@@ -39,21 +54,37 @@ struct SiteLayout<Content: View>: View {
             .class("site-footer")
         }
     }
+
 }
 
 /// A small pill showing a plant's light needs.
 struct LightBadge: View {
+
+    // MARK: - Properties
+
+    /// The light level to show.
     let light: Light
 
+    // MARK: - View
+
+    /// The elements this view is made of.
     var body: some View {
         Span(light.label).class("badge", "badge-\(light.rawValue)")
     }
+
 }
 
 /// A summary card for one plant, linking to its page.
 struct PlantCard: View {
+
+    // MARK: - Properties
+
+    /// The plant to show.
     let plant: Plant
 
+    // MARK: - View
+
+    /// The elements this view is made of.
     var body: some View {
         Article {
             Heading(level: .h3) {
@@ -64,12 +95,20 @@ struct PlantCard: View {
         }
         .class("card")
     }
+
 }
 
 /// A fragment that can be returned on its own from a route.
 struct PlantCount: View {
+
+    // MARK: - Properties
+
+    /// How many plants there are.
     let count: Int
 
+    // MARK: - View
+
+    /// The elements this view is made of.
     var body: some View {
         Paragraph {
             Strong("\(count)")
@@ -77,12 +116,20 @@ struct PlantCount: View {
         }
         .id("plant-count")
     }
+
 }
 
 /// A list of validation messages, or nothing when there are none.
 struct ErrorSummary: View {
+
+    // MARK: - Properties
+
+    /// The problems to list.
     let errors: [String]
 
+    // MARK: - View
+
+    /// The elements this view is made of.
     var body: some View {
         if !errors.isEmpty {
             Div {
@@ -97,8 +144,10 @@ struct ErrorSummary: View {
             .role("alert")
         }
     }
+
 }
 
+/// The Plant Shelf app's stylesheet.
 let siteCSS = """
 :root { --green: #2f6b3a; --ink: #1d2420; --muted: #5d6b62; --line: #dfe6e0; }
 * { box-sizing: border-box; }

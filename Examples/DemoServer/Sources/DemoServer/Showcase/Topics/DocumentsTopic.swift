@@ -1,6 +1,9 @@
 import SwiftVaporUI
 
+/// The "Full documents" showcase page.
 enum DocumentsTopic {
+
+    /// The page's topic, with every example.
     static let topic = Topic(
         slug: "documents",
         title: "Full documents",
@@ -96,18 +99,35 @@ enum DocumentsTopic {
             },
         ]
     )
+
 }
 
 // snippet: layout
+/// A shared layout: the same head, header and footer around every page.
 struct SiteShell<Content: View>: View {
+
+    // MARK: - Properties
+
+    /// The page title.
     let title: String
+
+    /// The page's own content.
     let content: Content
 
+    // MARK: - Initializer
+
+    /// Creates a page in the shared layout.
+    /// - Parameters:
+    ///   - title: The page title.
+    ///   - content: A view builder that creates the page's own content.
     init(title: String, @ViewBuilder content: () -> Content) {
         self.title = title
         self.content = content()
     }
 
+    // MARK: - View
+
+    /// The elements this view is made of.
     var body: some View {
         HTMLDocument(title: "\(title) · Greenfield") {
             Style("body { margin: 0; font-family: system-ui } header, footer, main { padding: 12px 20px }")
@@ -123,13 +143,22 @@ struct SiteShell<Content: View>: View {
             .foregroundColor(.gray)
         }
     }
+
 }
 // end-snippet
 
 // snippet: responses
+/// The page for a path that does not exist, sent with a 404 status.
 struct MissingPage: View {
+
+    // MARK: - Properties
+
+    /// The path that was not found.
     let path: String
 
+    // MARK: - View
+
+    /// The elements this view is made of.
     var body: some View {
         Page(title: "Not found") {
             Heading("404: nothing here")
@@ -142,8 +171,11 @@ struct MissingPage: View {
                 .attribute("target", "_top")
         }
     }
+
 }
 
+/// Registers the routes the document examples link to.
+/// - Parameter app: The application to add the routes to.
 func registerDocumentRoutes(_ app: Application) {
     app.get("documents", "missing") { req in
         HTMLResponse(status: .notFound, headers: ["Cache-Control": "no-store"]) {

@@ -21,6 +21,7 @@ import Vapor
 /// Every view is also an `AsyncResponseEncodable`, so it can be returned
 /// directly from a Vapor route handler and is sent as `text/html`.
 public protocol View: AsyncResponseEncodable, Sendable {
+
     /// The type of view representing the body of this view.
     associatedtype Body: View
 
@@ -32,43 +33,66 @@ public protocol View: AsyncResponseEncodable, Sendable {
     /// You do not normally implement this yourself: composite views render
     /// their `body`. It is public so that the library's primitive views can
     /// override it.
+    /// - Parameter renderer: The renderer that collects the page's HTML.
     func _render(into renderer: inout HTMLRenderer)
+
 }
 
+/// Rendering for every view: composite views render their `body`.
 extension View {
-    public func _render(into renderer: inout HTMLRenderer) {
-        body._render(into: &renderer)
-    }
 
     /// Renders the view to an HTML string.
+    /// - Returns: The HTML, as a string.
     public func render() -> String {
         var renderer = HTMLRenderer()
         _render(into: &renderer)
         return renderer.output
     }
+
+    /// Writes this view's HTML into `renderer`.
+    /// - Parameter renderer: The renderer that collects the page's HTML.
+    public func _render(into renderer: inout HTMLRenderer) {
+        body._render(into: &renderer)
+    }
+
 }
 
+/// Primitive views have no body.
 extension View where Body == Never {
+
+    /// Primitive views render themselves, so their body is never evaluated.
     public var body: Never {
         fatalError("\(Self.self) is a primitive view and has no body.")
     }
+
 }
 
+/// `Never` is the body of primitive views, so it must be encodable like every view.
 extension Never: @retroactive AsyncResponseEncodable {}
 
+/// `Never` is the body of primitive views, which render themselves.
 extension Never: View {
+
+    /// `Never` is the terminal view, so its body is `Never` too.
     public typealias Body = Never
 
+    /// Writes this view's HTML into `renderer`.
+    /// - Parameter renderer: The renderer that collects the page's HTML.
     public func _render(into renderer: inout HTMLRenderer) {}
+
 }
 
 // MARK: - Vapor integration
 
+/// Returning a view from a Vapor route.
 extension View {
+
     /// Encodes the view as an HTML response with status `200 OK`.
+    /// - Parameter request: The request being answered.
     public func encodeResponse(for request: Request) async throws -> Response {
         try await HTMLResponse(self).encodeResponse(for: request)
     }
+
 }
 
 /// Wraps a view so a route can choose the response status and headers.
@@ -79,14 +103,25 @@ extension View {
 /// }
 /// ```
 public struct HTMLResponse<Content: View>: AsyncResponseEncodable {
+
+    // MARK: - Properties
+
     /// The response status. Defaults to `200 OK`.
     public var status: HTTPResponseStatus
+
     /// Extra response headers. `Content-Type` defaults to `text/html; charset=utf-8`.
     public var headers: HTTPHeaders
+
     /// The view rendered as the response body.
     public var content: Content
 
+    // MARK: - Initializers
+
     /// Creates a response that renders `content`.
+    /// - Parameters:
+    ///   - status: The response status. Defaults to `200 OK`.
+    ///   - headers: Extra response headers. `Content-Type` defaults to `text/html; charset=utf-8`.
+    ///   - content: The view rendered as the response body.
     public init(status: HTTPResponseStatus = .ok, headers: HTTPHeaders = [:], _ content: Content) {
         self.status = status
         self.headers = headers
@@ -94,6 +129,10 @@ public struct HTMLResponse<Content: View>: AsyncResponseEncodable {
     }
 
     /// Creates a response that renders the view built by `content`.
+    /// - Parameters:
+    ///   - status: The response status. Defaults to `200 OK`.
+    ///   - headers: Extra response headers. `Content-Type` defaults to `text/html; charset=utf-8`.
+    ///   - content: The view rendered as the response body.
     public init(
         status: HTTPResponseStatus = .ok,
         headers: HTTPHeaders = [:],
@@ -102,7 +141,10 @@ public struct HTMLResponse<Content: View>: AsyncResponseEncodable {
         self.init(status: status, headers: headers, content())
     }
 
+    // MARK: - Methods
+
     /// Renders the view and builds the Vapor response.
+    /// - Parameter request: The request being answered.
     public func encodeResponse(for request: Request) async throws -> Response {
         var headers = headers
         if headers.contentType == nil {
@@ -110,4 +152,5 @@ public struct HTMLResponse<Content: View>: AsyncResponseEncodable {
         }
         return Response(status: status, headers: headers, body: .init(string: content.render()))
     }
+
 }

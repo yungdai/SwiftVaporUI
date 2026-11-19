@@ -1,6 +1,9 @@
 import SwiftVaporUI
 
+/// The "More elements" showcase page.
 enum ElementsTopic {
+
+    /// The page's topic, with every example.
     static let topic = Topic(
         slug: "elements",
         title: "More elements",
@@ -86,8 +89,48 @@ enum ElementsTopic {
                 }
                 // end-snippet
             },
+
+            Example(
+                "dialog",
+                title: "Dialog",
+                summary: "Dialog renders <dialog>. Open it as a modal with one line of script, and close it with a Form(method: .dialog), which needs no script at all."
+            ) {
+                // snippet: dialog
+                Button("Show today's special", action: .script("document.getElementById('special').showModal()"))
+                    .class("button")
+                Dialog {
+                    Heading("Today's special", level: .h3)
+                    Paragraph("Crispy pork belly bao, until they run out.")
+                    Form(method: .dialog) {
+                        Button("Close").class("button-secondary")
+                    }
+                }
+                .id("special")
+                .border(.hex("e2e5eb"))
+                .cornerRadius(12)
+                // end-snippet
+            },
+
+            Example(
+                "global-attributes",
+                title: "Global attributes",
+                summary: "Modifiers for the attributes any element can take: .title(_:) for a tooltip, .tabIndex(_:) for focus order, .lang(_:) for language, and .hidden() and .disabled()."
+            ) {
+                // snippet: global-attributes
+                VStack(spacing: 8) {
+                    Span("Hover me for a tooltip").title("Opens at 6pm")
+                    Div { "This box can take keyboard focus" }
+                        .class("box")
+                        .tabIndex(0)
+                    Paragraph("Guten Appetit!").lang("de")
+                    Paragraph("You cannot see this paragraph.").hidden()
+                    Button("Sold out", action: .plain).class("button").disabled()
+                }
+                // end-snippet
+            },
         ]
     )
+
 }
 
 /// A small leaf illustration for the images example.

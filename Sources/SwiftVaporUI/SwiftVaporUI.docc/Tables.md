@@ -35,7 +35,21 @@ Table {
 .class("data-table")
 ```
 
-Cells take a string or a builder, so they can hold links, badges or buttons. Set cell attributes such as `colspan` or `scope` with `.attribute(_:_:)`.
+Cells take a string or a builder, so they can hold links, badges or buttons. Pass `columnSpan` or `rowSpan` to make a cell cover several columns or rows, and give the table a title with ``TableCaption``, first inside the table. Set other cell attributes, such as `scope`, with `.attribute(_:_:)`.
+
+```swift
+Table {
+    TableCaption("Friday's stage")
+    TableRow {
+        TableHeaderCell("Evening", rowSpan: 2)
+        TableCell("19:00")
+    }
+    TableRow { TableCell("20:00") }
+    TableFooter {
+        TableRow { TableCell("Free entry", columnSpan: 2) }
+    }
+}
+```
 
 ## Topics
 
@@ -46,3 +60,4 @@ Cells take a string or a builder, so they can hold links, badges or buttons. Set
 - ``TableRow``
 - ``TableHeaderCell``
 - ``TableCell``
+- ``TableCaption``

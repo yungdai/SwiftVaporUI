@@ -1,12 +1,21 @@
 import SwiftVaporUI
 
 // snippet: data-table
+/// One crop's harvest, for the table examples.
 struct HarvestRow: Sendable {
+
+    /// The crop's name.
     let crop: String
+
+    /// The bed it grew in.
     let bed: String
+
+    /// How much was harvested, in kilograms.
     let kilograms: Double
+
 }
 
+/// This season's harvest, one row per crop and bed.
 let harvest = [
     HarvestRow(crop: "Tomatoes", bed: "South", kilograms: 12.5),
     HarvestRow(crop: "Courgettes", bed: "East", kilograms: 8),
@@ -15,7 +24,10 @@ let harvest = [
 ]
 // end-snippet
 
+/// The "Tables" showcase page.
 enum TablesTopic {
+
+    /// The page's topic, with every example.
     static let topic = Topic(
         slug: "tables",
         title: "Tables",
@@ -98,7 +110,7 @@ enum TablesTopic {
             Example(
                 "rich-cells",
                 title: "Cells with any content",
-                summary: "The builder forms of TableCell hold links, badges, buttons or whole stacks. Use .attribute for cell attributes such as colspan."
+                summary: "The builder forms of TableCell hold links, badges, buttons or whole stacks. columnSpan and rowSpan make a cell cover several columns or rows."
             ) {
                 // snippet: rich-cells
                 let beds = ["North", "South", "East"]
@@ -122,10 +134,49 @@ enum TablesTopic {
                             }
                         }
                         TableRow {
-                            TableCell {
+                            TableCell(columnSpan: 3) {
                                 Small("West bed is resting this year.").class("muted")
                             }
-                            .attribute("colspan", "3")
+                        }
+                    }
+                }
+                .class("data-table")
+                // end-snippet
+            },
+            Example(
+                "caption-spans",
+                title: "Caption, row spans and a footer",
+                summary: "TableCaption titles the table for everyone, including screen readers. rowSpan lets the evening cell cover two rows."
+            ) {
+                // snippet: caption-spans
+                Table {
+                    TableCaption("Friday's stage")
+                    TableHead {
+                        TableRow {
+                            TableHeaderCell("Part")
+                            TableHeaderCell("Time")
+                            TableHeaderCell("Act")
+                        }
+                    }
+                    TableBody {
+                        TableRow {
+                            TableHeaderCell("Evening", rowSpan: 2).attribute("scope", "rowgroup")
+                            TableCell("19:00")
+                            TableCell("Brass band")
+                        }
+                        TableRow {
+                            TableCell("20:00")
+                            TableCell("Folk trio")
+                        }
+                        TableRow {
+                            TableHeaderCell("Late").attribute("scope", "row")
+                            TableCell("21:00")
+                            TableCell("Lantern walk")
+                        }
+                    }
+                    TableFooter {
+                        TableRow {
+                            TableCell("Free entry all night", columnSpan: 3)
                         }
                     }
                 }
@@ -134,4 +185,5 @@ enum TablesTopic {
             },
         ]
     )
+
 }

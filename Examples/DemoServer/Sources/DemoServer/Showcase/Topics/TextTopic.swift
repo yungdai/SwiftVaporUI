@@ -1,6 +1,9 @@
 import SwiftVaporUI
 
+/// The "Text and headings" showcase page.
 enum TextTopic {
+
+    /// The page's topic, with every example.
     static let topic = Topic(
         slug: "text",
         title: "Text and headings",
@@ -97,6 +100,57 @@ enum TextTopic {
                 """)
                 // end-snippet
             },
+
+            Example(
+                "text-level",
+                title: "Text-level elements",
+                summary: "Mark highlights, Keyboard shows keys, Subscript and Superscript shift text, Abbreviation carries its expansion, and Time gives a date a machine-readable value."
+            ) {
+                // snippet: text-level
+                Paragraph {
+                    "Search results for "
+                    Mark("lantern")
+                    ". Press "
+                    Keyboard("⌘")
+                    " "
+                    Keyboard("K")
+                    " to search again."
+                }
+                Paragraph {
+                    "Brewed with H"
+                    Subscript("2")
+                    "O at 90°C, served in a 10"
+                    Superscript("2")
+                    " ml cup."
+                }
+                Paragraph {
+                    "The "
+                    Abbreviation("RSVP", title: "Répondez s'il vous plaît")
+                    " closes on "
+                    Time("Friday 27 November", dateTime: "2026-11-27")
+                    "."
+                }
+                // end-snippet
+            },
+
+            Example(
+                "quotes",
+                title: "Quotations and emphasis",
+                summary: "Blockquote for a quotation from elsewhere, Emphasis for stress, and .lang(_:) when a passage is in another language."
+            ) {
+                // snippet: quotes
+                Blockquote {
+                    Paragraph {
+                        "The dumplings are "
+                        Emphasis("worth")
+                        " the queue."
+                    }
+                    Footer { Small("A regular, every Friday") }
+                }
+                Paragraph("Bon appétit !").lang("fr").italic()
+                // end-snippet
+            },
         ]
     )
+
 }

@@ -17,16 +17,54 @@ import SwiftVaporUI
 /// view defined at the top of the file and its use further down); the
 /// regions are shown one after another.
 struct Example: Sendable {
+
+    // MARK: - Properties
+
+    /// The anchor on the topic page.
     let id: String
+
+    /// The example's heading.
     let title: String
+
+    /// One or two sentences on what the example shows.
     let summary: String
+
+    /// The view the example renders.
     let preview: AnyView
+
+    /// The snippet marker id to show the source of.
     let snippetID: String
+
+    /// The Swift file the snippet is in.
     let file: String
+
     /// Show the result in an `<iframe>` instead of inline. Used for full
     /// HTML documents, which cannot be nested inside another page.
     let isolated: Bool
 
+    // MARK: - Computed Properties
+
+    /// The Swift source between this example's markers.
+    var source: SourceSnippet {
+        SourceLibrary.shared.snippet(snippetID, in: file)
+    }
+
+    /// The HTML the example renders.
+    var html: String {
+        preview.render()
+    }
+
+    // MARK: - Initializer
+
+    /// Creates an example.
+    /// - Parameters:
+    ///   - id: The anchor on the topic page.
+    ///   - title: The example's heading.
+    ///   - summary: One or two sentences on what the example shows.
+    ///   - snippet: The snippet marker id, if different from `id`.
+    ///   - isolated: Whether to show the result in an `<iframe>`.
+    ///   - file: The Swift file the snippet is in. Defaults to the caller's file.
+    ///   - preview: A view builder that creates the example's result.
     init<Preview: View>(
         _ id: String,
         title: String,
@@ -45,34 +83,46 @@ struct Example: Sendable {
         self.isolated = isolated
     }
 
-    /// The Swift source between this example's markers.
-    var source: SourceSnippet {
-        SourceLibrary.shared.snippet(snippetID, in: file)
-    }
-
-    /// The HTML the example renders.
-    var html: String {
-        preview.render()
-    }
 }
 
 /// Swift source extracted from a file, with where it came from.
 struct SourceSnippet: Sendable {
+
+    /// The source code.
     let code: String
+
     /// The file path relative to the demo package, such as
     /// `Sources/DemoServer/Showcase/Topics/TextTopic.swift`.
     let displayPath: String
+
     /// The first line of the snippet in that file, counting from 1.
     let line: Int?
+
 }
 
 /// Reads and caches the demo's own source files.
 final class SourceLibrary: @unchecked Sendable {
+
+    // MARK: - Static Properties
+
+    /// The library every page reads from.
     static let shared = SourceLibrary()
 
+    // MARK: - Properties
+
+    /// Guards `files` across requests.
     private let lock = NSLock()
+
+    /// File contents already read, as lines, by path.
     private var files: [String: [String]] = [:]
 
+    // MARK: - Methods
+
+    /// Reads the snippet regions marked `id` in a file.
+    /// - Parameters:
+    ///   - id: The snippet marker id.
+    ///   - path: The file's path.
+    /// - Returns: The snippet, or a comment explaining why it could not be read.
     func snippet(_ id: String, in path: String) -> SourceSnippet {
         let displayPath = Self.displayPath(for: path)
         guard let lines = lines(of: path) else {
@@ -108,6 +158,9 @@ final class SourceLibrary: @unchecked Sendable {
         return SourceSnippet(code: code, displayPath: displayPath, line: firstLine)
     }
 
+    /// Reads a file, or returns it from the cache.
+    /// - Parameter path: The file's path.
+    /// - Returns: The file's lines, or `nil` if it cannot be read.
     private func lines(of path: String) -> [String]? {
         lock.lock()
         defer { lock.unlock() }
@@ -120,6 +173,8 @@ final class SourceLibrary: @unchecked Sendable {
 
     /// Removes the indentation common to every non-blank line, and blank
     /// lines at the start and end.
+    /// - Parameter lines: The lines of a snippet.
+    /// - Returns: The lines without their shared indentation.
     static func dedent(_ lines: [String]) -> [String] {
         var lines = lines
         while let first = lines.first, first.trimmingCharacters(in: .whitespaces).isEmpty { lines.removeFirst() }
@@ -131,10 +186,14 @@ final class SourceLibrary: @unchecked Sendable {
         return lines.map { $0.count >= indent ? String($0.dropFirst(indent)) : $0.trimmingCharacters(in: .whitespaces) }
     }
 
+    /// Shortens an absolute path for display.
+    /// - Parameter path: The absolute path.
+    /// - Returns: The path from `Sources/DemoServer/`, or the file name.
     static func displayPath(for path: String) -> String {
         if let range = path.range(of: "/Sources/DemoServer/") {
             return "Sources/DemoServer/" + path[range.upperBound...]
         }
         return (path as NSString).lastPathComponent
     }
+
 }

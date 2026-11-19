@@ -8,3 +8,5 @@ DerivedData/
 .netrc
 Package.resolved
 .swiftpm/
+# Opts this checkout in to SwiftLint (see README).
+.enable-swiftlint

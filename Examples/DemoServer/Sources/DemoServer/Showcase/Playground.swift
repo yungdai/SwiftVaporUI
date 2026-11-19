@@ -10,7 +10,10 @@ let playgroundSourceFile = #filePath
 // └──────────────────────────────────────────────────────────────────────┘
 
 // snippet: playground
+/// The view you edit in the playground. Change it and run again.
 struct PlaygroundView: View {
+
+    /// The elements this view is made of.
     var body: some View {
         Heading("Hello from the playground", level: .h3)
         Paragraph("Edit Playground.swift and run again to change this.")
@@ -20,10 +23,14 @@ struct PlaygroundView: View {
             }
         }
     }
+
 }
 // end-snippet
 
+/// The playground page: your view, its source and its HTML.
 struct PlaygroundPage: View {
+
+    /// The elements this view is made of.
     var body: some View {
         ShowcaseLayout(title: "Playground", currentPath: "/playground") {
             Header {
@@ -50,4 +57,5 @@ struct PlaygroundPage: View {
             Script(copyScript)
         }
     }
+
 }

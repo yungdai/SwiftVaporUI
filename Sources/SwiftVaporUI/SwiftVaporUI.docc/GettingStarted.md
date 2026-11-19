@@ -84,6 +84,7 @@ Then open <http://127.0.0.1:8080>.
 
 ### Next steps
 
+- <doc:SettingUpAPage> shows how a web page differs from a SwiftUI screen, and how to set up the document, CSS, scripts and static files.
 - <doc:BuildingViews> explains how views and the result builder work.
 - <doc:Modifiers> covers classes, attributes and styling.
 - <doc:ComposingViews> shows how to build your own reusable components.

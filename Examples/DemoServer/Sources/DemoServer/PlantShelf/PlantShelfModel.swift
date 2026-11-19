@@ -1,8 +1,18 @@
 import SwiftVaporUI
 
+/// How much light a plant needs.
 enum Light: String, CaseIterable, Codable, Sendable {
-    case low, medium, bright
 
+    /// Shade or a north-facing window.
+    case low
+
+    /// Bright, indirect light.
+    case medium
+
+    /// Direct sun for part of the day.
+    case bright
+
+    /// The light level as shown to people.
     var label: String {
         switch self {
         case .low: "Low light"
@@ -10,18 +20,35 @@ enum Light: String, CaseIterable, Codable, Sendable {
         case .bright: "Bright light"
         }
     }
+
 }
 
+/// A plant on the shelf.
 struct Plant: Sendable {
+
+    /// The URL-safe name used in the plant's address.
     let slug: String
+
+    /// The plant's common name.
     let name: String
+
+    /// How much light the plant needs.
     let light: Light
+
+    /// How many days to wait between waterings.
     let waterEveryDays: Int
+
+    /// Care notes.
     let notes: String
+
 }
 
 /// An in-memory store, so the demo has some state to show.
 actor PlantShelf {
+
+    // MARK: - Properties
+
+    /// The plants on the shelf, seeded with a few examples.
     private var plants: [Plant] = [
         Plant(slug: "pothos", name: "Golden pothos", light: .low, waterEveryDays: 7,
               notes: "Trails happily off a bookshelf. Let the top inch of soil dry out."),
@@ -31,12 +58,22 @@ actor PlantShelf {
               notes: "Very forgiving. Overwatering is the main risk."),
     ]
 
+    // MARK: - Methods
+
+    /// Every plant, in the order they were added.
+    /// - Returns: The plants.
     func all() -> [Plant] { plants }
 
+    /// Finds a plant by its slug.
+    /// - Parameter slug: The URL-safe name.
+    /// - Returns: The plant, or `nil` if there is none.
     func plant(slug: String) -> Plant? {
         plants.first { $0.slug == slug }
     }
 
+    /// Adds a plant from a valid form.
+    /// - Parameter form: The submitted values.
+    /// - Returns: The new plant.
     func add(_ form: PlantForm) -> Plant {
         let base = form.name.lowercased().split(whereSeparator: { !$0.isLetter && !$0.isNumber }).joined(separator: "-")
         var slug = base.isEmpty ? "plant" : base
@@ -55,19 +92,34 @@ actor PlantShelf {
         plants.append(plant)
         return plant
     }
+
 }
 
 /// The values posted by the "add a plant" form.
 struct PlantForm: Content {
+
+    // MARK: - Properties
+
+    /// The name the visitor typed.
     var name = ""
+
+    /// The chosen light level's raw value.
     var light = Light.medium.rawValue
+
+    /// The watering interval as typed.
     var waterEveryDays = "7"
+
+    /// The care notes as typed.
     var notes = ""
 
+    // MARK: - Initializers
+
+    /// Creates an empty form with the default choices.
     init() {}
 
     /// Missing fields decode as empty, so validation can report them
     /// instead of the request failing with a 400.
+    /// - Parameter decoder: The decoder holding the submitted fields.
     init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         name = try container.decodeIfPresent(String.self, forKey: .name) ?? ""
@@ -76,6 +128,10 @@ struct PlantForm: Content {
         notes = try container.decodeIfPresent(String.self, forKey: .notes) ?? ""
     }
 
+    // MARK: - Methods
+
+    /// Checks the values.
+    /// - Returns: A message for each problem; empty when the form is valid.
     func validate() -> [String] {
         var errors: [String] = []
         if name.trimmingCharacters(in: .whitespaces).isEmpty {
@@ -91,4 +147,5 @@ struct PlantForm: Content {
         }
         return errors
     }
+
 }

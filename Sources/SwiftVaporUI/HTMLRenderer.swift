@@ -21,15 +21,15 @@ public struct HTMLRenderer: Sendable {
     /// `HTMLDocument` to write in the head, instead of writing them inline.
     var collectedSupportStyles: [SupportStyle]?
 
+    /// The HTML written so far.
+    public internal(set) var output = ""
+
     // MARK: - Initializer
 
     /// Creates an empty renderer.
     public init() {}
 
     // MARK: - Methods
-
-    /// The HTML written so far.
-    public internal(set) var output = ""
 
     /// Makes sure the CSS a built-in view needs is on the page, once.
     ///

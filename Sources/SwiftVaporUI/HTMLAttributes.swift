@@ -19,6 +19,9 @@ public struct HTMLAttributes: Sendable, Equatable, ExpressibleByDictionaryLitera
     /// Whether there are no attributes.
     public var isEmpty: Bool { storage.isEmpty }
 
+    /// The attributes, in the order they were first set.
+    public private(set) var storage: [Attribute] = []
+
     // MARK: - Initializers
 
     /// Creates an empty set of attributes.
@@ -48,9 +51,6 @@ public struct HTMLAttributes: Sendable, Equatable, ExpressibleByDictionaryLitera
     }
 
     // MARK: - Methods
-
-    /// The attributes, in the order they were first set.
-    public private(set) var storage: [Attribute] = []
 
     /// Whether an attribute called `name` is set.
     /// - Parameter name: The attribute name.

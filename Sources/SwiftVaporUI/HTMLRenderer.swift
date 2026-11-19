@@ -10,6 +10,7 @@ public struct HTMLRenderer: Sendable {
     /// Attribute changes waiting for the next element, innermost modifier first.
     var pending: [AttributeChange] = []
 
+    /// Creates an empty renderer.
     public init() {}
 
     mutating func write(_ string: String) {

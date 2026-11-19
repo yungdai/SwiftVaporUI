@@ -2,8 +2,10 @@
 
 /// A generic block container (`<div>`).
 public struct Div<Content: View>: View {
+    /// The element's content.
     public let content: Content
 
+    /// Creates the element with the content built by `content`.
     public init(@ViewBuilder content: () -> Content) {
         self.content = content()
     }
@@ -15,8 +17,10 @@ public struct Div<Content: View>: View {
 
 /// A generic inline container (`<span>`).
 public struct Span<Content: View>: View {
+    /// The element's content.
     public let content: Content
 
+    /// Creates the element with the content built by `content`.
     public init(@ViewBuilder content: () -> Content) {
         self.content = content()
     }
@@ -35,8 +39,10 @@ extension Span where Content == Text {
 
 /// A thematic section of a page (`<section>`).
 public struct Section<Content: View>: View {
+    /// The element's content.
     public let content: Content
 
+    /// Creates the element with the content built by `content`.
     public init(@ViewBuilder content: () -> Content) {
         self.content = content()
     }
@@ -48,8 +54,10 @@ public struct Section<Content: View>: View {
 
 /// Introductory content for a page or section (`<header>`).
 public struct Header<Content: View>: View {
+    /// The element's content.
     public let content: Content
 
+    /// Creates the element with the content built by `content`.
     public init(@ViewBuilder content: () -> Content) {
         self.content = content()
     }
@@ -61,8 +69,10 @@ public struct Header<Content: View>: View {
 
 /// Footer content for a page or section (`<footer>`).
 public struct Footer<Content: View>: View {
+    /// The element's content.
     public let content: Content
 
+    /// Creates the element with the content built by `content`.
     public init(@ViewBuilder content: () -> Content) {
         self.content = content()
     }
@@ -74,8 +84,10 @@ public struct Footer<Content: View>: View {
 
 /// A block of navigation links (`<nav>`).
 public struct Nav<Content: View>: View {
+    /// The element's content.
     public let content: Content
 
+    /// Creates the element with the content built by `content`.
     public init(@ViewBuilder content: () -> Content) {
         self.content = content()
     }
@@ -87,8 +99,10 @@ public struct Nav<Content: View>: View {
 
 /// The main content of the page (`<main>`).
 public struct Main<Content: View>: View {
+    /// The element's content.
     public let content: Content
 
+    /// Creates the element with the content built by `content`.
     public init(@ViewBuilder content: () -> Content) {
         self.content = content()
     }
@@ -100,8 +114,10 @@ public struct Main<Content: View>: View {
 
 /// Self-contained content (`<article>`).
 public struct Article<Content: View>: View {
+    /// The element's content.
     public let content: Content
 
+    /// Creates the element with the content built by `content`.
     public init(@ViewBuilder content: () -> Content) {
         self.content = content()
     }
@@ -113,8 +129,10 @@ public struct Article<Content: View>: View {
 
 /// Content related to the surrounding content (`<aside>`).
 public struct Aside<Content: View>: View {
+    /// The element's content.
     public let content: Content
 
+    /// Creates the element with the content built by `content`.
     public init(@ViewBuilder content: () -> Content) {
         self.content = content()
     }
@@ -126,8 +144,10 @@ public struct Aside<Content: View>: View {
 
 /// A paragraph (`<p>`).
 public struct Paragraph<Content: View>: View {
+    /// The element's content.
     public let content: Content
 
+    /// Creates the element with the content built by `content`.
     public init(@ViewBuilder content: () -> Content) {
         self.content = content()
     }
@@ -146,8 +166,10 @@ extension Paragraph where Content == Text {
 
 /// Text of strong importance (`<strong>`).
 public struct Strong<Content: View>: View {
+    /// The element's content.
     public let content: Content
 
+    /// Creates the element with the content built by `content`.
     public init(@ViewBuilder content: () -> Content) {
         self.content = content()
     }
@@ -166,8 +188,10 @@ extension Strong where Content == Text {
 
 /// Emphasised text (`<em>`).
 public struct Emphasis<Content: View>: View {
+    /// The element's content.
     public let content: Content
 
+    /// Creates the element with the content built by `content`.
     public init(@ViewBuilder content: () -> Content) {
         self.content = content()
     }
@@ -186,8 +210,10 @@ extension Emphasis where Content == Text {
 
 /// Side comments and fine print (`<small>`).
 public struct Small<Content: View>: View {
+    /// The element's content.
     public let content: Content
 
+    /// Creates the element with the content built by `content`.
     public init(@ViewBuilder content: () -> Content) {
         self.content = content()
     }
@@ -206,8 +232,10 @@ extension Small where Content == Text {
 
 /// A fragment of code (`<code>`).
 public struct Code<Content: View>: View {
+    /// The element's content.
     public let content: Content
 
+    /// Creates the element with the content built by `content`.
     public init(@ViewBuilder content: () -> Content) {
         self.content = content()
     }
@@ -226,8 +254,10 @@ extension Code where Content == Text {
 
 /// Preformatted text (`<pre>`).
 public struct Preformatted<Content: View>: View {
+    /// The element's content.
     public let content: Content
 
+    /// Creates the element with the content built by `content`.
     public init(@ViewBuilder content: () -> Content) {
         self.content = content()
     }
@@ -246,8 +276,10 @@ extension Preformatted where Content == Text {
 
 /// A quotation (`<blockquote>`).
 public struct Blockquote<Content: View>: View {
+    /// The element's content.
     public let content: Content
 
+    /// Creates the element with the content built by `content`.
     public init(@ViewBuilder content: () -> Content) {
         self.content = content()
     }
@@ -266,8 +298,10 @@ extension Blockquote where Content == Text {
 
 /// A bulleted list (`<ul>`).
 public struct UnorderedList<Content: View>: View {
+    /// The element's content.
     public let content: Content
 
+    /// Creates the element with the content built by `content`.
     public init(@ViewBuilder content: () -> Content) {
         self.content = content()
     }
@@ -279,8 +313,10 @@ public struct UnorderedList<Content: View>: View {
 
 /// A numbered list (`<ol>`).
 public struct OrderedList<Content: View>: View {
+    /// The element's content.
     public let content: Content
 
+    /// Creates the element with the content built by `content`.
     public init(@ViewBuilder content: () -> Content) {
         self.content = content()
     }
@@ -292,8 +328,10 @@ public struct OrderedList<Content: View>: View {
 
 /// An item in a list (`<li>`).
 public struct ListItem<Content: View>: View {
+    /// The element's content.
     public let content: Content
 
+    /// Creates the element with the content built by `content`.
     public init(@ViewBuilder content: () -> Content) {
         self.content = content()
     }
@@ -312,8 +350,10 @@ extension ListItem where Content == Text {
 
 /// A table (`<table>`).
 public struct Table<Content: View>: View {
+    /// The element's content.
     public let content: Content
 
+    /// Creates the element with the content built by `content`.
     public init(@ViewBuilder content: () -> Content) {
         self.content = content()
     }
@@ -325,8 +365,10 @@ public struct Table<Content: View>: View {
 
 /// The header rows of a table (`<thead>`).
 public struct TableHead<Content: View>: View {
+    /// The element's content.
     public let content: Content
 
+    /// Creates the element with the content built by `content`.
     public init(@ViewBuilder content: () -> Content) {
         self.content = content()
     }
@@ -338,8 +380,10 @@ public struct TableHead<Content: View>: View {
 
 /// The body rows of a table (`<tbody>`).
 public struct TableBody<Content: View>: View {
+    /// The element's content.
     public let content: Content
 
+    /// Creates the element with the content built by `content`.
     public init(@ViewBuilder content: () -> Content) {
         self.content = content()
     }
@@ -351,8 +395,10 @@ public struct TableBody<Content: View>: View {
 
 /// The footer rows of a table (`<tfoot>`).
 public struct TableFooter<Content: View>: View {
+    /// The element's content.
     public let content: Content
 
+    /// Creates the element with the content built by `content`.
     public init(@ViewBuilder content: () -> Content) {
         self.content = content()
     }
@@ -364,8 +410,10 @@ public struct TableFooter<Content: View>: View {
 
 /// A table row (`<tr>`).
 public struct TableRow<Content: View>: View {
+    /// The element's content.
     public let content: Content
 
+    /// Creates the element with the content built by `content`.
     public init(@ViewBuilder content: () -> Content) {
         self.content = content()
     }
@@ -377,8 +425,10 @@ public struct TableRow<Content: View>: View {
 
 /// A header cell (`<th>`).
 public struct TableHeaderCell<Content: View>: View {
+    /// The element's content.
     public let content: Content
 
+    /// Creates the element with the content built by `content`.
     public init(@ViewBuilder content: () -> Content) {
         self.content = content()
     }
@@ -397,8 +447,10 @@ extension TableHeaderCell where Content == Text {
 
 /// A data cell (`<td>`).
 public struct TableCell<Content: View>: View {
+    /// The element's content.
     public let content: Content
 
+    /// Creates the element with the content built by `content`.
     public init(@ViewBuilder content: () -> Content) {
         self.content = content()
     }
@@ -417,8 +469,10 @@ extension TableCell where Content == Text {
 
 /// Self-contained figure content (`<figure>`).
 public struct Figure<Content: View>: View {
+    /// The element's content.
     public let content: Content
 
+    /// Creates the element with the content built by `content`.
     public init(@ViewBuilder content: () -> Content) {
         self.content = content()
     }
@@ -430,8 +484,10 @@ public struct Figure<Content: View>: View {
 
 /// A caption for a `Figure` (`<figcaption>`).
 public struct FigureCaption<Content: View>: View {
+    /// The element's content.
     public let content: Content
 
+    /// Creates the element with the content built by `content`.
     public init(@ViewBuilder content: () -> Content) {
         self.content = content()
     }
@@ -450,8 +506,10 @@ extension FigureCaption where Content == Text {
 
 /// A disclosure widget (`<details>`).
 public struct Details<Content: View>: View {
+    /// The element's content.
     public let content: Content
 
+    /// Creates the element with the content built by `content`.
     public init(@ViewBuilder content: () -> Content) {
         self.content = content()
     }
@@ -463,8 +521,10 @@ public struct Details<Content: View>: View {
 
 /// The visible label of a `Details` (`<summary>`).
 public struct Summary<Content: View>: View {
+    /// The element's content.
     public let content: Content
 
+    /// Creates the element with the content built by `content`.
     public init(@ViewBuilder content: () -> Content) {
         self.content = content()
     }
@@ -483,8 +543,10 @@ extension Summary where Content == Text {
 
 /// A group of form controls (`<fieldset>`).
 public struct Fieldset<Content: View>: View {
+    /// The element's content.
     public let content: Content
 
+    /// Creates the element with the content built by `content`.
     public init(@ViewBuilder content: () -> Content) {
         self.content = content()
     }
@@ -496,8 +558,10 @@ public struct Fieldset<Content: View>: View {
 
 /// The caption of a `Fieldset` (`<legend>`).
 public struct Legend<Content: View>: View {
+    /// The element's content.
     public let content: Content
 
+    /// Creates the element with the content built by `content`.
     public init(@ViewBuilder content: () -> Content) {
         self.content = content()
     }
@@ -516,8 +580,10 @@ extension Legend where Content == Text {
 
 /// A list of terms and descriptions (`<dl>`).
 public struct DescriptionList<Content: View>: View {
+    /// The element's content.
     public let content: Content
 
+    /// Creates the element with the content built by `content`.
     public init(@ViewBuilder content: () -> Content) {
         self.content = content()
     }
@@ -529,8 +595,10 @@ public struct DescriptionList<Content: View>: View {
 
 /// A term in a `DescriptionList` (`<dt>`).
 public struct DescriptionTerm<Content: View>: View {
+    /// The element's content.
     public let content: Content
 
+    /// Creates the element with the content built by `content`.
     public init(@ViewBuilder content: () -> Content) {
         self.content = content()
     }
@@ -549,8 +617,10 @@ extension DescriptionTerm where Content == Text {
 
 /// The description of a term (`<dd>`).
 public struct DescriptionDetail<Content: View>: View {
+    /// The element's content.
     public let content: Content
 
+    /// Creates the element with the content built by `content`.
     public init(@ViewBuilder content: () -> Content) {
         self.content = content()
     }
@@ -569,8 +639,10 @@ extension DescriptionDetail where Content == Text {
 
 /// Markup the browser holds but does not render (`<template>`), for use from scripts.
 public struct Template<Content: View>: View {
+    /// The element's content.
     public let content: Content
 
+    /// Creates the element with the content built by `content`.
     public init(@ViewBuilder content: () -> Content) {
         self.content = content()
     }
@@ -582,8 +654,10 @@ public struct Template<Content: View>: View {
 
 /// The document head (`<head>`). `HTMLDocument` writes this for you.
 public struct Head<Content: View>: View {
+    /// The element's content.
     public let content: Content
 
+    /// Creates the element with the content built by `content`.
     public init(@ViewBuilder content: () -> Content) {
         self.content = content()
     }
@@ -595,8 +669,10 @@ public struct Head<Content: View>: View {
 
 /// The document body (`<body>`). Named so it does not clash with `View.Body`.
 public struct DocumentBody<Content: View>: View {
+    /// The element's content.
     public let content: Content
 
+    /// Creates the element with the content built by `content`.
     public init(@ViewBuilder content: () -> Content) {
         self.content = content()
     }

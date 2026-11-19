@@ -5,10 +5,14 @@ public enum FormMethod: String, Sendable {
 
 /// A form (`<form>`).
 public struct Form<Content: View>: View {
+    /// The URL the form submits to. `nil` submits to the current URL.
     public let action: String?
+    /// The HTTP method the form submits with.
     public let method: FormMethod
+    /// The element's content.
     public let content: Content
 
+    /// Creates a form that submits to `action` with `method`.
     public init(action: String? = nil, method: FormMethod = .post, @ViewBuilder content: () -> Content) {
         self.action = action
         self.method = method
@@ -48,9 +52,12 @@ public enum ButtonAction: Sendable, Equatable {
 /// Button("Close", action: .script("dialog.close()"))
 /// ```
 public struct Button<Label: View>: View {
+    /// What the button does when pressed.
     public let action: ButtonAction
+    /// The button's visible content.
     public let label: Label
 
+    /// Creates a button whose visible content is built by `label`.
     public init(action: ButtonAction = .submit, @ViewBuilder label: () -> Label) {
         self.action = action
         self.label = label()
@@ -73,6 +80,7 @@ public struct Button<Label: View>: View {
 }
 
 extension Button where Label == Text {
+    /// Creates a button with escaped `title` as its text.
     public init(_ title: String, action: ButtonAction = .submit) {
         self.init(action: action) { Text(title) }
     }
@@ -80,9 +88,12 @@ extension Button where Label == Text {
 
 /// A caption for a form control (`<label>`).
 public struct Label<Content: View>: View {
+    /// The `id` of the control this label describes, written as `for`.
     public let forID: String?
+    /// The element's content.
     public let content: Content
 
+    /// Creates a label for the control with the given `id`.
     public init(for id: String? = nil, @ViewBuilder content: () -> Content) {
         self.forID = id
         self.content = content()
@@ -96,6 +107,7 @@ public struct Label<Content: View>: View {
 }
 
 extension Label where Content == Text {
+    /// Creates a label with escaped `title` as its text.
     public init(_ title: String, for id: String? = nil) {
         self.init(for: id) { Text(title) }
     }
@@ -103,32 +115,53 @@ extension Label where Content == Text {
 
 /// The `type` of an `Input`.
 public struct InputType: RawRepresentable, Sendable, Hashable, ExpressibleByStringLiteral {
+    /// The value written to the `type` attribute.
     public let rawValue: String
+    /// Creates an input type from its HTML name.
     public init(rawValue: String) { self.rawValue = rawValue }
+    /// Creates an input type from a string literal, such as `"color"`.
     public init(stringLiteral value: String) { self.rawValue = value }
 
+    /// A single-line text input.
     public static let text: InputType = "text"
+    /// An email address input.
     public static let email: InputType = "email"
+    /// A password input.
     public static let password: InputType = "password"
+    /// A number input.
     public static let number: InputType = "number"
+    /// A search input.
     public static let search: InputType = "search"
+    /// A telephone number input.
     public static let tel: InputType = "tel"
+    /// A URL input.
     public static let url: InputType = "url"
+    /// A date picker.
     public static let date: InputType = "date"
+    /// A checkbox.
     public static let checkbox: InputType = "checkbox"
+    /// A radio button.
     public static let radio: InputType = "radio"
+    /// A hidden value, submitted with the form but not shown.
     public static let hidden: InputType = "hidden"
+    /// A file picker.
     public static let file: InputType = "file"
+    /// A submit button.
     public static let submit: InputType = "submit"
 }
 
 /// A form input (`<input>`).
 public struct Input: View {
+    /// The input type.
     public var type: InputType
+    /// The field name the value is submitted under.
     public var name: String?
+    /// The initial value.
     public var value: String?
+    /// Hint text shown while the input is empty.
     public var placeholder: String?
 
+    /// Creates an input.
     public init(type: InputType = .text, name: String? = nil, value: String? = nil, placeholder: String? = nil) {
         self.type = type
         self.name = name
@@ -151,13 +184,28 @@ public struct Input: View {
 /// TextField("Your name", name: "name", id: "name", text: form.name, autocomplete: "name")
 /// ```
 public struct TextField: View {
+    /// Hint text shown while the field is empty.
     public let placeholder: String?
+    /// The field name the value is submitted under.
     public let name: String
+    /// The element `id`, for use with `Label(for:)`.
     public let id: String?
+    /// The current value, for example the value the user submitted last time.
     public let text: String?
+    /// The input type, such as `.email` or `.search`.
     public let type: InputType
+    /// The `autocomplete` hint, such as `"email"` or `"off"`.
     public let autocomplete: String?
 
+    /// Creates a text field.
+    /// ///
+    /// - Parameters:
+    ///   - placeholder: Hint text shown while the field is empty.
+    ///   - name: The field name the value is submitted under.
+    ///   - id: The element `id`, for use with `Label(for:)`.
+    ///   - text: The current value.
+    ///   - type: The input type. Defaults to `.text`.
+    ///   - autocomplete: The `autocomplete` hint.
     public init(
         _ placeholder: String? = nil,
         name: String,
@@ -187,11 +235,16 @@ public struct TextField: View {
 /// A password field, in the style of SwiftUI's `SecureField`. It never
 /// renders a value back into the page.
 public struct SecureField: View {
+    /// Hint text shown while the field is empty.
     public let placeholder: String?
+    /// The field name the value is submitted under.
     public let name: String
+    /// The element `id`, for use with `Label(for:)`.
     public let id: String?
+    /// The `autocomplete` hint, such as `"current-password"`.
     public let autocomplete: String?
 
+    /// Creates a password field.
     public init(_ placeholder: String? = nil, name: String, id: String? = nil, autocomplete: String? = nil) {
         self.placeholder = placeholder
         self.name = name
@@ -210,11 +263,16 @@ public struct SecureField: View {
 
 /// A multi-line text field (`<textarea>`). The text is escaped.
 public struct TextArea: View {
+    /// The field name the value is submitted under.
     public let name: String
+    /// The initial text. It is escaped.
     public let text: String
+    /// The number of visible text lines.
     public let rows: Int?
+    /// Hint text shown while the field is empty.
     public let placeholder: String?
 
+    /// Creates a multi-line text field.
     public init(name: String, text: String = "", rows: Int? = nil, placeholder: String? = nil) {
         self.name = name
         self.text = text
@@ -232,9 +290,12 @@ public struct TextArea: View {
 
 /// A drop-down list (`<select>`). Fill it with `Option`s.
 public struct Select<Content: View>: View {
+    /// The field name the selection is submitted under.
     public let name: String
+    /// The element's content.
     public let content: Content
 
+    /// Creates a drop-down list whose options are built by `content`.
     public init(name: String, @ViewBuilder content: () -> Content) {
         self.name = name
         self.content = content()
@@ -247,10 +308,14 @@ public struct Select<Content: View>: View {
 
 /// An entry in a `Select` (`<option>`).
 public struct Option: View {
+    /// The visible text.
     public let title: String
+    /// The value submitted when this option is selected.
     public let value: String
+    /// Whether the option starts selected.
     public let isSelected: Bool
 
+    /// Creates an option. When `value` is `nil`, the title is submitted.
     public init(_ title: String, value: String? = nil, selected: Bool = false) {
         self.title = title
         self.value = value ?? title

@@ -1,41 +1,42 @@
 import SwiftVaporUI
 
+// The SwiftVaporUI showcase server.
+//
+// Run it from Xcode (open Examples/DemoServer/Package.swift, pick the
+// DemoServer scheme and press ⌘R) or from a terminal with `swift run`,
+// then open http://127.0.0.1:8080.
+
 let app = try await Application.make(.detect())
-let shelf = PlantShelf()
 
-// Full pages.
-app.get { _ in
-    HomePage(plants: await shelf.all())
+// Default address. `swift run DemoServer serve --port 9000` still overrides it.
+app.http.server.configuration.hostname = Environment.get("HOST") ?? "127.0.0.1"
+app.http.server.configuration.port = Environment.get("PORT").flatMap(Int.init) ?? 8080
+
+// The showcase: a home page and one page per feature area.
+app.get { _ in ShowcaseHomePage() }
+for topic in Topics.all {
+    app.get(PathComponent(stringLiteral: topic.slug)) { _ in TopicPage(topic: topic) }
 }
 
-app.get("plants", ":slug") { req in
-    guard let slug = req.parameters.get("slug"), let plant = await shelf.plant(slug: slug) else {
-        return HTMLResponse(status: .notFound) { AnyView(NotFoundPage()) }
-    }
-    return HTMLResponse { AnyView(PlantPage(plant: plant)) }
+// The capstone page, the page it explains, and the playground.
+app.get("capstone") { _ in CapstonePage() }
+registerMarketRoutes(app)
+app.get("playground") { _ in PlaygroundPage() }
+
+// Routes that the examples link to or submit to.
+registerFormRoutes(app)
+registerNavigationRoutes(app)
+registerComponentRoutes(app)
+registerDocumentRoutes(app)
+app.get("images", "leaf.svg") { _ in
+    Response(status: .ok, headers: ["Content-Type": "image/svg+xml"], body: .init(string: leafSVG))
 }
 
-app.get("plants", "new") { _ in
-    NewPlantPage(form: PlantForm(), errors: [])
-}
+// The Plant Shelf sample app.
+registerPlantShelfRoutes(app)
 
-app.post("plants") { req in
-    let form = try req.content.decode(PlantForm.self)
-    let errors = form.validate()
-    guard errors.isEmpty else {
-        return HTMLResponse(status: .unprocessableEntity) {
-            AnyView(NewPlantPage(form: form, errors: errors))
-        }
-    }
-    let plant = await shelf.add(form)
-    return HTMLResponse(status: .created) { AnyView(PlantPage(plant: plant, justAdded: true)) }
-}
-
-// A fragment: any view can be returned on its own, which suits htmx-style
-// partial updates.
-app.get("fragments", "plant-count") { _ in
-    PlantCount(count: await shelf.all().count)
-}
+let address = "http://\(app.http.server.configuration.hostname):\(app.http.server.configuration.port)"
+app.logger.notice("SwiftVaporUI showcase: open \(address) in your browser.")
 
 try await app.execute()
 try await app.asyncShutdown()

@@ -4,6 +4,8 @@ A SwiftUI-like DSL for building HTML views in [Vapor](https://vapor.codes).
 
 SwiftVaporUI lets you describe web pages with the declarative, composable syntax Swift developers already know from SwiftUI, and return them straight from Vapor routes. No template files, full type checking, and reusable components written in plain Swift.
 
+Want to see it first? Clone the repo and [run the showcase site](#try-the-showcase-site): every feature with its source code next to the live result, plus a complete example website.
+
 ## Quick look
 
 ```swift
@@ -78,20 +80,91 @@ Add the package to your `Package.swift`:
 
 and add `"SwiftVaporUI"` to your target's dependencies.
 
-## Repository layout
+## Try the showcase site
 
-- `Sources/SwiftVaporUI`: the library.
-- `Tests/SwiftVaporUITests`: unit tests.
-- `Examples/DemoServer`: "Plant Shelf", a small Vapor app with a shared layout, list and detail pages, a validated form, a 404 page and an HTML fragment route.
+The repository includes a showcase website built entirely with SwiftVaporUI. It has a page for each feature area, and every example shows the Swift source next to the live result it renders. The source on the page is read from the server's own Swift files, so it always matches what you see, and you can change a file, run again and watch the result change.
 
-## Running the demo server
+It also has:
+
+- a **capstone page**: a complete "night market" event website that uses most of the DSL, shown live and then taken apart step by step, from the data model to the routes that serve it;
+- a **playground** page backed by `Playground.swift`, for your own experiments;
+- **Plant Shelf**, a small app with a shared layout, list and detail pages and a validated form.
+
+### Clone
+
+```bash
+git clone https://github.com/yungdai/SwiftVaporUI.git
+cd SwiftVaporUI
+```
+
+### Run in Xcode
+
+1. Open `Examples/DemoServer/Package.swift` in Xcode (`open Examples/DemoServer/Package.swift`).
+2. Wait for the Swift packages to resolve.
+3. Choose the **DemoServer** scheme and **My Mac** as the destination.
+4. Press **⌘R**.
+5. Open http://127.0.0.1:8080 in your browser.
+
+The server logs the address in Xcode's console when it starts. Press **⌘.** to stop it.
+
+### Run from a terminal
 
 ```bash
 cd Examples/DemoServer
 swift run DemoServer
 ```
 
-Then open http://localhost:8080.
+Then open http://127.0.0.1:8080. To use another port, run `PORT=9000 swift run DemoServer` or `swift run DemoServer serve --port 9000`.
+
+### What's on the site
+
+| Page | Path |
+| --- | --- |
+| Home and a first view | `/` |
+| Text and headings | `/text` |
+| Layout stacks | `/layout` |
+| Styling modifiers | `/styling` |
+| Lists and ForEach | `/lists` |
+| Conditionals | `/conditionals` |
+| Tables | `/tables` |
+| Forms, inputs and buttons | `/forms` |
+| Navigation and links | `/navigation` |
+| Custom views | `/components` |
+| More elements | `/elements` |
+| Full documents | `/documents` |
+| Capstone: how the night market page is built | `/capstone` |
+| The night market page on its own | `/market` |
+| Playground | `/playground` |
+| Plant Shelf sample app | `/plants` |
+
+## Documentation
+
+The library has DocC documentation: a getting-started guide, an article per feature area and reference docs for every public type. In Xcode, open the root `Package.swift` and choose **Product › Build Documentation** (⌃⇧⌘D). The sources are in `Sources/SwiftVaporUI/SwiftVaporUI.docc`.
+
+## Repository layout
+
+- `Sources/SwiftVaporUI`: the library.
+- `Sources/SwiftVaporUI/SwiftVaporUI.docc`: the DocC catalog.
+- `Tests/SwiftVaporUITests`: unit tests.
+- `Examples/DemoServer`: the showcase server, a separate Vapor package that depends on the library by path.
+  - `Sources/DemoServer/Showcase/Topics`: one file per feature page.
+  - `Sources/DemoServer/Showcase/Capstone`: the night market page and the page that explains it.
+  - `Sources/DemoServer/Showcase/Playground.swift`: the playground.
+  - `Sources/DemoServer/PlantShelf`: the Plant Shelf sample app.
+
+### Adding an example
+
+Each example on a feature page is an `Example` whose preview is wrapped in marker comments:
+
+```swift
+Example("greeting", title: "A greeting") {
+    // snippet: greeting
+    Paragraph("Hello!")
+    // end-snippet
+}
+```
+
+The page shows the code between the markers next to the rendered result and the HTML it produced. A snippet id can appear more than once in a file, for example around a helper view defined further down, and the regions are shown together.
 
 ## Requirements
 

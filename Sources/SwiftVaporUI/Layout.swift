@@ -22,10 +22,14 @@ public enum VerticalAlignment: String, Sendable {
 /// stack vertically; that leaves the layout to your CSS classes. Pass an
 /// alignment or spacing to get a flexbox column.
 public struct VStack<Content: View>: View {
+    /// How children are aligned across the column, or `nil` to leave it to CSS.
     public let alignment: HorizontalAlignment?
+    /// The gap between children in pixels, or `nil` to leave it to CSS.
     public let spacing: Double?
+    /// The element's content.
     public let content: Content
 
+    /// Creates a vertical stack.
     public init(alignment: HorizontalAlignment? = nil, spacing: Double? = nil, @ViewBuilder content: () -> Content) {
         self.alignment = alignment
         self.spacing = spacing
@@ -42,10 +46,14 @@ public struct VStack<Content: View>: View {
 
 /// Arranges its children in a horizontal row, using a flexbox `<div>`.
 public struct HStack<Content: View>: View {
+    /// How children are aligned across the row.
     public let alignment: VerticalAlignment
+    /// The gap between children in pixels. `nil` leaves it to CSS.
     public let spacing: Double?
+    /// The element's content.
     public let content: Content
 
+    /// Creates a horizontal stack. Children are vertically centred with an 8 pixel gap unless you say otherwise.
     public init(alignment: VerticalAlignment = .center, spacing: Double? = 8, @ViewBuilder content: () -> Content) {
         self.alignment = alignment
         self.spacing = spacing
@@ -59,6 +67,7 @@ public struct HStack<Content: View>: View {
 
 /// Expands to fill the free space along the main axis of an `HStack` or `VStack`.
 public struct Spacer: View {
+    /// Creates a spacer.
     public init() {}
 
     public var body: Element<EmptyView> {
@@ -68,9 +77,12 @@ public struct Spacer: View {
 
 /// A `<nav>` landmark that lays its links out in a row.
 public struct NavigationBar<Content: View>: View {
+    /// The gap between links in pixels.
     public let spacing: Double
+    /// The element's content.
     public let content: Content
 
+    /// Creates a navigation bar whose links are built by `content`.
     public init(spacing: Double = 16, @ViewBuilder content: () -> Content) {
         self.spacing = spacing
         self.content = content()

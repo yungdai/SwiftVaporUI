@@ -2,6 +2,7 @@
 public struct EmptyView: View {
     public typealias Body = Never
 
+    /// Creates a view that renders nothing.
     public init() {}
 
     public func _render(into renderer: inout HTMLRenderer) {}
@@ -13,12 +14,15 @@ public struct EmptyView: View {
 /// is wrapped in a `<span>` to carry the attributes.
 public struct Text: View {
     public typealias Body = Never
+    /// The unescaped text.
     public let content: String
 
+    /// Creates text from a string. It is escaped when rendered.
     public init(_ content: String) {
         self.content = content
     }
 
+    /// Creates text from any value's `description`, such as a number.
     public init<S: CustomStringConvertible>(_ value: S) {
         self.content = value.description
     }
@@ -38,8 +42,10 @@ public struct Text: View {
 /// raw HTML, and are passed on to the next element instead.
 public struct RawHTML: View {
     public typealias Body = Never
+    /// The markup, written without escaping.
     public let html: String
 
+    /// Creates raw HTML. Only pass markup you trust.
     public init(_ html: String) {
         self.html = html
     }
@@ -54,6 +60,7 @@ public struct AnyView: View {
     public typealias Body = Never
     let view: any View
 
+    /// Wraps `view`, hiding its type.
     public init<Content: View>(_ view: Content) {
         if let erased = view as? AnyView {
             self = erased
@@ -69,8 +76,10 @@ public struct AnyView: View {
 
 /// Groups views without adding an element around them.
 public struct Group<Content: View>: View {
+    /// The element's content.
     public let content: Content
 
+    /// Creates the element with the content built by `content`.
     public init(@ViewBuilder content: () -> Content) {
         self.content = content()
     }
@@ -89,8 +98,10 @@ public struct Group<Content: View>: View {
 /// ```
 public struct ForEach<Content: View>: View {
     public typealias Body = Never
+    /// The rendered views, one per element.
     public let views: [Content]
 
+    /// Creates one view, built by `content`, for each element of `data`.
     public init<Data: Sequence>(_ data: Data, @ViewBuilder content: (Data.Element) throws -> Content) rethrows {
         self.views = try data.map(content)
     }
@@ -119,14 +130,19 @@ public struct ForEach<Content: View>: View {
 /// element around it.
 public struct Element<Content: View>: View {
     public typealias Body = Never
+    /// The tag name, such as `"time"`.
     public let tag: String
+    /// The element's own attributes. Modifiers add to these.
     public let attributes: HTMLAttributes
+    /// The element's content.
     public let content: Content
 
+    /// Creates an element with the given tag, attributes and content.
     public init(_ tag: String, attributes: HTMLAttributes = [:], @ViewBuilder content: () -> Content) {
         self.init(tag, attributes: attributes, wrapping: content())
     }
 
+    /// Creates an element that wraps an existing view.
     public init(_ tag: String, attributes: HTMLAttributes = [:], wrapping content: Content) {
         self.tag = tag
         self.attributes = attributes
@@ -147,6 +163,7 @@ public struct Element<Content: View>: View {
 }
 
 extension Element where Content == EmptyView {
+    /// Creates an element with no content, such as `<div></div>`.
     public init(_ tag: String, attributes: HTMLAttributes = [:]) {
         self.init(tag, attributes: attributes, wrapping: EmptyView())
     }
@@ -155,9 +172,12 @@ extension Element where Content == EmptyView {
 /// An HTML element with no content and no closing tag, such as `<img>`.
 public struct VoidElement: View {
     public typealias Body = Never
+    /// The tag name, such as `"wbr"`.
     public let tag: String
+    /// The element's own attributes. Modifiers add to these.
     public let attributes: HTMLAttributes
 
+    /// Creates a void element with the given tag and attributes.
     public init(_ tag: String, attributes: HTMLAttributes = [:]) {
         self.tag = tag
         self.attributes = attributes

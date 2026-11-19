@@ -12,6 +12,14 @@ let app = try await Application.make(.detect())
 app.http.server.configuration.hostname = Environment.get("HOST") ?? "127.0.0.1"
 app.http.server.configuration.port = Environment.get("PORT").flatMap(Int.init) ?? 8080
 
+// snippet: static-files
+// Serve CSS, JavaScript and images from the Public folder, so
+// Public/css/site.css is at /css/site.css. Vapor's default is
+// app.directory.publicDirectory, which is relative to the working directory;
+// this demo finds Public next to its Package.swift so it also works from Xcode.
+app.middleware.use(FileMiddleware(publicDirectory: demoPublicDirectory))
+// end-snippet
+
 // The showcase: a home page and one page per feature area.
 app.get { _ in ShowcaseHomePage() }
 for topic in Topics.all {
@@ -28,6 +36,7 @@ registerFormRoutes(app)
 registerNavigationRoutes(app)
 registerComponentRoutes(app)
 registerDocumentRoutes(app)
+registerMediaRoutes(app)
 app.get("images", "leaf.svg") { _ in
     Response(status: .ok, headers: ["Content-Type": "image/svg+xml"], body: .init(string: leafSVG))
 }

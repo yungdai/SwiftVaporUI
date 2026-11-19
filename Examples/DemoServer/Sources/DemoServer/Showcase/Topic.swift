@@ -19,15 +19,20 @@ enum Topics {
     static let all: [Topic] = [
         TextTopic.topic,
         LayoutTopic.topic,
+        ContainersTopic.topic,
         StylingTopic.topic,
+        CompositionTopic.topic,
         ListsTopic.topic,
         ConditionalsTopic.topic,
         TablesTopic.topic,
         FormsTopic.topic,
+        ControlsTopic.topic,
         NavigationTopic.topic,
         ComponentsTopic.topic,
         ElementsTopic.topic,
+        MediaTopic.topic,
         DocumentsTopic.topic,
+        PageSetupTopic.topic,
     ]
 
     static func topic(slug: String) -> Topic? {

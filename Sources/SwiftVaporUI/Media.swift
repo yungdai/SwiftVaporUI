@@ -127,7 +127,7 @@ public struct Video<Content: View>: View {
     }
 }
 
-/// Initializers for an element with no content.
+/// Initializers for a video with a single file and no fallback content.
 extension Video where Content == EmptyView {
 
     /// Creates a video player for a single file.
@@ -192,7 +192,7 @@ public struct Audio<Content: View>: View {
     }
 }
 
-/// Initializers for an element with no content.
+/// Initializers for audio with a single file and no fallback content.
 extension Audio where Content == EmptyView {
 
     /// Creates an audio player for a single file.

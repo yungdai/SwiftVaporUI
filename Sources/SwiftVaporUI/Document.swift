@@ -30,7 +30,6 @@ public struct HTMLDocument<HeadContent: View, Content: View>: View {
     // MARK: - Initializer
 
     /// Creates a document with a title, extra head content and body content.
-    /// ///
     /// - Parameters:
     ///   - title: The document title.
     ///   - language: The page language, such as `"en"` or `"fr"`.
@@ -66,7 +65,7 @@ public struct HTMLDocument<HeadContent: View, Content: View>: View {
     }
 }
 
-/// Initializers for an element with no content.
+/// Documents with nothing extra in the head.
 extension HTMLDocument where HeadContent == EmptyView {
 
     /// Creates a document with a title and body content, and nothing extra in its head.
@@ -303,15 +302,18 @@ public struct Script: View {
     // MARK: - Initializers
 
     /// Creates a script that loads `src`.
-    /// ///
     /// - Parameters:
     ///   - src: The script URL.
-    ///   - isDeferred: Adds `defer`, so the script runs after the document is parsed.
-    ///   - module: Adds `type="module"`.
-    public init(src: String, defer isDeferred: Bool = false, module: Bool = false) {
+    ///   - isDeferred: Adds `defer`: the script downloads while the page is
+    ///     parsed and runs, in order, once parsing is done.
+    ///   - isAsync: Adds `async`: the script runs as soon as it downloads, in
+    ///     any order. Use it for independent scripts such as analytics.
+    ///   - module: Adds `type="module"`. Modules are deferred by default.
+    public init(src: String, defer isDeferred: Bool = false, async isAsync: Bool = false, module: Bool = false) {
         var attributes: HTMLAttributes = ["src": src]
         if module { attributes["type"] = "module" }
         if isDeferred { attributes.setFlag("defer") }
+        if isAsync { attributes.setFlag("async") }
         self.attributes = attributes
         self.code = ""
     }

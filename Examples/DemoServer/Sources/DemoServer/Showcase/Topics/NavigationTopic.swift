@@ -85,6 +85,41 @@ enum NavigationTopic {
                 }
                 // end-snippet
             },
+
+            Example(
+                "navigation-link",
+                title: "NavigationLink and the current page",
+                summary: "NavigationLink(isActive:) marks the link to the page being shown with aria-current=\"page\", which screen readers announce and CSS can style."
+            ) {
+                // snippet: navigation-link
+                NavigationBar(spacing: 4) {
+                    NavigationLink("Stalls", destination: "#navigation-link", isActive: true)
+                    NavigationLink("Map", destination: "#navigation-link")
+                    NavigationLink("Visit", destination: "#navigation-link")
+                }
+                .class("pill-nav")
+                // end-snippet
+            },
+
+            Example(
+                "link-targets",
+                title: "Opening links elsewhere",
+                summary: "target: .blank opens a new tab and adds rel=\"noopener\" for you. Pass relationship for other rel values, such as nofollow for links you do not vouch for."
+            ) {
+                // snippet: link-targets
+                UnorderedList {
+                    ListItem {
+                        Link("Vapor documentation", destination: "https://docs.vapor.codes", target: .blank)
+                    }
+                    ListItem {
+                        Link("A visitor's blog", destination: "https://example.com", target: .blank, relationship: "nofollow noopener")
+                    }
+                    ListItem {
+                        Link("Download the menu", destination: "/images/leaf.svg").attribute("download", "menu.svg")
+                    }
+                }
+                // end-snippet
+            },
         ]
     )
 }

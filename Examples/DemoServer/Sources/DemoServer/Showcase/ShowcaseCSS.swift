@@ -123,4 +123,26 @@ pre.code { margin: 0; padding: 14px 16px; overflow: auto; font-size: .84rem; lin
 .status-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; }
 .sample-site header, .sample-site footer { background: #f1f3f6; padding: 8px 12px; border-radius: 6px; }
 .sample-site main { padding: 12px; }
+.svui-control { display: flex; gap: 10px; align-items: center; font-weight: 500; }
+.stack-form .svui-control { display: flex; margin: 0; }
+.stack-form .svui-control-title { min-width: 150px; font-weight: 600; font-size: .9rem; }
+.controls-form .svui-control input[type=range] { flex: 1; }
+.svui-radio-group { display: flex; gap: 16px; flex-wrap: wrap; }
+.svui-radio-group legend { font-weight: 600; font-size: .9rem; }
+.svui-radio-group .svui-control { font-weight: 400; }
+.svui-control input:disabled + .svui-control-title, .svui-control:has(:disabled) { color: var(--muted); }
+progress, meter { width: 180px; }
+.data-table caption { text-align: left; font-weight: 700; padding: 0 10px 8px; }
+.svui-tabs { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: #fff; }
+.svui-tab { color: var(--muted); }
+.svui-tab-input:checked + .svui-tab { color: var(--accent); }
+.svui-tab-panel { padding: 12px 16px; border-top: 1px solid var(--line); }
+.svui-menu-items a { padding: 6px 10px; border-radius: 6px; text-decoration: none; color: var(--ink); white-space: nowrap; font-weight: 400; }
+.svui-menu-items a:hover { background: #eceef2; }
+details:not(.svui-menu):not(.html-output) > summary { cursor: pointer; font-weight: 600; }
+dialog::backdrop { background: rgb(20 24 43 / 40%); }
+blockquote { margin: 0 0 12px; padding: 4px 16px; border-left: 4px solid var(--accent); background: var(--accent-soft); border-radius: 0 8px 8px 0; }
+kbd { font-family: ui-monospace, Menlo, monospace; font-size: .85em; border: 1px solid #cdd2db; border-bottom-width: 2px; border-radius: 4px; padding: 0 5px; background: #fafbfc; }
+mark { background: #fff1a8; padding: 0 2px; }
+nav a[aria-current=page] { background: var(--ink); color: #fff; }
 """

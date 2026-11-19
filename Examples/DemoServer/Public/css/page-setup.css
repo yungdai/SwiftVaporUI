@@ -1,0 +1,5 @@
+/* Served from Examples/DemoServer/Public by Vapor's FileMiddleware. */
+body { margin: 0; font: 16px/1.5 Georgia, serif; background: #fbf7ef; color: #3b2f1e; }
+header, main, footer { padding: 12px 20px; }
+header { background: #14182b; color: #ffb347; }
+.js-status { font-family: ui-monospace, Menlo, monospace; font-size: 13px; color: #1f6b35; }

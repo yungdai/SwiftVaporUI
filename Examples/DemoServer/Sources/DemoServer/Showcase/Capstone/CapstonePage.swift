@@ -16,19 +16,19 @@ struct CapstonePage: View {
              text: "Plain Swift structs and enums hold the content. Nothing here knows about HTML. In a real app this would come from Fluent or an API.",
              snippet: "market-data", file: marketDataSourceFile),
         Step(id: "page", title: "2. The page",
-             text: "MarketPage is the whole document. HTMLDocument writes the doctype and head, and the body is a list of smaller views, each taking only the data it needs.",
+             text: "MarketPage is the whole document. HTMLDocument writes the doctype and head, and the body is a list of smaller views, each taking only the data it needs. The market's colours go into the environment once, with .environment(\\.marketTheme, ...), and any view inside can read them.",
              snippet: "market-page", file: marketPageSourceFile),
         Step(id: "header", title: "3. Header and hero",
-             text: "HStack, Spacer and NavigationBar build the top bar. The hero uses Button(action: .navigate) for links styled as buttons, and a small HeroStat component three times.",
+             text: "HStack, Spacer, NavigationBar and NavigationLink build the top bar, with an inline SVG lantern and a Menu that opens without JavaScript. HeroStat reads the lantern colour with @ViewEnvironment.",
              snippet: "market-header", file: marketPageSourceFile),
         Step(id: "stalls", title: "4. Stalls, with a filter",
-             text: "The category filter is ordinary links with a query string. The route reads it and passes it in, and .class(_:when:) marks the active one. Each card uses if/else if for its badge.",
+             text: "The category filter is NavigationLinks with a query string; isActive marks the current one. A LazyVGrid with an adaptive column lays out the cards, and the MarketCard ViewModifier styles each one, fading sold-out stalls.",
              snippet: "market-stalls", file: marketPageSourceFile),
         Step(id: "schedule", title: "5. Schedule and FAQ",
-             text: "A Table built with ForEach, and native Details elements for the questions, so they open without any JavaScript.",
+             text: "A TabView switches between the programme and directions with CSS alone. The programme is a Table with a caption and <time> elements; the directions are a Grid. The questions are DisclosureGroups.",
              snippet: "market-schedule", file: marketPageSourceFile),
         Step(id: "visit", title: "6. The form and its states",
-             text: "A switch over VisitState shows the form, the form with an error, or a confirmation. The form keeps the visitor's values when it is shown again.",
+             text: "A switch over VisitState shows the form, the form with an error, or a confirmation. Stepper, Toggle and ProgressView render real form fields, and the form keeps the visitor's values when it is shown again.",
              snippet: "market-visit", file: marketPageSourceFile),
         Step(id: "routes", title: "7. Serving it",
              text: "Two routes: GET renders the page, POST validates the form and renders the page again with the outcome, using HTMLResponse for the 422 status.",
@@ -42,7 +42,7 @@ struct CapstonePage: View {
             Header {
                 Paragraph("Putting it together").class("eyebrow")
                 Heading("A night market page")
-                Paragraph("This is a complete, realistic page built from the pieces on the other feature pages: layout stacks, styling, lists, conditionals, a table, a working form, navigation, custom components and a full document. Below the live page, each step shows the Swift that builds it.").class("lead")
+                Paragraph("This is a complete, realistic page built from the pieces on the other feature pages: layout stacks and grids, styling, a custom ViewModifier, the environment, lists, conditionals, tabs, a table, a working form with SwiftUI-style controls, navigation, custom components and a full document. Below the live page, each step shows the Swift that builds it.").class("lead")
                 HStack(spacing: 10) {
                     Button("Open the page on its own", action: .navigate(to: "/market")).class("button")
                     Button("Jump to the code", action: .navigate(to: "#how")).class("button-secondary")

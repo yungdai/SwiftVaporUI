@@ -23,6 +23,15 @@ struct ScheduleSlot: Sendable {
     let time: String
     let title: String
     let place: String
+
+    /// The time in 24-hour form for `<time datetime>`, such as `18:00`.
+    var dateTime: String {
+        let parts = time.split(separator: " ")
+        let clock = parts.first?.split(separator: ":").compactMap { Int($0) } ?? []
+        guard clock.count == 2 else { return time }
+        let hour = clock[0] % 12 + (parts.last == "pm" ? 12 : 0)
+        return String(format: "%02d:%02d", hour, clock[1])
+    }
 }
 
 /// Everything the page shows. In a real app this would come from a database.

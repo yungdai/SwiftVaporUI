@@ -6,20 +6,66 @@ let marketPageSourceFile = #filePath
 // snippet: market-page
 /// What happened with the "I'm coming" form, if anything.
 enum VisitState: Sendable {
+
+    /// The form has not been sent.
     case notSent
+
+    /// The visit is booked.
     case confirmed(name: String, guests: Int)
+
+    /// The form had a problem; show it again with the message.
     case failed(message: String, form: VisitForm)
 }
 
+/// The colours of the market, passed to every view through the environment.
+struct MarketTheme: Sendable {
+
+    /// The warm accent used for highlights.
+    var lantern: Color
+
+    /// The dark background of the header and footer.
+    var night: Color
+}
+
+/// The environment key for `MarketTheme`.
+private struct MarketThemeKey: EnvironmentKey {
+
+    /// The market's usual colours.
+    static let defaultValue = MarketTheme(lantern: .hex("ffb347"), night: .hex("14182b"))
+}
+
+/// The `marketTheme` environment value.
+extension EnvironmentValues {
+
+    /// The colours of the market for this part of the page.
+    var marketTheme: MarketTheme {
+        get { self[MarketThemeKey.self] }
+        set { self[MarketThemeKey.self] = newValue }
+    }
+}
+
+/// The night market page: the whole document.
 struct MarketPage: View {
+
+    // MARK: - Properties
+
+    /// The market to show.
     let market: NightMarket
+
+    /// The stall category to filter by, if any.
     let category: StallCategory?
+
+    /// What happened with the visit form.
     var visit: VisitState = .notSent
 
+    // MARK: - View
+
+    /// The document: head, header, sections and footer.
     var body: some View {
         HTMLDocument(title: market.name) {
             Meta(name: "description", content: "Street food, makers and music by the river.")
             ResourceLink(relationship: "icon", destination: "/images/leaf.svg")
+            SupportStyles()
             Style(marketCSS)
         } body: {
             MarketHeader(name: market.name)
@@ -35,48 +81,80 @@ struct MarketPage: View {
             }
             Footer {
                 Small("Built with SwiftVaporUI. No templates, no JavaScript framework.")
-                Link("How this page is made", destination: "/capstone").attribute("target", "_top")
+                Link("How this page is made", destination: "/capstone", target: .top)
             }
             .class("market-footer")
         }
+        .environment(\.marketTheme, MarketTheme(lantern: .hex("ffb347"), night: .hex("14182b")))
     }
 }
 // end-snippet
 
 // snippet: market-header
+/// A paper lantern, drawn inline so it needs no image file.
+struct LanternIcon: View {
+
+    /// The lantern colour from the market theme.
+    @ViewEnvironment(\.marketTheme) var theme
+
+    /// The lantern drawing.
+    var body: some View {
+        SVG(viewBox: "0 0 64 96", width: 18, height: 26) {
+            Element("ellipse", attributes: ["cx": "32", "cy": "50", "rx": "28", "ry": "38", "fill": "#ff6b4a"])
+            Element("ellipse", attributes: ["cx": "32", "cy": "50", "rx": "14", "ry": "38", "fill": theme.lantern.css])
+        }
+    }
+}
+
+/// The sticky top bar: the market's name, its sections and a share menu.
 struct MarketHeader: View {
+
+    /// The market's name.
     let name: String
 
+    /// A row with the brand, the section links and the share menu.
     var body: some View {
         Header {
             HStack(spacing: 24) {
                 Link(destination: "/market") {
-                    Span("🏮")
+                    LanternIcon()
                     Strong(name)
                 }
                 .class("market-brand")
                 Spacer()
                 NavigationBar(spacing: 20) {
-                    Link("Stalls", destination: "#stalls")
-                    Link("Tonight", destination: "#schedule")
-                    Link("Visit", destination: "#visit")
+                    NavigationLink("Stalls", destination: "#stalls")
+                    NavigationLink("Tonight", destination: "#schedule")
+                    NavigationLink("Visit", destination: "#visit")
                 }
                 .aria("label", "Market")
+                Menu("Share") {
+                    Link("Email a friend", destination: "mailto:?subject=Riverside%20Night%20Market")
+                    Link("Open the map", destination: "https://www.openstreetmap.org", target: .blank)
+                }
+                .class("share")
             }
         }
         .class("market-header")
     }
 }
 
+/// The big opening banner with the date, a call to action and three numbers.
 struct MarketHero: View {
+
+    /// The market to describe.
     let market: NightMarket
 
+    /// The banner.
     var body: some View {
         Section {
             Paragraph(market.date).class("hero-date")
             Heading("Street food, makers and music by the river")
-            Paragraph("Eight stalls, a riverside stage and a lantern walk every Friday night. Come hungry.")
-                .class("hero-lead")
+            Paragraph {
+                "Eight stalls, a riverside stage and a lantern walk every Friday night. "
+                Mark("Come hungry.")
+            }
+            .class("hero-lead")
             HStack(spacing: 12) {
                 Button("I'm coming", action: .navigate(to: "#visit")).class("market-button")
                 Button("See the stalls", action: .navigate(to: "#stalls")).class("market-button", "ghost")
@@ -92,13 +170,26 @@ struct MarketHero: View {
     }
 }
 
+/// One big number in the hero, in the theme's lantern colour.
 struct HeroStat: View {
+
+    // MARK: - Properties
+
+    /// The colours from the environment.
+    @ViewEnvironment(\.marketTheme) var theme
+
+    /// The number, or a word such as "Free".
     let value: String
+
+    /// What the number counts.
     let label: String
 
+    // MARK: - View
+
+    /// The number above its label.
     var body: some View {
         VStack(spacing: 0) {
-            Strong(value).class("hero-stat-value")
+            Strong(value).class("hero-stat-value").foregroundColor(theme.lantern)
             Small(label)
         }
     }
@@ -106,21 +197,46 @@ struct HeroStat: View {
 // end-snippet
 
 // snippet: market-stalls
+/// The white, rounded, softly shadowed card the page uses for stalls and questions.
+struct MarketCard: ViewModifier {
+
+    /// Whether the item is unavailable, which fades the card.
+    var isDimmed = false
+
+    /// Draws `content` as a card.
+    /// - Parameter content: The view the modifier is applied to.
+    /// - Returns: The content as a card.
+    func body(content: Self.Content) -> some View {
+        content
+            .class("market-card")
+            .shadow(color: .rgb(20, 24, 43, opacity: 0.06), radius: 24, y: 8)
+            .opacity(isDimmed ? 0.55 : 1)
+    }
+}
+
+/// The stalls, with links to filter them by category.
 struct StallSection: View {
+
+    /// The stalls to show.
     let stalls: [Stall]
+
+    /// The category being shown, or `nil` for all of them.
     let selected: StallCategory?
 
+    /// A heading with filter links, then a grid of stall cards.
     var body: some View {
         Section {
             HStack(spacing: 16) {
                 Heading("The stalls", level: .h2)
                 Spacer()
                 NavigationBar(spacing: 6) {
-                    Link("All", destination: "/market#stalls")
-                        .class("active", when: selected == nil)
+                    NavigationLink("All", destination: "/market#stalls", isActive: selected == nil)
                     ForEach(StallCategory.allCases) { category in
-                        Link(category.title, destination: "/market?category=\(category.rawValue)#stalls")
-                            .class("active", when: category == selected)
+                        NavigationLink(
+                            category.title,
+                            destination: "/market?category=\(category.rawValue)#stalls",
+                            isActive: category == selected
+                        )
                     }
                 }
                 .class("filters")
@@ -131,21 +247,24 @@ struct StallSection: View {
             if stalls.isEmpty {
                 Paragraph("No stalls in this category tonight.")
             } else {
-                Div {
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: 230))], spacing: 16) {
                     ForEach(stalls) { stall in
                         StallCard(stall: stall)
                     }
                 }
-                .class("stall-grid")
             }
         }
         .id("stalls")
     }
 }
 
+/// One stall: its category, a badge, its name, a blurb and tags.
 struct StallCard: View {
+
+    /// The stall to show.
     let stall: Stall
 
+    /// The card.
     var body: some View {
         Article {
             HStack(spacing: 8) {
@@ -166,54 +285,75 @@ struct StallCard: View {
             }
         }
         .class("stall")
-        .class("is-sold-out", when: stall.isSoldOut)
+        .modifier(MarketCard(isDimmed: stall.isSoldOut))
     }
 }
 // end-snippet
 
 // snippet: market-schedule
+/// Tonight's programme and how to get there, as tabs.
 struct ScheduleSection: View {
+
+    /// Tonight's programme.
     let schedule: [ScheduleSlot]
 
+    /// A heading and a tab view.
     var body: some View {
         Section {
             Heading("Tonight", level: .h2)
-            Table {
-                TableHead {
-                    TableRow {
-                        TableHeaderCell("Time")
-                        TableHeaderCell("What")
-                        TableHeaderCell("Where")
-                    }
-                }
-                TableBody {
-                    ForEach(schedule) { slot in
-                        TableRow {
-                            TableCell(slot.time).class("time")
-                            TableCell { Strong(slot.title) }
-                            TableCell(slot.place)
+            TabView(id: "tonight") {
+                Tab("Programme") {
+                    Table {
+                        TableCaption("Every Friday from 6pm")
+                        TableHead {
+                            TableRow {
+                                TableHeaderCell("Time")
+                                TableHeaderCell("What")
+                                TableHeaderCell("Where")
+                            }
                         }
+                        TableBody {
+                            ForEach(schedule) { slot in
+                                TableRow {
+                                    TableCell { Time(slot.time, dateTime: slot.dateTime) }.class("time")
+                                    TableCell { Strong(slot.title) }
+                                    TableCell(slot.place)
+                                }
+                            }
+                        }
+                    }
+                    .class("schedule")
+                }
+                Tab("Getting there") {
+                    Grid(alignment: .top, horizontalSpacing: 20, verticalSpacing: 10) {
+                        GridRow { Strong("On foot"); "Ten minutes from the station along the river path." }
+                        GridRow { Strong("By bike"); "Racks by the bridge, free all night." }
+                        GridRow { Strong("By bus"); "Routes 4 and 11 stop at Riverside." }
                     }
                 }
             }
-            .class("schedule")
+            .class("tonight")
         }
         .id("schedule")
     }
 }
 
+/// Common questions, each one opening to show its answer.
 struct FAQSection: View {
+
+    /// The questions and answers.
     let faqs: [(question: String, answer: String)]
 
+    /// A heading and a disclosure group per question.
     var body: some View {
         Section {
             Heading("Good to know", level: .h2)
             ForEach(faqs) { faq in
-                Details {
-                    Summary(faq.question)
+                DisclosureGroup(faq.question) {
                     Paragraph(faq.answer)
                 }
                 .class("faq")
+                .modifier(MarketCard())
             }
         }
     }
@@ -221,9 +361,13 @@ struct FAQSection: View {
 // end-snippet
 
 // snippet: market-visit
+/// The "I'm coming" section: the form, the form with an error, or a confirmation.
 struct VisitSection: View {
+
+    /// What happened with the form.
     let visit: VisitState
 
+    /// The section for the current state.
     var body: some View {
         Section {
             Heading("Let us know you're coming", level: .h2)
@@ -247,26 +391,20 @@ struct VisitSection: View {
     }
 }
 
+/// The form, filled in with the visitor's earlier values when shown again.
 struct VisitFormView: View {
+
+    /// The values to fill in.
     let form: VisitForm
 
+    /// The form.
     var body: some View {
         Form(action: "/market/visit#visit", method: .post) {
             Label("Your name", for: "visit-name")
             TextField("Sam", name: "name", id: "visit-name", text: form.name, autocomplete: "given-name")
-            Label("How many of you?", for: "visit-guests")
-            Select(name: "guests") {
-                for count in 1...8 {
-                    Option("\(count)", selected: "\(count)" == (form.guests ?? "2"))
-                }
-            }
-            .id("visit-guests")
-            Label {
-                Input(type: .checkbox, name: "updates", value: "yes")
-                    .flag("checked", if: form.updates == "yes")
-                " Email me if it's cancelled"
-            }
-            .class("check")
+            Stepper("How many of you?", name: "guests", value: Int(form.guests ?? "") ?? 2, in: 1...8)
+            Toggle("Email me if it's cancelled", name: "updates", isOn: form.updates == "yes", value: "yes")
+            ProgressView("Riverside tables booked", value: 31, total: 40)
             Button("I'm coming").class("market-button")
         }
     }
@@ -327,12 +465,12 @@ section { margin-top: 48px; }
 h2 { font-size: 1.6rem; margin: 0 0 16px; }
 .section-head { flex-wrap: wrap; margin-bottom: 16px; } .section-head h2 { margin: 0; }
 .filters a { text-decoration: none; color: var(--soft); padding: 4px 12px; border-radius: 999px; font-size: .9rem; }
-.filters a.active { background: var(--night); color: #fff; }
+.filters a[aria-current=page] { background: var(--night); color: #fff; }
 .stall-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 16px; }
-.stall { background: #fff; border-radius: 16px; padding: 16px 18px; box-shadow: 0 1px 2px rgba(20,24,43,.06), 0 8px 24px rgba(20,24,43,.06); }
+.market-card { background: #fff; border-radius: 16px; }
+.stall { padding: 16px 18px; }
 .stall h3 { margin: 10px 0 4px; font-size: 1.1rem; }
 .stall p { margin: 0 0 8px; color: var(--soft); font-size: .93rem; }
-.stall.is-sold-out { opacity: .55; }
 .chip { font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; padding: 2px 10px; border-radius: 999px; }
 .chip-food { background: #ffe8dc; color: #b93c10; } .chip-drink { background: #dff1ff; color: #1b5f93; }
 .chip-crafts { background: #efe6ff; color: #5b34a8; } .chip-music { background: #e2f6e9; color: #1f7a45; }
@@ -347,14 +485,29 @@ h2 { font-size: 1.6rem; margin: 0 0 16px; }
 .visit form { display: grid; gap: 8px; background: #fff; padding: 20px; border-radius: 16px; box-shadow: 0 8px 24px rgba(20,24,43,.06); }
 .visit label { font-weight: 600; font-size: .9rem; }
 .visit input[type=text], .visit select { padding: 10px 12px; border: 1px solid #ddd8cc; border-radius: 10px; font: inherit; }
-.visit .check { font-weight: 400; display: flex; align-items: center; gap: 6px; margin: 4px 0 8px; }
+.visit .svui-control { display: flex; align-items: center; gap: 10px; }
+.visit .svui-control input[type=number] { width: 80px; padding: 8px 10px; border: 1px solid #ddd8cc; border-radius: 10px; font: inherit; }
+.visit .svui-control input[type=checkbox] + .svui-control-title { font-weight: 400; }
+.visit progress { flex: 1; accent-color: #c2410c; }
 .visit form .market-button { justify-self: start; }
 .confirmation { background: #e2f6e9; border-radius: 12px; padding: 16px; }
 .form-error { background: #ffe8dc; color: #9a3412; border-radius: 10px; padding: 10px 14px; }
-.faq { background: #fff; border-radius: 12px; padding: 12px 16px; margin-bottom: 10px; box-shadow: 0 1px 2px rgba(20,24,43,.06); }
+.faq { border-radius: 12px; padding: 12px 16px; margin-bottom: 10px; }
 .faq summary { cursor: pointer; font-weight: 600; }
 .faq p { margin: 8px 0 0; color: var(--soft); }
 .market-footer { background: var(--night); color: #b8bbd3; text-align: center; padding: 28px 24px; display: flex; flex-direction: column; gap: 4px; align-items: center; }
 .market-footer a { color: var(--lantern); }
+.market-brand { align-items: center; }
+.share > summary { color: #f4f1ff; opacity: .8; }
+.share .svui-menu-items { left: auto; right: 0; background: #fff; color: var(--ink); border: 0; box-shadow: 0 8px 24px rgba(20,24,43,.2); }
+.market-header .share .svui-menu-items a { color: var(--ink); padding: 6px 10px; white-space: nowrap; }
+mark { background: var(--lantern); color: var(--night); padding: 0 4px; border-radius: 4px; }
+.tonight { background: #fff; border-radius: 16px; box-shadow: 0 8px 24px rgba(20,24,43,.06); }
+.tonight .svui-tab { color: var(--soft); font-weight: 600; }
+.tonight .svui-tab-input:checked + .svui-tab { color: #c2410c; }
+.tonight .svui-tab-panel { border-top: 1px solid #f0ece3; }
+.tonight .svui-tab-panel > .svui-grid { margin: 12px 8px; }
+.tonight .schedule { box-shadow: none; border-radius: 0 0 16px 16px; }
+.schedule caption { text-align: left; padding: 12px 16px 4px; color: var(--soft); font-size: .9rem; }
 @media (max-width: 640px) { .hero { padding: 40px 24px; } .market-header nav { display: none; } }
 """

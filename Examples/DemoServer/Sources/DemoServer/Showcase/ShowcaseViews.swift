@@ -5,17 +5,34 @@ import SwiftVaporUI
 
 /// The page shell: document head, top bar, topic sidebar and main column.
 struct ShowcaseLayout<Content: View>: View {
+
+    // MARK: - Properties
+
+    /// The page title, shown in the browser tab.
     let title: String
+
     /// The path of the current page, used to highlight the sidebar link.
     let currentPath: String
+
+    /// The page's own content.
     let content: Content
 
+    // MARK: - Initializer
+
+    /// Creates a showcase page.
+    /// - Parameters:
+    ///   - title: The page title, shown in the browser tab.
+    ///   - currentPath: The path of the current page, used to highlight the sidebar link.
+    ///   - content: A view builder that creates the page's own content.
     init(title: String, currentPath: String, @ViewBuilder content: () -> Content) {
         self.title = title
         self.currentPath = currentPath
         self.content = content()
     }
 
+    // MARK: - View
+
+    /// The elements this view is made of.
     var body: some View {
         HTMLDocument(title: "\(title) · SwiftVaporUI Showcase") {
             Meta(name: "description", content: "Live examples of the SwiftVaporUI DSL, each shown next to its Swift source.")
@@ -79,8 +96,15 @@ struct ShowcaseLayout<Content: View>: View {
 /// One example: the Swift source on the left, the live result on the
 /// right, and the HTML it produced underneath.
 struct ExampleView: View {
+
+    // MARK: - Properties
+
+    /// The example to show.
     let example: Example
 
+    // MARK: - View
+
+    /// The elements this view is made of.
     var body: some View {
         let source = example.source
         let html = example.html
@@ -122,8 +146,15 @@ struct ExampleView: View {
 
 /// Highlighted Swift source with a copy button and the file it came from.
 struct CodePanel: View {
+
+    // MARK: - Properties
+
+    /// The Swift source to show.
     let source: SourceSnippet
 
+    // MARK: - View
+
+    /// The elements this view is made of.
     var body: some View {
         Div {
             HStack(spacing: 8) {
@@ -149,8 +180,15 @@ struct CodePanel: View {
 /// A topic page: introduction, contents, every example, and links to the
 /// neighbouring topics.
 struct TopicPage: View {
+
+    // MARK: - Properties
+
+    /// The topic to show.
     let topic: Topic
 
+    // MARK: - View
+
+    /// The elements this view is made of.
     var body: some View {
         let index = Topics.all.firstIndex { $0.slug == topic.slug } ?? 0
         let previous = index > 0 ? Topics.all[index - 1] : nil
@@ -206,6 +244,8 @@ struct TopicPage: View {
 
 /// The landing page.
 struct ShowcaseHomePage: View {
+
+    /// The elements this view is made of.
     var body: some View {
         ShowcaseLayout(title: "Home", currentPath: "/") {
             Header {
@@ -261,7 +301,10 @@ struct ShowcaseHomePage: View {
     }
 }
 
+/// The examples shown on the home page.
 enum HomeExamples {
+
+    /// The example on the home page.
     static let quickStart = Example(
         "quick-start",
         title: "A first view",
@@ -274,10 +317,20 @@ enum HomeExamples {
 }
 
 // snippet: quick-start
+/// The home page's quick-start example view.
 struct Greeting: View {
+
+    // MARK: - Properties
+
+    /// The visitor's name.
     let name: String
+
+    /// How many unread messages the visitor has.
     let unread: Int
 
+    // MARK: - View
+
+    /// The elements this view is made of.
     var body: some View {
         Section {
             Heading("Hello, \(name)", level: .h3)

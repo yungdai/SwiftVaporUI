@@ -4,6 +4,12 @@ import Foundation
 // on them. Every control renders a real form field, so it submits with its
 // `Form` and works without JavaScript.
 
+/// The attributes every typed input starts with.
+/// - Parameters:
+///   - type: The input type.
+///   - name: The field name.
+///   - id: The element `id`.
+/// - Returns: The `type`, `name` and `id` attributes.
 private func inputAttributes(_ type: InputType, name: String?, id: String?) -> HTMLAttributes {
     var attributes: HTMLAttributes = ["type": type.rawValue]
     attributes["name"] = name

@@ -94,8 +94,12 @@ struct MarketPage: View {
 /// A paper lantern, drawn inline so it needs no image file.
 struct LanternIcon: View {
 
+    // MARK: - Properties
+
     /// The lantern colour from the market theme.
     @ViewEnvironment(\.marketTheme) var theme
+
+    // MARK: - View
 
     /// The lantern drawing.
     var body: some View {
@@ -109,8 +113,12 @@ struct LanternIcon: View {
 /// The sticky top bar: the market's name, its sections and a share menu.
 struct MarketHeader: View {
 
+    // MARK: - Properties
+
     /// The market's name.
     let name: String
+
+    // MARK: - View
 
     /// A row with the brand, the section links and the share menu.
     var body: some View {
@@ -142,8 +150,12 @@ struct MarketHeader: View {
 /// The big opening banner with the date, a call to action and three numbers.
 struct MarketHero: View {
 
+    // MARK: - Properties
+
     /// The market to describe.
     let market: NightMarket
+
+    // MARK: - View
 
     /// The banner.
     var body: some View {
@@ -200,8 +212,12 @@ struct HeroStat: View {
 /// The white, rounded, softly shadowed card the page uses for stalls and questions.
 struct MarketCard: ViewModifier {
 
+    // MARK: - Properties
+
     /// Whether the item is unavailable, which fades the card.
     var isDimmed = false
+
+    // MARK: - ViewModifier
 
     /// Draws `content` as a card.
     /// - Parameter content: The view the modifier is applied to.
@@ -217,11 +233,15 @@ struct MarketCard: ViewModifier {
 /// The stalls, with links to filter them by category.
 struct StallSection: View {
 
+    // MARK: - Properties
+
     /// The stalls to show.
     let stalls: [Stall]
 
     /// The category being shown, or `nil` for all of them.
     let selected: StallCategory?
+
+    // MARK: - View
 
     /// A heading with filter links, then a grid of stall cards.
     var body: some View {
@@ -261,8 +281,12 @@ struct StallSection: View {
 /// One stall: its category, a badge, its name, a blurb and tags.
 struct StallCard: View {
 
+    // MARK: - Properties
+
     /// The stall to show.
     let stall: Stall
+
+    // MARK: - View
 
     /// The card.
     var body: some View {
@@ -294,8 +318,12 @@ struct StallCard: View {
 /// Tonight's programme and how to get there, as tabs.
 struct ScheduleSection: View {
 
+    // MARK: - Properties
+
     /// Tonight's programme.
     let schedule: [ScheduleSlot]
+
+    // MARK: - View
 
     /// A heading and a tab view.
     var body: some View {
@@ -341,8 +369,12 @@ struct ScheduleSection: View {
 /// Common questions, each one opening to show its answer.
 struct FAQSection: View {
 
+    // MARK: - Properties
+
     /// The questions and answers.
     let faqs: [(question: String, answer: String)]
+
+    // MARK: - View
 
     /// A heading and a disclosure group per question.
     var body: some View {
@@ -364,8 +396,12 @@ struct FAQSection: View {
 /// The "I'm coming" section: the form, the form with an error, or a confirmation.
 struct VisitSection: View {
 
+    // MARK: - Properties
+
     /// What happened with the form.
     let visit: VisitState
+
+    // MARK: - View
 
     /// The section for the current state.
     var body: some View {
@@ -394,8 +430,12 @@ struct VisitSection: View {
 /// The form, filled in with the visitor's earlier values when shown again.
 struct VisitFormView: View {
 
+    // MARK: - Properties
+
     /// The values to fill in.
     let form: VisitForm
+
+    // MARK: - View
 
     /// The form.
     var body: some View {
@@ -412,6 +452,8 @@ struct VisitFormView: View {
 // end-snippet
 
 // snippet: market-routes
+/// Registers the market page and its form route.
+/// - Parameter app: The application to add the routes to.
 func registerMarketRoutes(_ app: Application) {
     let market = NightMarket()
 

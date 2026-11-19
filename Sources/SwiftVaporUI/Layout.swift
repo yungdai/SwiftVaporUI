@@ -157,6 +157,12 @@ public struct NavigationBar<Content: View>: View {
     }
 }
 
+/// The inline CSS for a flexbox stack.
+/// - Parameters:
+///   - direction: `row` or `column`.
+///   - alignment: The `align-items` value, if any.
+///   - spacing: The gap in pixels, if any.
+/// - Returns: The CSS declarations.
 func stackStyle(_ direction: String, _ alignment: String?, _ spacing: Double?) -> String {
     var style = "display: flex; flex-direction: \(direction)"
     if let alignment {

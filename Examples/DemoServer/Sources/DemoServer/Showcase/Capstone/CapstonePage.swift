@@ -3,14 +3,26 @@ import SwiftVaporUI
 /// The capstone: a realistic page that uses most of the DSL, shown live
 /// and then taken apart piece by piece.
 struct CapstonePage: View {
+
+    // MARK: - Nested Types
+
+    /// One step of the walkthrough.
     struct Step: Sendable {
+        /// The step's anchor.
         let id: String
+        /// The step's heading.
         let title: String
+        /// What the step explains.
         let text: String
+        /// The snippet marker id of its code.
         let snippet: String
+        /// The file the code is in.
         let file: String
     }
 
+    // MARK: - Static Properties
+
+    /// The walkthrough, in order.
     static let steps = [
         Step(id: "data", title: "1. The data",
              text: "Plain Swift structs and enums hold the content. Nothing here knows about HTML. In a real app this would come from Fluent or an API.",
@@ -35,6 +47,9 @@ struct CapstonePage: View {
              snippet: "market-routes", file: marketPageSourceFile),
     ]
 
+    // MARK: - View
+
+    /// The elements this view is made of.
     var body: some View {
         let html = MarketPage(market: NightMarket(), category: nil).render()
 

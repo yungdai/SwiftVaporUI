@@ -1,20 +1,42 @@
 import SwiftVaporUI
 
 // snippet: if
+/// Someone visiting the site, who may be signed in.
 struct Visitor: Sendable {
+
+    /// The visitor's name, if they are signed in.
     var name: String?
+
+    /// How many unread messages they have.
     var unread: Int
 }
 // end-snippet
 
 // snippet: switch
+/// How wet a plant's soil is.
 enum SoilMoisture: Sendable, CaseIterable {
-    case dry, moist, soaked
+
+    /// The soil needs water.
+    case dry
+
+    /// The soil is just right.
+    case moist
+
+    /// The soil is too wet.
+    case soaked
 }
 
+/// A soil reading, with advice that depends on it.
 struct MoistureReading: View {
+
+    // MARK: - Properties
+
+    /// The reading to show.
     let moisture: SoilMoisture
 
+    // MARK: - View
+
+    /// The elements this view is made of.
     var body: some View {
         switch moisture {
         case .dry:
@@ -31,7 +53,10 @@ struct MoistureReading: View {
 }
 // end-snippet
 
+/// The "Conditionals" showcase page.
 enum ConditionalsTopic {
+
+    /// The page's topic, with every example.
     static let topic = Topic(
         slug: "conditionals",
         title: "Conditionals",

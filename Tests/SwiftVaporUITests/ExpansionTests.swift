@@ -5,38 +5,68 @@ import XCTest
 // Tests for the HTML5 elements, SwiftUI-style containers and controls,
 // ViewModifier and the environment.
 
+/// A theme for the environment tests.
 private struct Theme: Sendable, Equatable {
+
+    /// The accent colour's name.
     var accent: String
 }
 
+/// The environment key for `Theme`.
 private struct ThemeKey: EnvironmentKey {
+
+    /// The theme when none is set.
     static let defaultValue = Theme(accent: "blue")
 }
 
+/// The `theme` environment value used by the tests.
 extension EnvironmentValues {
+
+    /// The theme for this part of the tree.
     fileprivate var theme: Theme {
         get { self[ThemeKey.self] }
         set { self[ThemeKey.self] = newValue }
     }
 }
 
+/// Shows the theme's accent, read from the environment.
 private struct AccentLabel: View {
+
+    // MARK: - Properties
+
+    /// The theme from the environment.
     @ViewEnvironment(\.theme) var theme
 
+    // MARK: - View
+
+    /// The elements this view is made of.
     var body: some View {
         Span(theme.accent)
     }
 }
 
+/// Wraps content in a classed box, for the ViewModifier tests.
 private struct Boxed: ViewModifier {
+
+    // MARK: - Properties
+
+    /// An extra class for the box.
     let tone: String
 
+    // MARK: - ViewModifier
+
+    /// Wraps `content` in a box.
+    /// - Parameter content: The view the modifier is applied to.
+    /// - Returns: The boxed content.
     func body(content: Self.Content) -> some View {
         Div { content }.class("box", tone)
     }
 }
 
+/// Tests for the HTML5 elements, inputs and attributes.
 final class HTML5ElementTests: XCTestCase {
+
+    /// Checks inline text elements.
     func testInlineTextElements() {
         let html = Paragraph {
             Mark("hit")
@@ -57,6 +87,7 @@ final class HTML5ElementTests: XCTestCase {
         )
     }
 
+    /// Checks dialog.
     func testDialog() {
         XCTAssertEqual(Dialog(isPresented: true) { "Hi" }.render(), "<dialog open>Hi</dialog>")
         XCTAssertEqual(Dialog { "Hi" }.id("d").render(), "<dialog id=\"d\">Hi</dialog>")
@@ -64,6 +95,7 @@ final class HTML5ElementTests: XCTestCase {
                        "<form method=\"dialog\"><button type=\"submit\">Close</button></form>")
     }
 
+    /// Checks table caption and spans.
     func testTableCaptionAndSpans() {
         let html = Table {
             TableCaption("Totals")
@@ -79,6 +111,7 @@ final class HTML5ElementTests: XCTestCase {
         )
     }
 
+    /// Checks option group and data list.
     func testOptionGroupAndDataList() {
         let select = Select(name: "s") {
             OptionGroup("Hot") { Option("Tea") }
@@ -92,6 +125,7 @@ final class HTML5ElementTests: XCTestCase {
                        "<datalist id=\"herbs\"><option value=\"Basil\">Basil</option></datalist>")
     }
 
+    /// Checks meter and output.
     func testMeterAndOutput() {
         XCTAssertEqual(
             Meter(value: 0.7, low: 0.3, high: 0.8, optimum: 0.1, label: "70%").render(),
@@ -100,6 +134,7 @@ final class HTML5ElementTests: XCTestCase {
         XCTAssertEqual(Output("5", name: "sum", for: ["a", "b"]).render(), "<output name=\"sum\" for=\"a b\">5</output>")
     }
 
+    /// Checks media.
     func testMedia() {
         let video = Video(poster: "/p.jpg", options: [.controls, .muted, .playsInline]) {
             Source(src: "/v.webm", type: "video/webm")
@@ -124,6 +159,7 @@ final class HTML5ElementTests: XCTestCase {
         XCTAssertEqual(picture, "<picture><source srcset=\"/a.avif\" type=\"image/avif\"><img src=\"/a.jpg\" alt=\"A\"></picture>")
     }
 
+    /// Checks iframe and svg.
     func testIFrameAndSVG() {
         XCTAssertEqual(
             IFrame(src: "/map", title: "Map", height: 200, sandbox: "").render(),
@@ -140,6 +176,7 @@ final class HTML5ElementTests: XCTestCase {
         XCTAssertTrue(SVG(viewBox: "0 0 1 1") { EmptyView() }.render().contains("aria-hidden=\"true\""))
     }
 
+    /// Checks typed inputs.
     func testTypedInputs() {
         XCTAssertEqual(Checkbox(name: "a", isChecked: true).render(), "<input type=\"checkbox\" name=\"a\" value=\"on\" checked>")
         XCTAssertEqual(RadioButton(name: "r", value: "x", id: "rx").render(), "<input type=\"radio\" name=\"r\" id=\"rx\" value=\"x\">")
@@ -155,12 +192,14 @@ final class HTML5ElementTests: XCTestCase {
                        "<input type=\"file\" name=\"f\" accept=\"image/*,.pdf\" multiple>")
     }
 
+    /// Checks attribute modifiers.
     func testAttributeModifiers() {
         let html = Div { "x" }.title("Tip").tabIndex(0).lang("fr").hidden().disabled().render()
         XCTAssertEqual(html, "<div title=\"Tip\" tabindex=\"0\" lang=\"fr\" hidden disabled>x</div>")
         XCTAssertEqual(Div { "x" }.hidden(false).render(), "<div>x</div>")
     }
 
+    /// Checks link target and rel.
     func testLinkTargetAndRel() {
         XCTAssertEqual(Link("A", destination: "/a", target: .blank).render(),
                        "<a href=\"/a\" target=\"_blank\" rel=\"noopener\">A</a>")
@@ -170,7 +209,10 @@ final class HTML5ElementTests: XCTestCase {
     }
 }
 
+/// Tests for the SwiftUI-style containers, controls and modifiers.
 final class SwiftUIStyleTests: XCTestCase {
+
+    /// Checks ZStack writes support style once.
     func testZStackWritesSupportStyleOnce() {
         let html = Div {
             ZStack(alignment: .bottomLeading) { "a"; "b" }.class("hero")
@@ -182,6 +224,7 @@ final class SwiftUIStyleTests: XCTestCase {
         XCTAssertTrue(html.contains("<div class=\"svui-zstack\" style=\"place-items: center center\">c</div>"))
     }
 
+    /// Checks support styles in head suppresses inline styles.
     func testSupportStylesInHeadSuppressesInlineStyles() {
         let html = Div {
             SupportStyles()
@@ -192,6 +235,7 @@ final class SwiftUIStyleTests: XCTestCase {
         XCTAssertEqual(html.components(separatedBy: "<style>").count - 1, 1)
     }
 
+    /// Checks grid.
     func testGrid() {
         let html = Grid(horizontalSpacing: 16, verticalSpacing: 4) {
             GridRow { "a"; "b" }
@@ -206,6 +250,7 @@ final class SwiftUIStyleTests: XCTestCase {
         ))
     }
 
+    /// Checks lazy v grid.
     func testLazyVGrid() {
         let html = LazyVGrid(columns: [GridItem(.fixed(100)), GridItem(), GridItem(.adaptive(minimum: 120, maximum: 200))]) {
             "a"
@@ -218,6 +263,7 @@ final class SwiftUIStyleTests: XCTestCase {
         )
     }
 
+    /// Checks scroll view.
     func testScrollView() {
         XCTAssertEqual(ScrollView { "a" }.render(),
                        "<div style=\"overflow-x: hidden; overflow-y: auto\" tabindex=\"0\">a</div>")
@@ -225,10 +271,12 @@ final class SwiftUIStyleTests: XCTestCase {
                        "<div style=\"overflow: auto; scrollbar-width: none\" tabindex=\"0\">a</div>")
     }
 
+    /// Checks divider.
     func testDivider() {
         XCTAssertEqual(Divider().render(), "<hr>")
     }
 
+    /// Checks toggle applies modifiers to the control.
     func testToggleAppliesModifiersToTheControl() {
         XCTAssertEqual(
             Toggle("Notify me", name: "notify", isOn: true).disabled().render(),
@@ -237,6 +285,7 @@ final class SwiftUIStyleTests: XCTestCase {
         )
     }
 
+    /// Checks picker styles.
     func testPickerStyles() {
         let menu = Picker("Spice", name: "spice", selection: "hot", options: ["mild", PickerOption("Hot!", value: "hot")])
             .class("wide")
@@ -254,6 +303,7 @@ final class SwiftUIStyleTests: XCTestCase {
         XCTAssertTrue(radios.contains("<input type=\"radio\" name=\"size\" value=\"m\">"))
     }
 
+    /// Checks slider and stepper.
     func testSliderAndStepper() {
         let slider = Slider("Volume", name: "v", value: 40, showsValue: true).render()
         XCTAssertTrue(slider.contains(
@@ -263,6 +313,7 @@ final class SwiftUIStyleTests: XCTestCase {
         XCTAssertTrue(stepper.contains("<input type=\"number\" name=\"g\" value=\"2\" min=\"1\" max=\"12\" step=\"2\">"))
     }
 
+    /// Checks date picker.
     func testDatePicker() throws {
         let date = try XCTUnwrap(ISO8601DateFormatter().date(from: "2026-11-21T18:05:00Z"))
         XCTAssertTrue(DatePicker("Day", name: "d", selection: date).render()
@@ -273,6 +324,7 @@ final class SwiftUIStyleTests: XCTestCase {
             .contains("<input type=\"datetime-local\" name=\"w\" value=\"2026-11-21T18:05\" min=\"2026-11-21T18:05\" max=\"2026-11-21T18:05\">"))
     }
 
+    /// Checks progress view.
     func testProgressView() {
         XCTAssertEqual(ProgressView().render(), "<progress></progress>")
         XCTAssertEqual(ProgressView(value: 3, total: 8).render(), "<progress value=\"3\" max=\"8\">38%</progress>")
@@ -280,6 +332,7 @@ final class SwiftUIStyleTests: XCTestCase {
         XCTAssertTrue(ProgressView("Upload", value: 0.5).render().contains("<span class=\"svui-control-title\">Upload</span>"))
     }
 
+    /// Checks disclosure group menu and navigation link.
     func testDisclosureGroupMenuAndNavigationLink() {
         XCTAssertEqual(DisclosureGroup("More", isExpanded: true) { "x" }.render(),
                        "<details open=\"\"><summary>More</summary>x</details>")
@@ -290,6 +343,7 @@ final class SwiftUIStyleTests: XCTestCase {
                        "<a href=\"/map\" aria-current=\"page\">Map</a>")
     }
 
+    /// Checks tab view.
     func testTabView() {
         let html = TabView(id: "info", selection: 1) {
             Tab("Menu") { "m" }
@@ -309,10 +363,12 @@ final class SwiftUIStyleTests: XCTestCase {
         ))
     }
 
+    /// Checks tab outside tab view is a section.
     func testTabOutsideTabViewIsASection() {
         XCTAssertEqual(Tab("Alone") { "x" }.render(), "<section><h3>Alone</h3>x</section>")
     }
 
+    /// Checks nested tab views keep their own counts.
     func testNestedTabViewsKeepTheirOwnCounts() {
         let html = TabView(id: "outer") {
             Tab("A") {
@@ -326,17 +382,22 @@ final class SwiftUIStyleTests: XCTestCase {
         XCTAssertFalse(html.contains("outer-tab-2"))
     }
 
+    /// Checks border and shadow.
     func testBorderAndShadow() {
         XCTAssertEqual(Div { "x" }.border(.gray, width: 2).shadow(radius: 4, y: 2).render(),
                        "<div style=\"border: 2px solid gray; box-shadow: 0px 2px 4px rgb(0 0 0 / 33%)\">x</div>")
     }
 
+    /// Checks opacity.
     func testOpacity() {
         XCTAssertEqual(Span("x").opacity(0.5).render(), "<span style=\"opacity: 0.5\">x</span>")
     }
 }
 
+/// Tests for ViewModifier, AnyView and the environment.
 final class CompositionTests: XCTestCase {
+
+    /// Checks view modifier.
     func testViewModifier() {
         XCTAssertEqual(Paragraph("Hi").modifier(Boxed(tone: "warm")).render(),
                        "<div class=\"box warm\"><p>Hi</p></div>")
@@ -344,11 +405,13 @@ final class CompositionTests: XCTestCase {
                        "<div class=\"box warm\" id=\"b\"><p>Hi</p></div>")
     }
 
+    /// Checks any view erases different types.
     func testAnyViewErasesDifferentTypes() {
         let views: [AnyView] = [AnyView(Strong("a")), AnyView(Text("b")), AnyView(AnyView(Emphasis("c")))]
         XCTAssertEqual(ForEach(views) { $0 }.render(), "<strong>a</strong>b<em>c</em>")
     }
 
+    /// Checks environment flows down and is scoped.
     func testEnvironmentFlowsDownAndIsScoped() {
         let html = Div {
             AccentLabel()
@@ -367,6 +430,7 @@ final class CompositionTests: XCTestCase {
         )
     }
 
+    /// Checks environment modifier keeps attribute modifiers.
     func testEnvironmentModifierKeepsAttributeModifiers() {
         XCTAssertEqual(AccentLabel().environment(\.theme, Theme(accent: "red")).class("x").render(),
                        "<span class=\"x\">red</span>")

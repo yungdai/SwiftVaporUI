@@ -4,8 +4,6 @@ import SwiftVaporUI
 /// disclosure groups and menus.
 enum ContainersTopic {
 
-    // MARK: - Static Properties
-
     /// The page's topic, with every example.
     static let topic = Topic(
         slug: "containers",
@@ -177,5 +175,4 @@ enum ContainersTopic {
             },
         ]
     )
-
 }

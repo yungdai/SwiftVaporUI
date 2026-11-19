@@ -1,6 +1,9 @@
 import SwiftVaporUI
 
+/// The "More elements" showcase page.
 enum ElementsTopic {
+
+    /// The page's topic, with every example.
     static let topic = Topic(
         slug: "elements",
         title: "More elements",

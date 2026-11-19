@@ -3,6 +3,10 @@ import SwiftVaporUI
 /// A small Swift syntax highlighter, enough to make the snippets easy to
 /// read. It returns escaped HTML with `<span class="tok-…">` around tokens.
 enum SwiftHighlighter {
+
+    // MARK: - Static Properties
+
+    /// The Swift keywords to colour.
     static let keywords: Set<String> = [
         "let", "var", "func", "struct", "enum", "class", "protocol", "extension", "init",
         "if", "else", "for", "in", "while", "switch", "case", "default", "return", "guard",
@@ -11,12 +15,21 @@ enum SwiftHighlighter {
         "typealias", "associatedtype", "break", "continue", "mutating", "inout", "let",
     ]
 
+    // MARK: - Methods
+
+    /// Colours Swift source with `<span>`s.
+    /// - Parameter code: The Swift source.
+    /// - Returns: Escaped HTML with token spans.
     static func highlight(_ code: String) -> String {
         let chars = Array(code)
         var html = ""
         var index = 0
         var previousNonSpace: Character?
 
+        /// Writes a token, wrapped in a span when it has a kind.
+        /// - Parameters:
+        ///   - text: The token's source text.
+        ///   - kind: The token kind used as the CSS class suffix, or `nil` for plain text.
         func emit(_ text: String, _ kind: String?) {
             let escaped = HTMLEscaping.escapeText(text)
             if let kind {
@@ -109,6 +122,10 @@ enum SwiftHighlighter {
 /// Indents rendered HTML so it is readable on the page: each block-level
 /// tag goes on its own line, while inline tags and text stay together.
 enum HTMLFormatter {
+
+    // MARK: - Static Properties
+
+    /// Tags that start a new indented line.
     static let blockTags: Set<String> = [
         "html", "head", "body", "title", "meta", "link", "style", "script",
         "div", "section", "header", "footer", "nav", "main", "article", "aside",
@@ -117,13 +134,21 @@ enum HTMLFormatter {
         "figure", "figcaption", "details", "summary", "form", "fieldset", "legend",
         "label", "input", "select", "option", "textarea", "button", "template", "img",
     ]
+
+    /// Tags with no closing tag.
     static let voidTags: Set<String> = ["meta", "link", "hr", "br", "input", "img"]
+
     /// Tags whose content is kept on the same line as the tag.
     static let leafTags: Set<String> = [
         "title", "h1", "h2", "h3", "h4", "h5", "h6", "p", "li", "dt", "dd", "th", "td",
         "figcaption", "summary", "legend", "label", "option", "textarea", "button", "pre",
     ]
 
+    // MARK: - Methods
+
+    /// Indents HTML so it is readable.
+    /// - Parameter html: The HTML on one line.
+    /// - Returns: The HTML on several indented lines.
     static func format(_ html: String) -> String {
         var lines: [String] = []
         var line = ""
@@ -131,6 +156,7 @@ enum HTMLFormatter {
         var leafDepth = 0
         var rest = Substring(html)
 
+        /// Writes the text collected so far as one line.
         func flush() {
             let trimmed = line.trimmingCharacters(in: .whitespaces)
             if !trimmed.isEmpty {

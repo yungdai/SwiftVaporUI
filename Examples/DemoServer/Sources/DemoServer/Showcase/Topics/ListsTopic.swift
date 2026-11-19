@@ -1,9 +1,16 @@
 import SwiftVaporUI
 
 // snippet: list
+/// A seedling in the list examples.
 struct Seedling: Sendable {
+
+    /// The seedling's name.
     let name: String
+
+    /// How many days it takes to sprout.
     let daysToSprout: Int
+
+    /// Whether it has been sown yet.
     let sown: Bool
 }
 
@@ -14,7 +21,10 @@ let seedlings = [
 ]
 // end-snippet
 
+/// The "Lists and ForEach" showcase page.
 enum ListsTopic {
+
+    /// The page's topic, with every example.
     static let topic = Topic(
         slug: "lists",
         title: "Lists and ForEach",

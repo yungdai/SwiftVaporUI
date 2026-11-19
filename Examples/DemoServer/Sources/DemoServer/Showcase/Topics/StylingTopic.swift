@@ -1,6 +1,9 @@
 import SwiftVaporUI
 
+/// The "Styling modifiers" showcase page.
 enum StylingTopic {
+
+    /// The page's topic, with every example.
     static let topic = Topic(
         slug: "styling",
         title: "Styling modifiers",

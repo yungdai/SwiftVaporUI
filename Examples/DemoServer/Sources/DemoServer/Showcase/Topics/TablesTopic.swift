@@ -1,9 +1,16 @@
 import SwiftVaporUI
 
 // snippet: data-table
+/// One crop's harvest, for the table examples.
 struct HarvestRow: Sendable {
+
+    /// The crop's name.
     let crop: String
+
+    /// The bed it grew in.
     let bed: String
+
+    /// How much was harvested, in kilograms.
     let kilograms: Double
 }
 
@@ -15,7 +22,10 @@ let harvest = [
 ]
 // end-snippet
 
+/// The "Tables" showcase page.
 enum TablesTopic {
+
+    /// The page's topic, with every example.
     static let topic = Topic(
         slug: "tables",
         title: "Tables",

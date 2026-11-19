@@ -1,8 +1,16 @@
 import SwiftVaporUI
 
+/// The shelf: every plant, and a link to add one.
 struct HomePage: View {
+
+    // MARK: - Properties
+
+    /// The plants on the shelf.
     let plants: [Plant]
 
+    // MARK: - View
+
+    /// The elements this view is made of.
     var body: some View {
         SiteLayout(title: "All plants") {
             Heading("Your plant shelf")
@@ -27,10 +35,20 @@ struct HomePage: View {
     }
 }
 
+/// One plant's details.
 struct PlantPage: View {
+
+    // MARK: - Properties
+
+    /// The plant to show.
     let plant: Plant
+
+    /// Whether the plant was just added, which shows a confirmation.
     var justAdded = false
 
+    // MARK: - View
+
+    /// The elements this view is made of.
     var body: some View {
         SiteLayout(title: plant.name) {
             if justAdded {
@@ -56,10 +74,20 @@ struct PlantPage: View {
     }
 }
 
+/// The form for adding a plant, with any errors from the last attempt.
 struct NewPlantPage: View {
+
+    // MARK: - Properties
+
+    /// The values to fill the form with.
     let form: PlantForm
+
+    /// Problems with the last submission.
     let errors: [String]
 
+    // MARK: - View
+
+    /// The elements this view is made of.
     var body: some View {
         SiteLayout(title: "Add a plant") {
             Heading("Add a plant")
@@ -105,7 +133,10 @@ struct NewPlantPage: View {
     }
 }
 
+/// Shown, with a 404 status, for a plant that does not exist.
 struct NotFoundPage: View {
+
+    /// The elements this view is made of.
     var body: some View {
         SiteLayout(title: "Not found") {
             Heading("No plant by that name")

@@ -1,6 +1,9 @@
 import SwiftVaporUI
 
+/// The "Layout stacks" showcase page.
 enum LayoutTopic {
+
+    /// The page's topic, with every example.
     static let topic = Topic(
         slug: "layout",
         title: "Layout stacks",

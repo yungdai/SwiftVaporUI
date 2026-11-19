@@ -1,6 +1,9 @@
 import SwiftVaporUI
 
+/// The "Custom views" showcase page.
 enum ComponentsTopic {
+
+    /// The page's topic, with every example.
     static let topic = Topic(
         slug: "components",
         title: "Custom views",
@@ -82,11 +85,23 @@ enum ComponentsTopic {
 }
 
 // snippet: properties
+/// A number with a label and an optional trend.
 struct StatTile: View {
+
+    // MARK: - Properties
+
+    /// What the number measures.
     let label: String
+
+    /// The number.
     let value: String
+
+    /// An optional note on the trend, such as `+3 this week`.
     var trend: String? = nil
 
+    // MARK: - View
+
+    /// The elements this view is made of.
     var body: some View {
         VStack(spacing: 2) {
             Small(label).class("muted")
@@ -103,11 +118,27 @@ struct StatTile: View {
 // end-snippet
 
 // snippet: content
+/// A titled panel with a body and an optional footer.
 struct Panel<Content: View, FooterContent: View>: View {
+
+    // MARK: - Properties
+
+    /// The panel's heading.
     let title: String
+
+    /// The panel's body.
     let content: Content
+
+    /// The panel's footer.
     let footer: FooterContent
 
+    // MARK: - Initializer
+
+    /// Creates a panel with a footer.
+    /// - Parameters:
+    ///   - title: The panel's heading.
+    ///   - content: A view builder that creates the panel's body.
+    ///   - footer: A view builder that creates the panel's footer.
     init(
         title: String,
         @ViewBuilder content: () -> Content,
@@ -118,6 +149,9 @@ struct Panel<Content: View, FooterContent: View>: View {
         self.footer = footer()
     }
 
+    // MARK: - View
+
+    /// The elements this view is made of.
     var body: some View {
         Article {
             Heading(title, level: .h3)
@@ -128,7 +162,13 @@ struct Panel<Content: View, FooterContent: View>: View {
     }
 }
 
+/// Initializers for an element with no content.
 extension Panel where FooterContent == EmptyView {
+
+    /// Creates a panel with no footer.
+    /// - Parameters:
+    ///   - title: The panel's heading.
+    ///   - content: A view builder that creates the panel's body.
     init(title: String, @ViewBuilder content: () -> Content) {
         self.init(title: title, content: content, footer: { EmptyView() })
     }
@@ -136,26 +176,55 @@ extension Panel where FooterContent == EmptyView {
 // end-snippet
 
 // snippet: composition
+/// How a plant is doing.
 enum PlantStatus: Sendable {
-    case happy, thirsty
 
+    /// The plant is doing well.
+    case happy
+
+    /// The plant needs water.
+    case thirsty
+
+    /// The status as shown to people.
     var label: String { self == .happy ? "Happy" : "Thirsty" }
+
+    /// The CSS class for the status badge.
     var badgeClass: String { self == .happy ? "badge-green" : "badge-orange" }
 }
 
+/// A coloured badge for a plant's status.
 struct StatusBadge: View {
+
+    // MARK: - Properties
+
+    /// The plant's status.
     let status: PlantStatus
 
+    // MARK: - View
+
+    /// The elements this view is made of.
     var body: some View {
         Span(status.label).class("badge", status.badgeClass)
     }
 }
 
+/// A plant's name, status and when it was last watered.
 struct PlantSummary: View {
+
+    // MARK: - Properties
+
+    /// The plant's name.
     let name: String
+
+    /// The plant's status.
     let status: PlantStatus
+
+    /// When it was last watered.
     let lastWatered: String
 
+    // MARK: - View
+
+    /// The elements this view is made of.
     var body: some View {
         Panel(title: name) {
             StatusBadge(status: status)
@@ -170,6 +239,8 @@ struct PlantSummary: View {
 
 // snippet: fragments
 // In main.swift:
+/// Registers the fragment routes the component examples load.
+/// - Parameter app: The application to add the routes to.
 func registerComponentRoutes(_ app: Application) {
     app.get("fragments", "stat") { _ in
         StatTile(label: "Fragments rendered", value: "1")

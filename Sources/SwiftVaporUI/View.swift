@@ -64,6 +64,7 @@ extension View where Body == Never {
     }
 }
 
+/// `Never` is the body of primitive views, so it must be encodable like every view.
 extension Never: @retroactive AsyncResponseEncodable {}
 
 /// `Never` is the body of primitive views, which render themselves.

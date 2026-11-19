@@ -4,8 +4,12 @@ import SwiftVaporUI
 /// Draws content as a card, optionally highlighted.
 struct CardStyle: ViewModifier {
 
+    // MARK: - Properties
+
     /// Whether to draw the card with an accent border.
     var isHighlighted = false
+
+    // MARK: - ViewModifier
 
     /// Wraps the content in a padded, rounded, shadowed box.
     /// - Parameter content: The view the modifier is applied to.

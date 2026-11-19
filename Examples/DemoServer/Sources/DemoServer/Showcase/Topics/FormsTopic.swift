@@ -1,7 +1,10 @@
 import Foundation
 import SwiftVaporUI
 
+/// The "Forms, inputs and buttons" showcase page.
 enum FormsTopic {
+
+    /// The page's topic, with every example.
     static let topic = Topic(
         slug: "forms",
         title: "Forms, inputs and buttons",
@@ -159,10 +162,20 @@ enum FormsTopic {
 }
 
 // snippet: handling
+/// A table of the fields a form sent.
 struct FormEcho: View {
+
+    // MARK: - Properties
+
+    /// The HTTP method the form used.
     let method: String
+
+    /// The fields the browser sent, in order.
     let fields: [(name: String, value: String)]
 
+    // MARK: - View
+
+    /// The elements this view is made of.
     var body: some View {
         Heading("Received a \(method) request", level: .h3)
         if fields.isEmpty {
@@ -181,6 +194,8 @@ struct FormEcho: View {
     }
 }
 
+/// Registers the routes the form examples submit to.
+/// - Parameter app: The application to add the routes to.
 func registerFormRoutes(_ app: Application) {
     app.on(.GET, "forms", "echo") { req in
         let fields = try req.query.decode([String: String].self)
@@ -195,9 +210,18 @@ func registerFormRoutes(_ app: Application) {
 
 /// The full page around `FormEcho`, inside the showcase layout.
 struct FormEchoPage: View {
+
+    // MARK: - Properties
+
+    /// The HTTP method the form used.
     let method: String
+
+    /// The fields the browser sent.
     let fields: [String: String]
 
+    // MARK: - View
+
+    /// The elements this view is made of.
     var body: some View {
         ShowcaseLayout(title: "Form received", currentPath: "/forms") {
             Header {

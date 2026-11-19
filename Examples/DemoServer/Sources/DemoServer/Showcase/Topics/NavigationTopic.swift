@@ -1,6 +1,9 @@
 import SwiftVaporUI
 
+/// The "Navigation and links" showcase page.
 enum NavigationTopic {
+
+    /// The page's topic, with every example.
     static let topic = Topic(
         slug: "navigation",
         title: "Navigation and links",
@@ -125,9 +128,17 @@ enum NavigationTopic {
 }
 
 // snippet: breadcrumbs
+/// A breadcrumb trail from the home page to the current one.
 struct Breadcrumbs: View {
+
+    // MARK: - Properties
+
+    /// The pages from the home page to this one.
     let trail: [(title: String, path: String)]
 
+    // MARK: - View
+
+    /// The elements this view is made of.
     var body: some View {
         Nav {
             OrderedList {
@@ -149,6 +160,8 @@ struct Breadcrumbs: View {
 // end-snippet
 
 // snippet: routes
+/// Registers the routes the navigation examples link to.
+/// - Parameter app: The application to add the routes to.
 func registerNavigationRoutes(_ app: Application) {
     app.get("navigation", "greet", ":name") { req in
         let name = req.parameters.get("name") ?? "friend"
@@ -156,9 +169,17 @@ func registerNavigationRoutes(_ app: Application) {
     }
 }
 
+/// A page that greets the name in its URL.
 struct GreetingPage: View {
+
+    // MARK: - Properties
+
+    /// The name from the URL.
     let name: String
 
+    // MARK: - View
+
+    /// The elements this view is made of.
     var body: some View {
         ShowcaseLayout(title: "Hello, \(name)", currentPath: "/navigation") {
             Heading("Hello, \(name)!")

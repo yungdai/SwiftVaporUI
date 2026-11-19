@@ -171,6 +171,31 @@ extension View {
         style("opacity", cssNumber(min(max(value, 0), 1)))
     }
 
+    /// Draws a solid border around the element.
+    ///
+    /// ```swift
+    /// Div { "Boxed" }.border(.gray, width: 2)
+    /// ```
+    public func border(_ color: Color, width: Double = 1) -> ModifiedView<Self> {
+        style("border", "\(cssNumber(width))px solid \(color.css)")
+    }
+
+    /// Adds a drop shadow behind the element, like SwiftUI's `shadow`.
+    ///
+    /// - Parameters:
+    ///   - color: The shadow color. Defaults to black at 33% opacity.
+    ///   - radius: The blur radius in pixels.
+    ///   - x: The horizontal offset in pixels.
+    ///   - y: The vertical offset in pixels.
+    public func shadow(
+        color: Color = .rgb(0, 0, 0, opacity: 0.33),
+        radius: Double,
+        x: Double = 0,
+        y: Double = 0
+    ) -> ModifiedView<Self> {
+        style("box-shadow", "\(cssNumber(x))px \(cssNumber(y))px \(cssNumber(radius))px \(color.css)")
+    }
+
     /// Fixes the width and/or height, in pixels.
     public func frame(width: Double? = nil, height: Double? = nil) -> ModifiedView<Self> {
         var declarations: [String] = []

@@ -86,6 +86,9 @@ public struct HTMLAttributes: Sendable, Equatable, ExpressibleByDictionaryLitera
         }
     }
 
+    /// Applies one modifier change.
+    ///
+    /// - Parameter change: The change to apply.
     mutating func apply(_ change: AttributeChange) {
         switch change {
         case let .set(name, value): set(name, value)
@@ -98,13 +101,20 @@ public struct HTMLAttributes: Sendable, Equatable, ExpressibleByDictionaryLitera
 
 /// A change a modifier makes to the attributes of the element it wraps.
 enum AttributeChange: Sendable, Equatable {
+    /// Sets an attribute, or a bare boolean attribute when the value is `nil`.
     case set(String, String?)
+    /// Removes an attribute.
     case remove(String)
+    /// Adds space-separated class names.
     case addClass(String)
+    /// Appends CSS declarations to `style`.
     case addStyle(String)
 }
 
 private extension String {
+    /// Removes spaces and semicolons from both ends.
+    ///
+    /// - Returns: The string without leading or trailing spaces and semicolons.
     func trimmingSeparators() -> String {
         let set: Set<Character> = [" ", ";"]
         var slice = Substring(self)

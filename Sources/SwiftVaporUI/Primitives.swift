@@ -58,6 +58,7 @@ public struct RawHTML: View {
 /// A type-erased view.
 public struct AnyView: View {
     public typealias Body = Never
+    /// The wrapped view.
     let view: any View
 
     /// Wraps `view`, hiding its type.
@@ -106,6 +107,9 @@ public struct ForEach<Content: View>: View {
         self.views = try data.map(content)
     }
 
+    /// Creates a view that renders `views` in order.
+    ///
+    /// - Parameter views: The views to render.
     init(views: [Content]) {
         self.views = views
     }

@@ -144,6 +144,7 @@ public struct ResourceLink: View {
 
 /// A `<meta>` tag for the document head.
 public struct Meta: View {
+    /// The element's attributes.
     let attributes: HTMLAttributes
 
     /// Creates `<meta charset>`. `HTMLDocument` already adds `utf-8`.
@@ -198,7 +199,9 @@ public struct Style: View {
 /// A script, either external (`src`) or inline. Inline code is not escaped,
 /// but any `</` inside it is written as `<\/` so it cannot close the tag early.
 public struct Script: View {
+    /// The element's attributes.
     let attributes: HTMLAttributes
+    /// The inline JavaScript, or an empty string for an external script.
     let code: String
 
     /// Creates a script that loads `src`.

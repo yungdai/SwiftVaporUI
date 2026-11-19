@@ -1,18 +1,27 @@
 /// Horizontal alignment of the children of a `VStack`.
 public enum HorizontalAlignment: String, Sendable {
+    /// Aligns children to the leading edge.
     case leading = "flex-start"
+    /// Centres children.
     case center = "center"
+    /// Aligns children to the trailing edge.
     case trailing = "flex-end"
+    /// Stretches children to fill the stack.
     case stretch = "stretch"
 }
 
 
 /// Vertical alignment of the children of an `HStack`.
 public enum VerticalAlignment: String, Sendable {
+    /// Aligns children to the top.
     case top = "flex-start"
+    /// Centres children.
     case center = "center"
+    /// Aligns children to the bottom.
     case bottom = "flex-end"
+    /// Stretches children to fill the stack.
     case stretch = "stretch"
+    /// Lines up the first line of text in each child.
     case baseline = "baseline"
 }
 

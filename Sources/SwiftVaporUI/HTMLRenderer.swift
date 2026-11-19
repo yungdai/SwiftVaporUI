@@ -10,13 +10,34 @@ public struct HTMLRenderer: Sendable {
     /// Attribute changes waiting for the next element, innermost modifier first.
     var pending: [AttributeChange] = []
 
+    /// Keys of the support style sheets already written, so each is written once.
+    var writtenSupportStyles: Set<String> = []
+
+    /// The `TabView` currently being rendered, if any.
+    var tabGroup: TabGroupState?
+
     /// Creates an empty renderer.
     public init() {}
 
+    /// Writes a small `<style>` element that a built-in view needs, unless a
+    /// style with the same key has already been written in this render.
+    mutating func writeSupportStyle(_ style: SupportStyle) {
+        guard writtenSupportStyles.insert(style.key).inserted else { return }
+        output += "<style>"
+        output += style.css
+        output += "</style>"
+    }
+
+    /// Writes markup exactly as given.
+    ///
+    /// - Parameter string: The markup to write.
     mutating func write(_ string: String) {
         output += string
     }
 
+    /// Writes text, escaping it.
+    ///
+    /// - Parameter string: The unescaped text.
     mutating func writeEscapedText(_ string: String) {
         output += HTMLEscaping.escapeText(string)
     }
@@ -29,6 +50,11 @@ public struct HTMLRenderer: Sendable {
         pending.removeAll()
     }
 
+    /// Writes an opening tag with its attributes.
+    ///
+    /// - Parameters:
+    ///   - tag: The tag name, already checked to be valid.
+    ///   - attributes: The attributes to write, already including any modifier changes.
     mutating func writeOpeningTag(_ tag: String, attributes: HTMLAttributes) {
         output += "<"
         output += tag
@@ -57,6 +83,12 @@ public enum HTMLEscaping {
         escape(string, quotes: true)
     }
 
+    /// Escapes `&`, `<` and `>`, and quotes too when asked.
+    ///
+    /// - Parameters:
+    ///   - string: The unescaped string.
+    ///   - quotes: Whether to escape double and single quotes.
+    /// - Returns: The escaped string.
     private static func escape(_ string: String, quotes: Bool) -> String {
         guard string.utf8.contains(where: { $0 == 0x26 || $0 == 0x3C || $0 == 0x3E || $0 == 0x22 || $0 == 0x27 }) else {
             return string

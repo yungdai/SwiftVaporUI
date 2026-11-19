@@ -8,8 +8,14 @@ public struct ModifiedView<Content: View>: View {
     public typealias Body = Never
     /// The view the modifier's attribute changes apply to.
     public let content: Content
+    /// The attribute changes, innermost first.
     let changes: [AttributeChange]
 
+    /// Creates a view with attribute changes.
+    ///
+    /// - Parameters:
+    ///   - content: The view the changes apply to.
+    ///   - changes: The attribute changes.
     init(content: Content, changes: [AttributeChange]) {
         self.content = content
         self.changes = changes
@@ -29,7 +35,11 @@ public struct ModifiedView<Content: View>: View {
 }
 
 extension View {
-    func modifier(_ changes: AttributeChange...) -> ModifiedView<Self> {
+    /// Wraps the view with attribute changes.
+    ///
+    /// - Parameter changes: The attribute changes.
+    /// - Returns: A view with the change applied.
+    func changing(_ changes: AttributeChange...) -> ModifiedView<Self> {
         ModifiedView(content: self, changes: changes)
     }
 
@@ -45,48 +55,66 @@ extension View {
 
     /// Sets the element's `id`.
     public func id(_ id: String) -> ModifiedView<Self> {
-        modifier(.set("id", id))
+        changing(.set("id", id))
     }
 
     /// Sets the ARIA `role`.
     public func role(_ role: String) -> ModifiedView<Self> {
-        modifier(.set("role", role))
+        changing(.set("role", role))
     }
 
     /// Sets the `title` attribute (the browser tooltip).
     public func tooltip(_ title: String) -> ModifiedView<Self> {
-        modifier(.set("title", title))
+        changing(.set("title", title))
+    }
+
+    /// Sets the `title` attribute: advisory text that browsers show as a
+    /// tooltip. The same as ``tooltip(_:)``.
+    public func title(_ title: String) -> ModifiedView<Self> {
+        tooltip(title)
+    }
+
+    /// Sets `tabindex`. Use `0` to make an element focusable in document
+    /// order and `-1` to make it focusable only from script.
+    public func tabIndex(_ index: Int) -> ModifiedView<Self> {
+        changing(.set("tabindex", String(index)))
+    }
+
+    /// Sets the language of the element's content, such as `"fr"` or
+    /// `"pt-BR"`, so screen readers and spell checkers use the right rules.
+    public func lang(_ language: String) -> ModifiedView<Self> {
+        changing(.set("lang", language))
     }
 
     /// Sets an attribute. Passing `nil` removes it.
     public func attribute(_ name: String, _ value: String?) -> ModifiedView<Self> {
-        modifier(value.map { .set(name, $0) } ?? .remove(name))
+        changing(value.map { .set(name, $0) } ?? .remove(name))
     }
 
     /// Adds a boolean attribute with no value, such as `novalidate`, when
     /// `condition` is true, and removes it otherwise.
     public func flag(_ name: String, if condition: Bool = true) -> ModifiedView<Self> {
-        modifier(condition ? .set(name, nil) : .remove(name))
+        changing(condition ? .set(name, nil) : .remove(name))
     }
 
     /// Sets a `data-*` attribute.
     public func data(_ key: String, _ value: String) -> ModifiedView<Self> {
-        modifier(.set("data-\(key)", value))
+        changing(.set("data-\(key)", value))
     }
 
     /// Sets an `aria-*` attribute.
     public func aria(_ key: String, _ value: String) -> ModifiedView<Self> {
-        modifier(.set("aria-\(key)", value))
+        changing(.set("aria-\(key)", value))
     }
 
     /// Appends inline CSS declarations, for example `"color: red; margin: 0"`.
     public func style(_ declarations: String) -> ModifiedView<Self> {
-        modifier(.addStyle(declarations))
+        changing(.addStyle(declarations))
     }
 
     /// Appends a single inline CSS declaration.
     public func style(_ property: String, _ value: String) -> ModifiedView<Self> {
-        modifier(.addStyle("\(property): \(value)"))
+        changing(.addStyle("\(property): \(value)"))
     }
 
     /// Adds the `hidden` attribute when `isHidden` is true.

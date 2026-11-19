@@ -424,46 +424,70 @@ public struct TableRow<Content: View>: View {
 }
 
 /// A header cell (`<th>`).
+///
+/// Pass `columnSpan` or `rowSpan` to make the cell cover more than one
+/// column or row (`colspan` and `rowspan`).
 public struct TableHeaderCell<Content: View>: View {
+    /// How many columns the cell covers, or `nil` for one.
+    public let columnSpan: Int?
+    /// How many rows the cell covers, or `nil` for one.
+    public let rowSpan: Int?
     /// The element's content.
     public let content: Content
 
     /// Creates the element with the content built by `content`.
-    public init(@ViewBuilder content: () -> Content) {
+    public init(columnSpan: Int? = nil, rowSpan: Int? = nil, @ViewBuilder content: () -> Content) {
+        self.columnSpan = columnSpan
+        self.rowSpan = rowSpan
         self.content = content()
     }
 
     public var body: Element<Content> {
-        Element("th", wrapping: content)
+        var attributes = HTMLAttributes()
+        attributes["colspan"] = columnSpan.map(String.init)
+        attributes["rowspan"] = rowSpan.map(String.init)
+        return Element("th", attributes: attributes, wrapping: content)
     }
 }
 
 extension TableHeaderCell where Content == Text {
     /// Creates the element containing escaped `text`.
-    public init(_ text: String) {
-        self.init { Text(text) }
+    public init(_ text: String, columnSpan: Int? = nil, rowSpan: Int? = nil) {
+        self.init(columnSpan: columnSpan, rowSpan: rowSpan) { Text(text) }
     }
 }
 
 /// A data cell (`<td>`).
+///
+/// Pass `columnSpan` or `rowSpan` to make the cell cover more than one
+/// column or row (`colspan` and `rowspan`).
 public struct TableCell<Content: View>: View {
+    /// How many columns the cell covers, or `nil` for one.
+    public let columnSpan: Int?
+    /// How many rows the cell covers, or `nil` for one.
+    public let rowSpan: Int?
     /// The element's content.
     public let content: Content
 
     /// Creates the element with the content built by `content`.
-    public init(@ViewBuilder content: () -> Content) {
+    public init(columnSpan: Int? = nil, rowSpan: Int? = nil, @ViewBuilder content: () -> Content) {
+        self.columnSpan = columnSpan
+        self.rowSpan = rowSpan
         self.content = content()
     }
 
     public var body: Element<Content> {
-        Element("td", wrapping: content)
+        var attributes = HTMLAttributes()
+        attributes["colspan"] = columnSpan.map(String.init)
+        attributes["rowspan"] = rowSpan.map(String.init)
+        return Element("td", attributes: attributes, wrapping: content)
     }
 }
 
 extension TableCell where Content == Text {
     /// Creates the element containing escaped `text`.
-    public init(_ text: String) {
-        self.init { Text(text) }
+    public init(_ text: String, columnSpan: Int? = nil, rowSpan: Int? = nil) {
+        self.init(columnSpan: columnSpan, rowSpan: rowSpan) { Text(text) }
     }
 }
 

@@ -1,6 +1,11 @@
 /// The HTTP method a `Form` submits with.
 public enum FormMethod: String, Sendable {
-    case get, post
+    /// Sends the fields in the URL query. Use for searches and filters.
+    case get
+    /// Sends the fields in the request body. Use for changes.
+    case post
+    /// Closes the enclosing `Dialog` instead of submitting to the server.
+    case dialog
 }
 
 /// A form (`<form>`).
@@ -148,6 +153,22 @@ public struct InputType: RawRepresentable, Sendable, Hashable, ExpressibleByStri
     public static let file: InputType = "file"
     /// A submit button.
     public static let submit: InputType = "submit"
+    /// A slider for a number in a range.
+    public static let range: InputType = "range"
+    /// A color picker.
+    public static let color: InputType = "color"
+    /// A time of day.
+    public static let time: InputType = "time"
+    /// A date and time with no time zone.
+    public static let dateTimeLocal: InputType = "datetime-local"
+    /// A month and year.
+    public static let month: InputType = "month"
+    /// A week of a year.
+    public static let week: InputType = "week"
+    /// A reset button.
+    public static let reset: InputType = "reset"
+    /// A plain button.
+    public static let button: InputType = "button"
 }
 
 /// A form input (`<input>`).
@@ -196,9 +217,11 @@ public struct TextField: View {
     public let type: InputType
     /// The `autocomplete` hint, such as `"email"` or `"off"`.
     public let autocomplete: String?
+    /// The `id` of a `DataList` of suggested values.
+    public let list: String?
 
     /// Creates a text field.
-    /// ///
+    ///
     /// - Parameters:
     ///   - placeholder: Hint text shown while the field is empty.
     ///   - name: The field name the value is submitted under.
@@ -206,14 +229,17 @@ public struct TextField: View {
     ///   - text: The current value.
     ///   - type: The input type. Defaults to `.text`.
     ///   - autocomplete: The `autocomplete` hint.
+    ///   - list: The `id` of a `DataList` of suggested values.
     public init(
         _ placeholder: String? = nil,
         name: String,
         id: String? = nil,
         text: String? = nil,
         type: InputType = .text,
-        autocomplete: String? = nil
+        autocomplete: String? = nil,
+        list: String? = nil
     ) {
+        self.list = list
         self.placeholder = placeholder
         self.name = name
         self.id = id
@@ -228,6 +254,7 @@ public struct TextField: View {
         attributes["value"] = text
         attributes["placeholder"] = placeholder
         attributes["autocomplete"] = autocomplete
+        attributes["list"] = list
         return VoidElement("input", attributes: attributes)
     }
 }

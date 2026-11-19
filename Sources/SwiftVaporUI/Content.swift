@@ -1,6 +1,17 @@
 /// The level of a `Heading`, from `<h1>` to `<h6>`.
 public enum HeadingLevel: Int, Sendable, CaseIterable {
-    case h1 = 1, h2, h3, h4, h5, h6
+    /// The page title level (`<h1>`).
+    case h1 = 1
+    /// A section heading (`<h2>`).
+    case h2
+    /// A subsection heading (`<h3>`).
+    case h3
+    /// A fourth-level heading (`<h4>`).
+    case h4
+    /// A fifth-level heading (`<h5>`).
+    case h5
+    /// A sixth-level heading (`<h6>`).
+    case h6
 }
 
 /// A section heading (`<h1>` to `<h6>`).
@@ -42,25 +53,65 @@ extension Heading where Content == Text {
 public struct Link<Label: View>: View {
     /// The URL the link points to. It is escaped but not validated.
     public let destination: String
+    /// Where to open the link, or `nil` for the current tab.
+    public let target: LinkTarget?
+    /// The relationship to the linked page (`rel`), such as `"nofollow"`.
+    public let relationship: String?
     /// The link's visible content.
     public let label: Label
 
     /// Creates a link to `destination` whose visible content is built by `label`.
-    public init(destination: String, @ViewBuilder label: () -> Label) {
+    ///
+    /// - Parameters:
+    ///   - destination: The URL.
+    ///   - target: Where to open it. `.blank` opens a new tab and, unless you
+    ///     pass a `relationship`, adds `rel="noopener"`.
+    ///   - relationship: The `rel` attribute.
+    ///   - label: A view builder that creates the link's content.
+    public init(
+        destination: String,
+        target: LinkTarget? = nil,
+        relationship: String? = nil,
+        @ViewBuilder label: () -> Label
+    ) {
         self.destination = destination
+        self.target = target
+        self.relationship = relationship
         self.label = label()
     }
 
     public var body: Element<Label> {
-        Element("a", attributes: ["href": destination], wrapping: label)
+        var attributes: HTMLAttributes = ["href": destination]
+        attributes["target"] = target?.rawValue
+        attributes["rel"] = relationship ?? (target == .blank ? "noopener" : nil)
+        return Element("a", attributes: attributes, wrapping: label)
     }
 }
 
 extension Link where Label == Text {
     /// Creates a link to `destination` with escaped `title` as its text.
-    public init(_ title: String, destination: String) {
-        self.init(destination: destination) { Text(title) }
+    public init(_ title: String, destination: String, target: LinkTarget? = nil, relationship: String? = nil) {
+        self.init(destination: destination, target: target, relationship: relationship) { Text(title) }
     }
+}
+
+/// Where a `Link` opens (the `target` attribute).
+public struct LinkTarget: RawRepresentable, Sendable, Hashable, ExpressibleByStringLiteral {
+    /// The value written to `target`.
+    public let rawValue: String
+    /// Creates a target from its value, such as the name of an `IFrame`.
+    public init(rawValue: String) { self.rawValue = rawValue }
+    /// Creates a target from a string literal.
+    public init(stringLiteral value: String) { self.rawValue = value }
+
+    /// A new tab or window.
+    public static let blank: LinkTarget = "_blank"
+    /// The current frame (the default).
+    public static let current: LinkTarget = "_self"
+    /// The parent frame.
+    public static let parent: LinkTarget = "_parent"
+    /// The whole window, breaking out of all frames.
+    public static let top: LinkTarget = "_top"
 }
 
 /// A `<ul>` with one `<li>` per element of a collection.

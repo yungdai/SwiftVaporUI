@@ -101,11 +101,15 @@ public struct OptionalView<Wrapped: View>: View {
 public struct ConditionalView<TrueContent: View, FalseContent: View>: View {
     public typealias Body = Never
 
+    /// Which branch was taken.
     enum Storage: Sendable {
+        /// The `if` branch, or the first `switch` case.
         case first(TrueContent)
+        /// The `else` branch, or a later `switch` case.
         case second(FalseContent)
     }
 
+    /// The branch that was taken, with its view.
     let storage: Storage
 
     public func _render(into renderer: inout HTMLRenderer) {

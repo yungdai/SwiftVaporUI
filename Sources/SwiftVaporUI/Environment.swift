@@ -33,20 +33,32 @@ public protocol EnvironmentKey {
 /// ``EnvironmentReader``. Values are scoped to the render: they do not leak
 /// to sibling views or to other requests.
 public struct EnvironmentValues: Sendable {
+
+    // MARK: - Static Properties
+
+    /// The environment of the view currently being rendered.
+    @TaskLocal static var current = EnvironmentValues()
+
+    // MARK: - Properties
+
     /// The values that have been set, by key type.
     private var values: [ObjectIdentifier: any Sendable] = [:]
+
+    // MARK: - Initializers
 
     /// Creates environment values where every key has its default value.
     public init() {}
 
+    // MARK: - Subscripts
+
     /// Gets or sets the value for `key`.
+    ///
+    /// - Parameter key: The key whose value to get or set.
     public subscript<Key: EnvironmentKey>(key: Key.Type) -> Key.Value {
         get { values[ObjectIdentifier(key)] as? Key.Value ?? Key.defaultValue }
         set { values[ObjectIdentifier(key)] = newValue }
     }
 
-    /// The environment of the view currently being rendered.
-    @TaskLocal static var current = EnvironmentValues()
 }
 
 /// Reads a value from the environment inside a view's `body`.
@@ -66,19 +78,29 @@ public struct EnvironmentValues: Sendable {
 /// ```
 @propertyWrapper
 public struct ViewEnvironment<Value>: @unchecked Sendable {
+
+    // MARK: - Properties
+
     /// The key path of the value to read. Key paths are immutable, so
     /// sharing one across threads is safe.
     private let keyPath: KeyPath<EnvironmentValues, Value>
 
-    /// Creates a property that reads the value at `keyPath`.
-    public init(_ keyPath: KeyPath<EnvironmentValues, Value>) {
-        self.keyPath = keyPath
-    }
+    // MARK: - Computed Properties
 
     /// The value in the environment of the view being rendered.
     public var wrappedValue: Value {
         EnvironmentValues.current[keyPath: keyPath]
     }
+
+    // MARK: - Initializers
+
+    /// Creates a property that reads the value at `keyPath`.
+    ///
+    /// - Parameter keyPath: The key path of the environment value to read.
+    public init(_ keyPath: KeyPath<EnvironmentValues, Value>) {
+        self.keyPath = keyPath
+    }
+
 }
 
 /// Builds content from an environment value, without declaring a view type.
@@ -89,32 +111,56 @@ public struct ViewEnvironment<Value>: @unchecked Sendable {
 /// }
 /// ```
 public struct EnvironmentReader<Value, Content: View>: View, @unchecked Sendable {
-    public typealias Body = Never
+
+    // MARK: - Properties
+
     /// The key path of the value to read.
     private let keyPath: KeyPath<EnvironmentValues, Value>
+
     /// Builds the content from the value.
     private let content: (Value) -> Content
 
+    // MARK: - Initializers
+
     /// Creates a view whose content is built from the value at `keyPath`.
+    ///
+    /// - Parameters:
+    ///   - keyPath: The key path of the environment value to read.
+    ///   - content: A view builder that creates the content from the value.
     public init(_ keyPath: KeyPath<EnvironmentValues, Value>, @ViewBuilder content: @escaping (Value) -> Content) {
         self.keyPath = keyPath
         self.content = content
     }
 
+    // MARK: - View
+
+    /// A primitive view writes its own HTML, so it has no `body`.
+    public typealias Body = Never
+
+    /// Writes this view's HTML into `renderer`.
+    ///
+    /// - Parameter renderer: The renderer that collects the page's HTML.
     public func _render(into renderer: inout HTMLRenderer) {
         content(EnvironmentValues.current[keyPath: keyPath])._render(into: &renderer)
     }
+
 }
 
 /// A view whose subtree sees a changed environment value.
 public struct EnvironmentModifiedView<Content: View, Value: Sendable>: View, @unchecked Sendable {
-    public typealias Body = Never
+
+    // MARK: - Properties
+
     /// The view that sees the changed value.
     public let content: Content
+
     /// The key path of the value to change.
     private let keyPath: WritableKeyPath<EnvironmentValues, Value>
+
     /// The new value.
     private let value: Value
+
+    // MARK: - Initializers
 
     /// Creates a view whose subtree sees `value` at `keyPath`.
     ///
@@ -128,6 +174,14 @@ public struct EnvironmentModifiedView<Content: View, Value: Sendable>: View, @un
         self.value = value
     }
 
+    // MARK: - View
+
+    /// A primitive view writes its own HTML, so it has no `body`.
+    public typealias Body = Never
+
+    /// Writes this view's HTML into `renderer`.
+    ///
+    /// - Parameter renderer: The renderer that collects the page's HTML.
     public func _render(into renderer: inout HTMLRenderer) {
         var environment = EnvironmentValues.current
         environment[keyPath: keyPath] = value
@@ -135,19 +189,29 @@ public struct EnvironmentModifiedView<Content: View, Value: Sendable>: View, @un
             content._render(into: &renderer)
         }
     }
+
 }
 
 extension View {
+
+    // MARK: - Modifiers
+
     /// Sets an environment value for this view and everything inside it.
     ///
     /// ```swift
     /// ProductPage()
     ///     .environment(\.theme, Theme(accent: .purple))
     /// ```
+    ///
+    /// - Parameters:
+    ///   - keyPath: The key path of the environment value to set.
+    ///   - value: The value to set.
+    /// - Returns: A view with the change applied.
     public func environment<Value: Sendable>(
         _ keyPath: WritableKeyPath<EnvironmentValues, Value>,
         _ value: Value
     ) -> EnvironmentModifiedView<Self, Value> {
         EnvironmentModifiedView(content: self, keyPath: keyPath, value: value)
     }
+
 }

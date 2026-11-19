@@ -43,9 +43,13 @@ public protocol ViewModifier: Sendable {
 /// The view a ``ViewModifier`` is applied to, passed to its
 /// `body(content:)`.
 public struct ViewModifierContent: View {
-    public typealias Body = Never
+
+    // MARK: - Properties
+
     /// The view the modifier is applied to.
     let view: AnyView
+
+    // MARK: - Initializers
 
     /// Wraps the view a modifier is applied to.
     ///
@@ -54,32 +58,62 @@ public struct ViewModifierContent: View {
         self.view = view
     }
 
+    // MARK: - View
+
+    /// A primitive view writes its own HTML, so it has no `body`.
+    public typealias Body = Never
+
+    /// Writes this view's HTML into `renderer`.
+    ///
+    /// - Parameter renderer: The renderer that collects the page's HTML.
     public func _render(into renderer: inout HTMLRenderer) {
         view._render(into: &renderer)
     }
+
 }
 
 /// A view with a ``ViewModifier`` applied.
 public struct ModifiedContent<Content: View, Modifier: ViewModifier>: View {
+
+    // MARK: - Properties
+
     /// The original view.
     public let content: Content
+
     /// The modifier applied to it.
     public let modifier: Modifier
 
+    // MARK: - Initializers
+
     /// Applies `modifier` to `content`.
+    ///
+    /// - Parameters:
+    ///   - content: The original view.
+    ///   - modifier: The modifier applied to it.
     public init(content: Content, modifier: Modifier) {
         self.content = content
         self.modifier = modifier
     }
 
+    // MARK: - View
+
+    /// The elements this view is made of.
     public var body: Modifier.Body {
         modifier.body(content: ViewModifierContent(AnyView(content)))
     }
+
 }
 
 extension View {
+
+    // MARK: - Modifiers
+
     /// Applies a ``ViewModifier``.
+    ///
+    /// - Parameter modifier: The modifier to apply.
+    /// - Returns: A view with the change applied.
     public func modifier<Modifier: ViewModifier>(_ modifier: Modifier) -> ModifiedContent<Self, Modifier> {
         ModifiedContent(content: self, modifier: modifier)
     }
+
 }

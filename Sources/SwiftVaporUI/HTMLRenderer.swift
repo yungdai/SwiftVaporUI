@@ -4,8 +4,8 @@
 /// queue attribute changes, and the next HTML element rendered inside them
 /// picks those changes up.
 public struct HTMLRenderer: Sendable {
-    /// The HTML written so far.
-    public internal(set) var output = ""
+
+    // MARK: - Properties
 
     /// Attribute changes waiting for the next element, innermost modifier first.
     var pending: [AttributeChange] = []
@@ -16,11 +16,20 @@ public struct HTMLRenderer: Sendable {
     /// The `TabView` currently being rendered, if any.
     var tabGroup: TabGroupState?
 
+    // MARK: - Initializers
+
     /// Creates an empty renderer.
     public init() {}
 
+    // MARK: - Methods
+
+    /// The HTML written so far.
+    public internal(set) var output = ""
+
     /// Writes a small `<style>` element that a built-in view needs, unless a
     /// style with the same key has already been written in this render.
+    ///
+    /// - Parameter style: The style sheet to write.
     mutating func writeSupportStyle(_ style: SupportStyle) {
         guard writtenSupportStyles.insert(style.key).inserted else { return }
         output += "<style>"
@@ -43,6 +52,8 @@ public struct HTMLRenderer: Sendable {
     }
 
     /// Applies and clears queued modifier changes on top of `attributes`.
+    ///
+    /// - Parameter attributes: The attributes to write, already including any modifier changes.
     mutating func takePending(applyingTo attributes: inout HTMLAttributes) {
         for change in pending {
             attributes.apply(change)
@@ -69,16 +80,26 @@ public struct HTMLRenderer: Sendable {
         }
         output += ">"
     }
+
 }
 
 /// Escaping helpers used by the renderer. Exposed for use in custom views.
 public enum HTMLEscaping {
+
+    // MARK: - Methods
+
     /// Escapes text placed between tags.
+    ///
+    /// - Parameter string: The unescaped string.
+    /// - Returns: The escaped text.
     public static func escapeText(_ string: String) -> String {
         escape(string, quotes: false)
     }
 
     /// Escapes a value placed inside a double-quoted attribute.
+    ///
+    /// - Parameter string: The unescaped string.
+    /// - Returns: The escaped value.
     public static func escapeAttribute(_ string: String) -> String {
         escape(string, quotes: true)
     }
@@ -114,6 +135,9 @@ public enum HTMLEscaping {
     /// `data-*`, `aria-*` and common framework attributes (for example
     /// `hx-get` or `@click`). Anything else is dropped rather than risk
     /// breaking out of the tag.
+    ///
+    /// - Parameter name: The name to check.
+    /// - Returns: Whether the name can be written as an attribute.
     public static func isValidAttributeName(_ name: String) -> Bool {
         !name.isEmpty && name.utf8.allSatisfy { byte in
             switch byte {
@@ -131,6 +155,9 @@ public enum HTMLEscaping {
 
     /// Whether `name` is safe to emit as a tag name: an ASCII letter
     /// followed by letters, digits or hyphens.
+    ///
+    /// - Parameter name: The name to check.
+    /// - Returns: Whether the name can be written as a tag.
     public static func isValidTagName(_ name: String) -> Bool {
         guard let first = name.utf8.first,
               (UInt8(ascii: "a")...UInt8(ascii: "z")).contains(first | 0x20) else {
@@ -148,4 +175,5 @@ public enum HTMLEscaping {
             }
         }
     }
+
 }

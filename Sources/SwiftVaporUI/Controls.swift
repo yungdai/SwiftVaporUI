@@ -16,16 +16,30 @@ private func inputAttributes(_ type: InputType, name: String?, id: String?) -> H
 /// A checkbox (`<input type="checkbox">`). When checked, the form submits
 /// `name=value`; when unchecked, it submits nothing.
 public struct Checkbox: View {
+
+    // MARK: - Properties
+
     /// The field name.
     public let name: String
+
     /// The value submitted when checked.
     public let value: String
+
     /// Whether it starts checked.
     public let isChecked: Bool
+
     /// The element `id`, for use with `Label(for:)`.
     public let id: String?
 
+    // MARK: - Initializers
+
     /// Creates a checkbox.
+    ///
+    /// - Parameters:
+    ///   - name: The field name.
+    ///   - value: The value submitted when checked.
+    ///   - isChecked: Whether it starts checked.
+    ///   - id: The element `id`, for use with `Label(for:)`.
     public init(name: String, value: String = "on", isChecked: Bool = false, id: String? = nil) {
         self.name = name
         self.value = value
@@ -33,27 +47,45 @@ public struct Checkbox: View {
         self.id = id
     }
 
+    // MARK: - View
+
+    /// The elements this view is made of.
     public var body: VoidElement {
         var attributes = inputAttributes(.checkbox, name: name, id: id)
         attributes["value"] = value
         if isChecked { attributes.setFlag("checked") }
         return VoidElement("input", attributes: attributes)
     }
+
 }
 
 /// A radio button (`<input type="radio">`). Buttons with the same `name`
 /// form a group where only one can be chosen.
 public struct RadioButton: View {
+
+    // MARK: - Properties
+
     /// The group's field name.
     public let name: String
+
     /// The value submitted when this button is chosen.
     public let value: String
+
     /// Whether it starts chosen.
     public let isChecked: Bool
+
     /// The element `id`, for use with `Label(for:)`.
     public let id: String?
 
+    // MARK: - Initializers
+
     /// Creates a radio button.
+    ///
+    /// - Parameters:
+    ///   - name: The group's field name.
+    ///   - value: The value submitted when this button is chosen.
+    ///   - isChecked: Whether it starts chosen.
+    ///   - id: The element `id`, for use with `Label(for:)`.
     public init(name: String, value: String, isChecked: Bool = false, id: String? = nil) {
         self.name = name
         self.value = value
@@ -61,30 +93,52 @@ public struct RadioButton: View {
         self.id = id
     }
 
+    // MARK: - View
+
+    /// The elements this view is made of.
     public var body: VoidElement {
         var attributes = inputAttributes(.radio, name: name, id: id)
         attributes["value"] = value
         if isChecked { attributes.setFlag("checked") }
         return VoidElement("input", attributes: attributes)
     }
+
 }
 
 /// A number field (`<input type="number">`).
 public struct NumberField: View {
+
+    // MARK: - Properties
+
     /// The field name.
     public let name: String
+
     /// The initial value.
     public let value: Double?
+
     /// The smallest allowed value.
     public let min: Double?
+
     /// The largest allowed value.
     public let max: Double?
+
     /// The step between allowed values. `nil` means whole numbers.
     public let step: Double?
+
     /// The element `id`, for use with `Label(for:)`.
     public let id: String?
 
+    // MARK: - Initializers
+
     /// Creates a number field.
+    ///
+    /// - Parameters:
+    ///   - name: The field name.
+    ///   - value: The initial value.
+    ///   - min: The smallest allowed value.
+    ///   - max: The largest allowed value.
+    ///   - step: The step between allowed values. `nil` means whole numbers.
+    ///   - id: The element `id`, for use with `Label(for:)`.
     public init(name: String, value: Double? = nil, min: Double? = nil, max: Double? = nil, step: Double? = nil, id: String? = nil) {
         self.name = name
         self.value = value
@@ -94,6 +148,9 @@ public struct NumberField: View {
         self.id = id
     }
 
+    // MARK: - View
+
+    /// The elements this view is made of.
     public var body: VoidElement {
         var attributes = inputAttributes(.number, name: name, id: id)
         attributes["value"] = value.map(cssNumber)
@@ -102,22 +159,39 @@ public struct NumberField: View {
         attributes["step"] = step.map(cssNumber)
         return VoidElement("input", attributes: attributes)
     }
+
 }
 
 /// A slider (`<input type="range">`).
 public struct RangeField: View {
+
+    // MARK: - Properties
+
     /// The field name.
     public let name: String
+
     /// The initial value.
     public let value: Double
+
     /// The allowed values.
     public let range: ClosedRange<Double>
+
     /// The step between allowed values, or `nil` for whole numbers.
     public let step: Double?
+
     /// The element `id`, for use with `Label(for:)`.
     public let id: String?
 
+    // MARK: - Initializers
+
     /// Creates a slider.
+    ///
+    /// - Parameters:
+    ///   - name: The field name.
+    ///   - value: The initial value.
+    ///   - range: The allowed values.
+    ///   - step: The step between allowed values, or `nil` for whole numbers.
+    ///   - id: The element `id`, for use with `Label(for:)`.
     public init(name: String, value: Double, in range: ClosedRange<Double> = 0...100, step: Double? = nil, id: String? = nil) {
         self.name = name
         self.value = value
@@ -126,6 +200,9 @@ public struct RangeField: View {
         self.id = id
     }
 
+    // MARK: - View
+
+    /// The elements this view is made of.
     public var body: VoidElement {
         var attributes = inputAttributes(.range, name: name, id: id)
         attributes["min"] = cssNumber(range.lowerBound)
@@ -134,24 +211,43 @@ public struct RangeField: View {
         attributes["value"] = cssNumber(value)
         return VoidElement("input", attributes: attributes)
     }
+
 }
 
 /// A date field (`<input type="date">`). Values are `yyyy-MM-dd` strings.
 public struct DateField: View {
+
+    // MARK: - Properties
+
     /// The field name.
     public let name: String
+
     /// The initial value, such as `"2026-11-21"`.
     public let value: String?
+
     /// The earliest allowed date.
     public let min: String?
+
     /// The latest allowed date.
     public let max: String?
+
     /// The input type: `.date`, `.time`, `.dateTimeLocal`, `.month` or `.week`.
     public let type: InputType
+
     /// The element `id`, for use with `Label(for:)`.
     public let id: String?
 
+    // MARK: - Initializers
+
     /// Creates a date field. Pass `type` for a time, month or week instead.
+    ///
+    /// - Parameters:
+    ///   - name: The field name.
+    ///   - value: The initial value, such as `"2026-11-21"`.
+    ///   - min: The earliest allowed date.
+    ///   - max: The latest allowed date.
+    ///   - type: The input type: `.date`, `.time`, `.dateTimeLocal`, `.month` or `.week`.
+    ///   - id: The element `id`, for use with `Label(for:)`.
     public init(name: String, value: String? = nil, min: String? = nil, max: String? = nil, type: InputType = .date, id: String? = nil) {
         self.name = name
         self.value = value
@@ -161,6 +257,9 @@ public struct DateField: View {
         self.id = id
     }
 
+    // MARK: - View
+
+    /// The elements this view is made of.
     public var body: VoidElement {
         var attributes = inputAttributes(type, name: name, id: id)
         attributes["value"] = value
@@ -168,23 +267,40 @@ public struct DateField: View {
         attributes["max"] = max
         return VoidElement("input", attributes: attributes)
     }
+
 }
 
 /// An email address field (`<input type="email">`). The browser checks the
 /// format before submitting.
 public struct EmailField: View {
+
+    // MARK: - Properties
+
     /// The field name.
     public let name: String
+
     /// The initial value.
     public let value: String?
+
     /// Hint text shown while the field is empty.
     public let placeholder: String?
+
     /// Whether several comma-separated addresses are allowed.
     public let allowsMultiple: Bool
+
     /// The element `id`, for use with `Label(for:)`.
     public let id: String?
 
+    // MARK: - Initializers
+
     /// Creates an email field. Its `autocomplete` hint is `email`.
+    ///
+    /// - Parameters:
+    ///   - placeholder: Hint text shown while the field is empty.
+    ///   - name: The field name.
+    ///   - value: The initial value.
+    ///   - allowsMultiple: Whether several comma-separated addresses are allowed.
+    ///   - id: The element `id`, for use with `Label(for:)`.
     public init(_ placeholder: String? = nil, name: String, value: String? = nil, multiple allowsMultiple: Bool = false, id: String? = nil) {
         self.name = name
         self.value = value
@@ -193,6 +309,9 @@ public struct EmailField: View {
         self.id = id
     }
 
+    // MARK: - View
+
+    /// The elements this view is made of.
     public var body: VoidElement {
         var attributes = inputAttributes(.email, name: name, id: id)
         attributes["value"] = value
@@ -201,6 +320,7 @@ public struct EmailField: View {
         if allowsMultiple { attributes.setFlag("multiple") }
         return VoidElement("input", attributes: attributes)
     }
+
 }
 
 /// A file picker (`<input type="file">`).
@@ -208,16 +328,30 @@ public struct EmailField: View {
 /// The enclosing form must post as `multipart/form-data`; add
 /// `.attribute("enctype", "multipart/form-data")` to the `Form`.
 public struct FileField: View {
+
+    // MARK: - Properties
+
     /// The field name.
     public let name: String
+
     /// Allowed file types, such as `["image/*", ".pdf"]`. Empty allows any.
     public let accept: [String]
+
     /// Whether several files can be chosen.
     public let allowsMultiple: Bool
+
     /// The element `id`, for use with `Label(for:)`.
     public let id: String?
 
+    // MARK: - Initializers
+
     /// Creates a file picker.
+    ///
+    /// - Parameters:
+    ///   - name: The field name.
+    ///   - accept: Allowed file types, such as `["image/*", ".pdf"]`. Empty allows any.
+    ///   - allowsMultiple: Whether several files can be chosen.
+    ///   - id: The element `id`, for use with `Label(for:)`.
     public init(name: String, accept: [String] = [], multiple allowsMultiple: Bool = false, id: String? = nil) {
         self.name = name
         self.accept = accept
@@ -225,12 +359,16 @@ public struct FileField: View {
         self.id = id
     }
 
+    // MARK: - View
+
+    /// The elements this view is made of.
     public var body: VoidElement {
         var attributes = inputAttributes(.file, name: name, id: id)
         if !accept.isEmpty { attributes["accept"] = accept.joined(separator: ",") }
         if allowsMultiple { attributes.setFlag("multiple") }
         return VoidElement("input", attributes: attributes)
     }
+
 }
 
 // MARK: - SwiftUI-style controls
@@ -240,14 +378,26 @@ public struct FileField: View {
 /// Modifiers on the control go to the control itself, not to the label, so
 /// `.disabled()` and `.class(_:)` act on the field as they would in SwiftUI.
 struct LabeledControl<Title: View, Control: View>: View {
-    typealias Body = Never
+
+    // MARK: - Properties
+
     /// The visible label.
     let title: Title
+
     /// The form control, which receives the modifiers.
     let control: Control
+
     /// Whether the title comes before the control (text fields) or after it (checkboxes).
     let titleFirst: Bool
 
+    // MARK: - View
+
+    /// A primitive view writes its own HTML, so it has no `body`.
+    typealias Body = Never
+
+    /// Writes this view's HTML into `renderer`.
+    ///
+    /// - Parameter renderer: The renderer that collects the page's HTML.
     func _render(into renderer: inout HTMLRenderer) {
         let pending = renderer.pending
         renderer.pending = []
@@ -266,6 +416,7 @@ struct LabeledControl<Title: View, Control: View>: View {
         renderer.pending = []
         renderer.write("</label>")
     }
+
 }
 
 /// A labelled checkbox, in the style of SwiftUI's `Toggle`.
@@ -277,16 +428,30 @@ struct LabeledControl<Title: View, Control: View>: View {
 /// Renders `<label><input type="checkbox"> title</label>`. Modifiers apply
 /// to the checkbox.
 public struct Toggle<Title: View>: View {
+
+    // MARK: - Properties
+
     /// The field name.
     public let name: String
+
     /// Whether it starts on.
     public let isOn: Bool
+
     /// The value submitted when on.
     public let value: String
+
     /// The visible label.
     public let title: Title
 
+    // MARK: - Initializers
+
     /// Creates a toggle whose label is built by `label`.
+    ///
+    /// - Parameters:
+    ///   - name: The field name.
+    ///   - isOn: Whether it starts on.
+    ///   - value: The value submitted when on.
+    ///   - label: A view builder that creates the label.
     public init(name: String, isOn: Bool = false, value: String = "on", @ViewBuilder label: () -> Title) {
         self.name = name
         self.isOn = isOn
@@ -294,43 +459,73 @@ public struct Toggle<Title: View>: View {
         self.title = label()
     }
 
+    // MARK: - View
+
+    /// The elements this view is made of.
     public var body: some View {
         LabeledControl(title: title, control: Checkbox(name: name, value: value, isChecked: isOn), titleFirst: false)
     }
+
 }
 
 extension Toggle where Title == Text {
+
+    // MARK: - Initializers
+
     /// Creates a toggle with escaped `title` as its label.
+    ///
+    /// - Parameters:
+    ///   - title: The visible label.
+    ///   - name: The field name.
+    ///   - isOn: Whether it starts on.
+    ///   - value: The value submitted when on.
     public init(_ title: String, name: String, isOn: Bool = false, value: String = "on") {
         self.init(name: name, isOn: isOn, value: value) { Text(title) }
     }
+
 }
 
 /// One choice in a `Picker`.
 public struct PickerOption: Sendable, Hashable, ExpressibleByStringLiteral {
+
+    // MARK: - Properties
+
     /// The visible text.
     public let title: String
+
     /// The submitted value.
     public let value: String
 
+    // MARK: - Initializers
+
     /// Creates a choice. When `value` is `nil`, the title is submitted.
+    ///
+    /// - Parameters:
+    ///   - title: The visible text.
+    ///   - value: The submitted value.
     public init(_ title: String, value: String? = nil) {
         self.title = title
         self.value = value ?? title
     }
 
     /// Creates a choice whose title is also its value.
+    ///
+    /// - Parameter value: The submitted value.
     public init(stringLiteral value: String) {
         self.init(value)
     }
+
 }
 
 /// How a `Picker` presents its choices.
 public enum PickerStyle: Sendable {
+
     /// A drop-down list (`<select>`).
     case menu
+
     /// A `<fieldset>` of radio buttons, all visible at once.
     case radioGroup
+
 }
 
 /// A labelled choice from a list, in the style of SwiftUI's `Picker`.
@@ -346,18 +541,34 @@ public enum PickerStyle: Sendable {
 /// In the `.menu` style, modifiers apply to the `<select>`; in the
 /// `.radioGroup` style, to the `<fieldset>`.
 public struct Picker: View {
+
+    // MARK: - Properties
+
     /// The visible label.
     public let title: String
+
     /// The field name.
     public let name: String
+
     /// The value chosen at first, if any.
     public let selection: String?
+
     /// How the choices are presented.
     public let style: PickerStyle
+
     /// The choices, in order.
     public let options: [PickerOption]
 
+    // MARK: - Initializers
+
     /// Creates a picker.
+    ///
+    /// - Parameters:
+    ///   - title: The visible label.
+    ///   - name: The field name.
+    ///   - selection: The value chosen at first, if any.
+    ///   - style: How the choices are presented.
+    ///   - options: The choices, in order.
     public init(_ title: String, name: String, selection: String? = nil, style: PickerStyle = .menu, options: [PickerOption]) {
         self.title = title
         self.name = name
@@ -366,6 +577,9 @@ public struct Picker: View {
         self.options = options
     }
 
+    // MARK: - View
+
+    /// The elements this view is made of.
     public var body: some View {
         switch style {
         case .menu:
@@ -392,6 +606,7 @@ public struct Picker: View {
             .class("svui-radio-group")
         }
     }
+
 }
 
 /// A labelled slider, in the style of SwiftUI's `Slider`.
@@ -403,20 +618,38 @@ public struct Picker: View {
 /// With `showsValue`, an `<output>` after the slider shows the current value
 /// and a one-line inline script keeps it up to date as the slider moves.
 public struct Slider: View {
+
+    // MARK: - Properties
+
     /// The visible label.
     public let title: String
+
     /// The field name.
     public let name: String
+
     /// The initial value.
     public let value: Double
+
     /// The allowed values.
     public let range: ClosedRange<Double>
+
     /// The step between values, or `nil` for whole numbers.
     public let step: Double?
+
     /// Whether to show the current value next to the slider.
     public let showsValue: Bool
 
+    // MARK: - Initializers
+
     /// Creates a slider.
+    ///
+    /// - Parameters:
+    ///   - title: The visible label.
+    ///   - name: The field name.
+    ///   - value: The initial value.
+    ///   - range: The allowed values.
+    ///   - step: The step between values, or `nil` for whole numbers.
+    ///   - showsValue: Whether to show the current value next to the slider.
     public init(
         _ title: String,
         name: String,
@@ -433,6 +666,9 @@ public struct Slider: View {
         self.showsValue = showsValue
     }
 
+    // MARK: - View
+
+    /// The elements this view is made of.
     public var body: some View {
         LabeledControl(
             title: Text(title),
@@ -448,6 +684,7 @@ public struct Slider: View {
             titleFirst: true
         )
     }
+
 }
 
 /// A labelled whole-number field with up and down buttons, in the style of
@@ -457,18 +694,34 @@ public struct Slider: View {
 /// Stepper("Guests", name: "guests", value: 2, in: 1...12)
 /// ```
 public struct Stepper: View {
+
+    // MARK: - Properties
+
     /// The visible label.
     public let title: String
+
     /// The field name.
     public let name: String
+
     /// The initial value.
     public let value: Int
+
     /// The allowed values, if limited.
     public let range: ClosedRange<Int>?
+
     /// The step between values.
     public let step: Int
 
+    // MARK: - Initializers
+
     /// Creates a stepper.
+    ///
+    /// - Parameters:
+    ///   - title: The visible label.
+    ///   - name: The field name.
+    ///   - value: The initial value.
+    ///   - range: The allowed values, if limited.
+    ///   - step: The step between values.
     public init(_ title: String, name: String, value: Int, in range: ClosedRange<Int>? = nil, step: Int = 1) {
         self.title = title
         self.name = name
@@ -477,6 +730,9 @@ public struct Stepper: View {
         self.step = step
     }
 
+    // MARK: - View
+
+    /// The elements this view is made of.
     public var body: some View {
         LabeledControl(
             title: Text(title),
@@ -490,19 +746,32 @@ public struct Stepper: View {
             titleFirst: true
         )
     }
+
 }
 
 /// The parts of a date a `DatePicker` asks for.
 public struct DatePickerComponents: OptionSet, Sendable, Hashable {
-    /// The bit mask of components.
-    public let rawValue: Int
-    /// Creates components from a bit mask.
-    public init(rawValue: Int) { self.rawValue = rawValue }
+
+    // MARK: - Static Properties
 
     /// The day, month and year.
     public static let date = DatePickerComponents(rawValue: 1)
+
     /// The hour and minute.
     public static let hourAndMinute = DatePickerComponents(rawValue: 2)
+
+    // MARK: - Properties
+
+    /// The bit mask of components.
+    public let rawValue: Int
+
+    // MARK: - Initializers
+
+    /// Creates components from a bit mask.
+    ///
+    /// - Parameter rawValue: The bit mask of components.
+    public init(rawValue: Int) { self.rawValue = rawValue }
+
 }
 
 /// A labelled date and/or time field, in the style of SwiftUI's `DatePicker`.
@@ -515,20 +784,49 @@ public struct DatePickerComponents: OptionSet, Sendable, Hashable {
 /// written in `timeZone`, UTC by default; HTML date fields have no time zone,
 /// so read the submitted value back in the same zone.
 public struct DatePicker: View {
+
+    // MARK: - Properties
+
     /// The visible label.
     public let title: String
+
     /// The field name.
     public let name: String
+
     /// The initial date, if any.
     public let selection: Date?
+
     /// The earliest and latest allowed dates, if limited.
     public let range: ClosedRange<Date>?
+
     /// Which parts of the date to ask for.
     public let displayedComponents: DatePickerComponents
+
     /// The time zone used to write dates.
     public let timeZone: TimeZone
 
+    // MARK: - Computed Properties
+
+    /// The input type for the chosen components.
+    var inputType: InputType {
+        switch (displayedComponents.contains(.date), displayedComponents.contains(.hourAndMinute)) {
+        case (true, true): .dateTimeLocal
+        case (false, true): .time
+        default: .date
+        }
+    }
+
+    // MARK: - Initializers
+
     /// Creates a date picker.
+    ///
+    /// - Parameters:
+    ///   - title: The visible label.
+    ///   - name: The field name.
+    ///   - selection: The initial date, if any.
+    ///   - range: The earliest and latest allowed dates, if limited.
+    ///   - displayedComponents: Which parts of the date to ask for.
+    ///   - timeZone: The time zone used to write dates.
     public init(
         _ title: String,
         name: String,
@@ -545,14 +843,7 @@ public struct DatePicker: View {
         self.timeZone = timeZone
     }
 
-    /// The input type for the chosen components.
-    var inputType: InputType {
-        switch (displayedComponents.contains(.date), displayedComponents.contains(.hourAndMinute)) {
-        case (true, true): .dateTimeLocal
-        case (false, true): .time
-        default: .date
-        }
-    }
+    // MARK: - Methods
 
     /// Formats `date` the way the field's input type expects.
     ///
@@ -576,6 +867,9 @@ public struct DatePicker: View {
         }
     }
 
+    // MARK: - View
+
+    /// The elements this view is made of.
     public var body: some View {
         LabeledControl(
             title: Text(title),
@@ -589,6 +883,7 @@ public struct DatePicker: View {
             titleFirst: true
         )
     }
+
 }
 
 /// Progress through a task, in the style of SwiftUI's `ProgressView`
@@ -602,26 +897,19 @@ public struct DatePicker: View {
 ///
 /// Use `Meter` for a measurement that is not progress, such as disk usage.
 public struct ProgressView: View {
+
+    // MARK: - Properties
+
     /// The visible label, if any.
     public let title: String?
+
     /// The amount done, or `nil` when unknown.
     public let value: Double?
+
     /// The amount when finished.
     public let total: Double
 
-    /// Creates an indeterminate progress bar, for work of unknown length.
-    public init(_ title: String? = nil) {
-        self.title = title
-        self.value = nil
-        self.total = 1
-    }
-
-    /// Creates a progress bar showing `value` out of `total`.
-    public init(_ title: String? = nil, value: Double?, total: Double = 1) {
-        self.title = title
-        self.value = value.map { min(max($0, 0), total) }
-        self.total = total
-    }
+    // MARK: - Computed Properties
 
     /// The `<progress>` element, with a percentage as fallback text.
     var bar: Element<Text> {
@@ -634,6 +922,32 @@ public struct ProgressView: View {
         return Element("progress", attributes: attributes, wrapping: Text(percent))
     }
 
+    // MARK: - Initializers
+
+    /// Creates an indeterminate progress bar, for work of unknown length.
+    ///
+    /// - Parameter title: The visible label, if any.
+    public init(_ title: String? = nil) {
+        self.title = title
+        self.value = nil
+        self.total = 1
+    }
+
+    /// Creates a progress bar showing `value` out of `total`.
+    ///
+    /// - Parameters:
+    ///   - title: The visible label, if any.
+    ///   - value: The amount done, or `nil` when unknown.
+    ///   - total: The amount when finished.
+    public init(_ title: String? = nil, value: Double?, total: Double = 1) {
+        self.title = title
+        self.value = value.map { min(max($0, 0), total) }
+        self.total = total
+    }
+
+    // MARK: - View
+
+    /// The elements this view is made of.
     public var body: some View {
         if let title {
             LabeledControl(title: Text(title), control: bar, titleFirst: true)
@@ -641,4 +955,5 @@ public struct ProgressView: View {
             bar
         }
     }
+
 }

@@ -3,6 +3,9 @@
 /// A `nil` value renders a boolean attribute with no value, such as
 /// `disabled`. Attribute names that are not safe to emit are ignored.
 public struct HTMLAttributes: Sendable, Equatable, ExpressibleByDictionaryLiteral {
+
+    // MARK: - Nested Types
+
     /// One attribute: a name and an optional value.
     public struct Attribute: Sendable, Equatable {
         /// The attribute name.
@@ -11,23 +14,30 @@ public struct HTMLAttributes: Sendable, Equatable, ExpressibleByDictionaryLitera
         public var value: String?
     }
 
-    /// The attributes, in the order they were first set.
-    public private(set) var storage: [Attribute] = []
+    // MARK: - Properties
+
+    /// Whether there are no attributes.
+    public var isEmpty: Bool { storage.isEmpty }
+
+    // MARK: - Initializers
 
     /// Creates an empty set of attributes.
     public init() {}
 
     /// Creates attributes from a dictionary literal, keeping the literal's order.
+    ///
+    /// - Parameter elements: Attribute names and values, in order.
     public init(dictionaryLiteral elements: (String, String)...) {
         for (name, value) in elements {
             self[name] = value
         }
     }
 
-    /// Whether there are no attributes.
-    public var isEmpty: Bool { storage.isEmpty }
+    // MARK: - Subscripts
 
     /// Gets or sets an attribute's value. Setting `nil` removes it.
+    ///
+    /// - Parameter name: The attribute name.
     public subscript(name: String) -> String? {
         get { storage.first(where: { $0.name == name })?.value ?? nil }
         set {
@@ -39,12 +49,24 @@ public struct HTMLAttributes: Sendable, Equatable, ExpressibleByDictionaryLitera
         }
     }
 
+    // MARK: - Methods
+
+    /// The attributes, in the order they were first set.
+    public private(set) var storage: [Attribute] = []
+
     /// Whether an attribute called `name` is set.
+    ///
+    /// - Parameter name: The attribute name.
+    /// - Returns: Whether the attribute is set.
     public func contains(_ name: String) -> Bool {
         storage.contains(where: { $0.name == name })
     }
 
     /// Sets `name` to `value`, or to a bare boolean attribute when `value` is `nil`.
+    ///
+    /// - Parameters:
+    ///   - name: The attribute name.
+    ///   - value: The value, or `nil` for a bare boolean attribute.
     public mutating func set(_ name: String, _ value: String?) {
         guard HTMLEscaping.isValidAttributeName(name) else { return }
         if let index = storage.firstIndex(where: { $0.name == name }) {
@@ -55,16 +77,22 @@ public struct HTMLAttributes: Sendable, Equatable, ExpressibleByDictionaryLitera
     }
 
     /// Adds a bare boolean attribute such as `required`.
+    ///
+    /// - Parameter name: The attribute name.
     public mutating func setFlag(_ name: String) {
         set(name, nil)
     }
 
     /// Removes the attribute called `name`, if it is set.
+    ///
+    /// - Parameter name: The attribute name.
     public mutating func remove(_ name: String) {
         storage.removeAll(where: { $0.name == name })
     }
 
     /// Adds whitespace-separated class names, skipping ones already present.
+    ///
+    /// - Parameter names: Space-separated class names.
     public mutating func addClass(_ names: String) {
         var classes = (self["class"] ?? "").split(separator: " ").map(String.init)
         for name in names.split(whereSeparator: \.isWhitespace).map(String.init) where !classes.contains(name) {
@@ -76,6 +104,8 @@ public struct HTMLAttributes: Sendable, Equatable, ExpressibleByDictionaryLitera
     }
 
     /// Appends CSS declarations to the `style` attribute.
+    ///
+    /// - Parameter declarations: CSS declarations, such as `"color: red; margin: 0"`.
     public mutating func addStyle(_ declarations: String) {
         let trimmed = declarations.trimmingSeparators()
         guard !trimmed.isEmpty else { return }
@@ -97,21 +127,30 @@ public struct HTMLAttributes: Sendable, Equatable, ExpressibleByDictionaryLitera
         case let .addStyle(css): addStyle(css)
         }
     }
+
 }
 
 /// A change a modifier makes to the attributes of the element it wraps.
 enum AttributeChange: Sendable, Equatable {
+
     /// Sets an attribute, or a bare boolean attribute when the value is `nil`.
     case set(String, String?)
+
     /// Removes an attribute.
     case remove(String)
+
     /// Adds space-separated class names.
     case addClass(String)
+
     /// Appends CSS declarations to `style`.
     case addStyle(String)
+
 }
 
 private extension String {
+
+    // MARK: - Methods
+
     /// Removes spaces and semicolons from both ends.
     ///
     /// - Returns: The string without leading or trailing spaces and semicolons.
@@ -122,4 +161,5 @@ private extension String {
         while let last = slice.last, set.contains(last) { slice.removeLast() }
         return String(slice)
     }
+
 }

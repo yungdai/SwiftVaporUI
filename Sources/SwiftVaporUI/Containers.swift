@@ -5,10 +5,8 @@
 
 /// A few lines of CSS a built-in view needs, written once per page.
 struct SupportStyle: Sendable {
-    /// A unique name, so the style is written once per page.
-    let key: String
-    /// The CSS rules.
-    let css: String
+
+    // MARK: - Static Properties
 
     /// Layers every child of a `ZStack` in the same grid cell.
     static let zStack = SupportStyle(
@@ -48,6 +46,15 @@ struct SupportStyle: Sendable {
 
     /// Every support style, in the order `SupportStyles` writes them.
     static let all: [SupportStyle] = [.zStack, .grid, .tabs, .menu]
+
+    // MARK: - Properties
+
+    /// A unique name, so the style is written once per page.
+    let key: String
+
+    /// The CSS rules.
+    let css: String
+
 }
 
 /// The CSS that `ZStack`, `Grid`, `TabView` and `Menu` rely on, as one
@@ -59,11 +66,20 @@ struct SupportStyle: Sendable {
 /// strict Content Security Policy with a hash. Views rendered after it then
 /// write no styles of their own.
 public struct SupportStyles: View {
-    public typealias Body = Never
+
+    // MARK: - Initializers
 
     /// Creates the support style sheet.
     public init() {}
 
+    // MARK: - View
+
+    /// A primitive view writes its own HTML, so it has no `body`.
+    public typealias Body = Never
+
+    /// Writes this view's HTML into `renderer`.
+    ///
+    /// - Parameter renderer: The renderer that collects the page's HTML.
     public func _render(into renderer: inout HTMLRenderer) {
         renderer.pending.removeAll()
         let missing = SupportStyle.all.filter { !renderer.writtenSupportStyles.contains($0.key) }
@@ -75,16 +91,28 @@ public struct SupportStyles: View {
         }
         renderer.write("</style>")
     }
+
 }
 
 /// Writes a support style, then renders `content`.
 struct WithSupportStyle<Content: View>: View {
-    typealias Body = Never
+
+    // MARK: - Properties
+
     /// The style the content needs.
     let style: SupportStyle
+
     /// The view to render after the style.
     let content: Content
 
+    // MARK: - View
+
+    /// A primitive view writes its own HTML, so it has no `body`.
+    typealias Body = Never
+
+    /// Writes this view's HTML into `renderer`.
+    ///
+    /// - Parameter renderer: The renderer that collects the page's HTML.
     func _render(into renderer: inout HTMLRenderer) {
         // Keep the pending modifiers for the content, not the <style>.
         let pending = renderer.pending
@@ -93,30 +121,44 @@ struct WithSupportStyle<Content: View>: View {
         renderer.pending = pending
         content._render(into: &renderer)
     }
+
 }
 
 // MARK: - ZStack
 
 /// Where content sits inside a `ZStack`.
 public enum Alignment: Sendable, CaseIterable {
+
+    // MARK: - Cases
+
     /// The top-left corner in left-to-right text.
     case topLeading
+
     /// The middle of the top edge.
     case top
+
     /// The top-right corner in left-to-right text.
     case topTrailing
+
     /// The middle of the leading edge.
     case leading
+
     /// The centre.
     case center
+
     /// The middle of the trailing edge.
     case trailing
+
     /// The bottom-left corner in left-to-right text.
     case bottomLeading
+
     /// The middle of the bottom edge.
     case bottom
+
     /// The bottom-right corner in left-to-right text.
     case bottomTrailing
+
+    // MARK: - Computed Properties
 
     /// The CSS `place-items` value: block axis, then inline axis.
     var placeItems: String {
@@ -134,6 +176,7 @@ public enum Alignment: Sendable, CaseIterable {
         }
         return "\(vertical) \(horizontal)"
     }
+
 }
 
 /// Layers its children on top of each other, like SwiftUI's `ZStack`.
@@ -148,17 +191,30 @@ public enum Alignment: Sendable, CaseIterable {
 /// }
 /// ```
 public struct ZStack<Content: View>: View {
+
+    // MARK: - Properties
+
     /// Where children sit inside the stack.
     public let alignment: Alignment
+
     /// The element's content.
     public let content: Content
 
+    // MARK: - Initializers
+
     /// Creates a stack whose layers are built by `content`.
+    ///
+    /// - Parameters:
+    ///   - alignment: Where children sit inside the stack.
+    ///   - content: The element's content.
     public init(alignment: Alignment = .center, @ViewBuilder content: () -> Content) {
         self.alignment = alignment
         self.content = content()
     }
 
+    // MARK: - View
+
+    /// The elements this view is made of.
     public var body: some View {
         WithSupportStyle(
             style: .zStack,
@@ -169,6 +225,7 @@ public struct ZStack<Content: View>: View {
             )
         )
     }
+
 }
 
 // MARK: - Grid
@@ -187,16 +244,30 @@ public struct ZStack<Content: View>: View {
 /// }
 /// ```
 public struct Grid<Content: View>: View {
+
+    // MARK: - Properties
+
     /// How cells are aligned vertically within their row, unless the row says otherwise.
     public let alignment: VerticalAlignment
+
     /// The gap between columns, in pixels.
     public let horizontalSpacing: Double
+
     /// The gap between rows, in pixels.
     public let verticalSpacing: Double
+
     /// The rows.
     public let content: Content
 
+    // MARK: - Initializers
+
     /// Creates a grid whose rows are built by `content`.
+    ///
+    /// - Parameters:
+    ///   - alignment: How cells are aligned vertically within their row, unless the row says otherwise.
+    ///   - horizontalSpacing: The gap between columns, in pixels.
+    ///   - verticalSpacing: The gap between rows, in pixels.
+    ///   - content: The rows.
     public init(
         alignment: VerticalAlignment = .center,
         horizontalSpacing: Double = 8,
@@ -209,6 +280,9 @@ public struct Grid<Content: View>: View {
         self.content = content()
     }
 
+    // MARK: - View
+
+    /// The elements this view is made of.
     public var body: some View {
         let style = "border-spacing: \(cssNumber(horizontalSpacing))px \(cssNumber(verticalSpacing))px; "
             + "--svui-valign: \(alignment.tableValue)"
@@ -217,21 +291,35 @@ public struct Grid<Content: View>: View {
             content: Element("div", attributes: ["class": "svui-grid", "style": style], wrapping: content)
         )
     }
+
 }
 
 /// One row of a `Grid`. Each child is one cell.
 public struct GridRow<Content: View>: View {
+
+    // MARK: - Properties
+
     /// How this row's cells are aligned vertically, or `nil` to use the grid's.
     public let alignment: VerticalAlignment?
+
     /// The cells.
     public let content: Content
 
+    // MARK: - Initializers
+
     /// Creates a row whose cells are built by `content`.
+    ///
+    /// - Parameters:
+    ///   - alignment: How this row's cells are aligned vertically, or `nil` to use the grid's.
+    ///   - content: The cells.
     public init(alignment: VerticalAlignment? = nil, @ViewBuilder content: () -> Content) {
         self.alignment = alignment
         self.content = content()
     }
 
+    // MARK: - View
+
+    /// The elements this view is made of.
     public var body: Element<Content> {
         var attributes: HTMLAttributes = ["class": "svui-grid-row"]
         if let alignment {
@@ -239,9 +327,13 @@ public struct GridRow<Content: View>: View {
         }
         return Element("div", attributes: attributes, wrapping: content)
     }
+
 }
 
 extension VerticalAlignment {
+
+    // MARK: - Computed Properties
+
     /// The CSS `vertical-align` value for a table cell.
     var tableValue: String {
         switch self {
@@ -251,10 +343,14 @@ extension VerticalAlignment {
         case .baseline: "baseline"
         }
     }
+
 }
 
 /// The size of one column of a `LazyVGrid`.
 public struct GridItem: Sendable, Hashable {
+
+    // MARK: - Nested Types
+
     /// How a column is sized.
     public enum Size: Sendable, Hashable {
         /// Exactly this many pixels wide.
@@ -266,13 +362,12 @@ public struct GridItem: Sendable, Hashable {
         case adaptive(minimum: Double, maximum: Double = .infinity)
     }
 
+    // MARK: - Properties
+
     /// How the column is sized.
     public let size: Size
 
-    /// Creates a column. The default shares the free space equally.
-    public init(_ size: Size = .flexible()) {
-        self.size = size
-    }
+    // MARK: - Computed Properties
 
     /// The CSS track size for `grid-template-columns`.
     var css: String {
@@ -286,6 +381,17 @@ public struct GridItem: Sendable, Hashable {
         }
     }
 
+    // MARK: - Initializers
+
+    /// Creates a column. The default shares the free space equally.
+    ///
+    /// - Parameter size: How the column is sized.
+    public init(_ size: Size = .flexible()) {
+        self.size = size
+    }
+
+    // MARK: - Methods
+
     /// Formats a column's largest width.
     ///
     /// - Parameter value: The width in pixels, or infinity for no limit.
@@ -293,6 +399,7 @@ public struct GridItem: Sendable, Hashable {
     private static func maximum(_ value: Double) -> String {
         value.isFinite ? "\(cssNumber(value))px" : "1fr"
     }
+
 }
 
 /// A grid that flows its children into columns, like SwiftUI's
@@ -308,16 +415,30 @@ public struct GridItem: Sendable, Hashable {
 ///
 /// HTML has no lazy loading for markup, so every child is rendered.
 public struct LazyVGrid<Content: View>: View {
+
+    // MARK: - Properties
+
     /// The columns.
     public let columns: [GridItem]
+
     /// The gap between cells, in pixels.
     public let spacing: Double?
+
     /// How children are aligned within their cells, or `nil` to stretch them.
     public let alignment: HorizontalAlignment?
+
     /// The cells.
     public let content: Content
 
+    // MARK: - Initializers
+
     /// Creates a grid whose cells are built by `content`.
+    ///
+    /// - Parameters:
+    ///   - columns: The columns.
+    ///   - alignment: How children are aligned within their cells, or `nil` to stretch them.
+    ///   - spacing: The gap between cells, in pixels.
+    ///   - content: The cells.
     public init(
         columns: [GridItem],
         alignment: HorizontalAlignment? = nil,
@@ -330,6 +451,9 @@ public struct LazyVGrid<Content: View>: View {
         self.content = content()
     }
 
+    // MARK: - View
+
+    /// The elements this view is made of.
     public var body: Element<Content> {
         let template = columns.isEmpty ? "1fr" : columns.map(\.css).joined(separator: " ")
         var style = "display: grid; grid-template-columns: \(template)"
@@ -337,16 +461,15 @@ public struct LazyVGrid<Content: View>: View {
         if let alignment { style += "; justify-items: \(alignment.rawValue)" }
         return Element("div", attributes: ["style": style], wrapping: content)
     }
+
 }
 
 // MARK: - ScrollView
 
 /// A direction content can scroll in.
 public enum Axis: Sendable, Hashable {
-    /// Left and right.
-    case horizontal
-    /// Up and down.
-    case vertical
+
+    // MARK: - Nested Types
 
     /// A set of directions.
     public struct Set: OptionSet, Sendable, Hashable {
@@ -360,6 +483,15 @@ public enum Axis: Sendable, Hashable {
         /// Up and down.
         public static let vertical = Set(rawValue: 2)
     }
+
+    // MARK: - Cases
+
+    /// Left and right.
+    case horizontal
+
+    /// Up and down.
+    case vertical
+
 }
 
 /// A region that scrolls when its content is too big, like SwiftUI's
@@ -374,20 +506,35 @@ public enum Axis: Sendable, Hashable {
 /// }
 /// ```
 public struct ScrollView<Content: View>: View {
+
+    // MARK: - Properties
+
     /// The directions the content can scroll in.
     public let axes: Axis.Set
+
     /// Whether to show scroll bars.
     public let showsIndicators: Bool
+
     /// The element's content.
     public let content: Content
 
+    // MARK: - Initializers
+
     /// Creates a scrolling region.
+    ///
+    /// - Parameters:
+    ///   - axes: The directions the content can scroll in.
+    ///   - showsIndicators: Whether to show scroll bars.
+    ///   - content: The element's content.
     public init(_ axes: Axis.Set = .vertical, showsIndicators: Bool = true, @ViewBuilder content: () -> Content) {
         self.axes = axes
         self.showsIndicators = showsIndicators
         self.content = content()
     }
 
+    // MARK: - View
+
+    /// The elements this view is made of.
     public var body: Element<Content> {
         var style: String
         switch (axes.contains(.horizontal), axes.contains(.vertical)) {
@@ -398,6 +545,7 @@ public struct ScrollView<Content: View>: View {
         if !showsIndicators { style += "; scrollbar-width: none" }
         return Element("div", attributes: ["style": style, "tabindex": "0"], wrapping: content)
     }
+
 }
 
 // MARK: - TabView
@@ -405,12 +553,18 @@ public struct ScrollView<Content: View>: View {
 /// The `TabView` being rendered: its id, which tab is chosen, and how many
 /// tabs have been written so far.
 struct TabGroupState: Sendable {
+
+    // MARK: - Properties
+
     /// The tab view's `id`, used as the radio group name.
     let id: String
+
     /// The index of the tab shown first.
     let selection: Int
+
     /// How many tabs have been written so far.
     var count = 0
+
 }
 
 /// Tabs that switch between panels, like SwiftUI's `TabView`, with no
@@ -430,21 +584,40 @@ struct TabGroupState: Sendable {
 /// The `id` must be unique in the page; it names the radio group. Modifiers
 /// apply to the tab view's container.
 public struct TabView<Content: View>: View {
-    public typealias Body = Never
+
+    // MARK: - Properties
+
     /// The container `id` and radio group name.
     public let id: String
+
     /// The index of the tab shown first, counting from 0.
     public let selection: Int
+
     /// The tabs.
     public let content: Content
 
+    // MARK: - Initializers
+
     /// Creates a tab view whose tabs are built by `content`.
+    ///
+    /// - Parameters:
+    ///   - id: The container `id` and radio group name.
+    ///   - selection: The index of the tab shown first, counting from 0.
+    ///   - content: The tabs.
     public init(id: String, selection: Int = 0, @ViewBuilder content: () -> Content) {
         self.id = id
         self.selection = selection
         self.content = content()
     }
 
+    // MARK: - View
+
+    /// A primitive view writes its own HTML, so it has no `body`.
+    public typealias Body = Never
+
+    /// Writes this view's HTML into `renderer`.
+    ///
+    /// - Parameter renderer: The renderer that collects the page's HTML.
     public func _render(into renderer: inout HTMLRenderer) {
         let pending = renderer.pending
         renderer.pending = []
@@ -460,6 +633,7 @@ public struct TabView<Content: View>: View {
         renderer.tabGroup = outer
         renderer.write("</div>")
     }
+
 }
 
 /// One tab of a `TabView`: its label and its panel.
@@ -467,18 +641,33 @@ public struct TabView<Content: View>: View {
 /// Modifiers apply to the panel. Outside a `TabView`, a tab renders as a
 /// `<section>` with its label as a heading.
 public struct Tab<TabLabel: View, Content: View>: View {
-    public typealias Body = Never
+
+    // MARK: - Properties
+
     /// The tab's label.
     public let label: TabLabel
+
     /// The panel content.
     public let content: Content
 
+    // MARK: - Initializers
+
     /// Creates a tab with a custom label.
+    ///
+    /// - Parameter content: The panel content.
     public init(@ViewBuilder content: () -> Content, @ViewBuilder label: () -> TabLabel) {
         self.label = label()
         self.content = content()
     }
 
+    // MARK: - View
+
+    /// A primitive view writes its own HTML, so it has no `body`.
+    public typealias Body = Never
+
+    /// Writes this view's HTML into `renderer`.
+    ///
+    /// - Parameter renderer: The renderer that collects the page's HTML.
     public func _render(into renderer: inout HTMLRenderer) {
         guard var group = renderer.tabGroup else {
             Section {
@@ -518,13 +707,22 @@ public struct Tab<TabLabel: View, Content: View>: View {
         ._render(into: &renderer)
         // A nested TabView inside the panel restores its own state, so ours is intact.
     }
+
 }
 
 extension Tab where TabLabel == Text {
+
+    // MARK: - Initializers
+
     /// Creates a tab with escaped `title` as its label.
+    ///
+    /// - Parameters:
+    ///   - title: The tab's label, which is escaped when rendered.
+    ///   - content: The panel content.
     public init(_ title: String, @ViewBuilder content: () -> Content) {
         self.init(content: content) { Text(title) }
     }
+
 }
 
 // MARK: - Disclosure, menu and navigation
@@ -539,33 +737,57 @@ extension Tab where TabLabel == Text {
 /// }
 /// ```
 public struct DisclosureGroup<TitleLabel: View, Content: View>: View {
+
+    // MARK: - Properties
+
     /// Whether it starts open.
     public let isExpanded: Bool
+
     /// The always-visible label.
     public let label: TitleLabel
+
     /// The content shown when open.
     public let content: Content
 
+    // MARK: - Initializers
+
     /// Creates a disclosure group with a custom label.
+    ///
+    /// - Parameters:
+    ///   - isExpanded: Whether it starts open.
+    ///   - content: The content shown when open.
     public init(isExpanded: Bool = false, @ViewBuilder content: () -> Content, @ViewBuilder label: () -> TitleLabel) {
         self.isExpanded = isExpanded
         self.label = label()
         self.content = content()
     }
 
+    // MARK: - View
+
+    /// The elements this view is made of.
     public var body: some View {
         Element("details", attributes: isExpanded ? ["open": ""] : [:]) {
             Summary { label }
             content
         }
     }
+
 }
 
 extension DisclosureGroup where TitleLabel == Text {
+
+    // MARK: - Initializers
+
     /// Creates a disclosure group with escaped `title` as its label.
+    ///
+    /// - Parameters:
+    ///   - title: The always-visible label, which is escaped when rendered.
+    ///   - isExpanded: Whether it starts open.
+    ///   - content: The content shown when open.
     public init(_ title: String, isExpanded: Bool = false, @ViewBuilder content: () -> Content) {
         self.init(isExpanded: isExpanded, content: content) { Text(title) }
     }
+
 }
 
 /// A button that opens a list of actions, like SwiftUI's `Menu`.
@@ -580,17 +802,28 @@ extension DisclosureGroup where TitleLabel == Text {
 /// }
 /// ```
 public struct Menu<MenuLabel: View, Content: View>: View {
+
+    // MARK: - Properties
+
     /// The button that opens the menu.
     public let label: MenuLabel
+
     /// The menu's items.
     public let content: Content
 
+    // MARK: - Initializers
+
     /// Creates a menu with a custom label.
+    ///
+    /// - Parameter content: The menu's items.
     public init(@ViewBuilder content: () -> Content, @ViewBuilder label: () -> MenuLabel) {
         self.label = label()
         self.content = content()
     }
 
+    // MARK: - View
+
+    /// The elements this view is made of.
     public var body: some View {
         WithSupportStyle(
             style: .menu,
@@ -600,13 +833,22 @@ public struct Menu<MenuLabel: View, Content: View>: View {
             }
         )
     }
+
 }
 
 extension Menu where MenuLabel == Text {
+
+    // MARK: - Initializers
+
     /// Creates a menu with escaped `title` as its label.
+    ///
+    /// - Parameters:
+    ///   - title: The menu button's text, which is escaped when rendered.
+    ///   - content: The menu's items.
     public init(_ title: String, @ViewBuilder content: () -> Content) {
         self.init(content: content) { Text(title) }
     }
+
 }
 
 /// A link to another page of your site, like SwiftUI's `NavigationLink`.
@@ -622,30 +864,55 @@ extension Menu where MenuLabel == Text {
 /// }
 /// ```
 public struct NavigationLink<LinkLabel: View>: View {
+
+    // MARK: - Properties
+
     /// The URL of the page.
     public let destination: String
+
     /// Whether this link points at the current page.
     public let isActive: Bool
+
     /// The link's visible content.
     public let label: LinkLabel
 
+    // MARK: - Initializers
+
     /// Creates a navigation link with a custom label.
+    ///
+    /// - Parameters:
+    ///   - destination: The URL of the page.
+    ///   - isActive: Whether this link points at the current page.
+    ///   - label: The link's visible content.
     public init(destination: String, isActive: Bool = false, @ViewBuilder label: () -> LinkLabel) {
         self.destination = destination
         self.isActive = isActive
         self.label = label()
     }
 
+    // MARK: - View
+
+    /// The elements this view is made of.
     public var body: Element<LinkLabel> {
         var attributes: HTMLAttributes = ["href": destination]
         if isActive { attributes["aria-current"] = "page" }
         return Element("a", attributes: attributes, wrapping: label)
     }
+
 }
 
 extension NavigationLink where LinkLabel == Text {
+
+    // MARK: - Initializers
+
     /// Creates a navigation link with escaped `title` as its text.
+    ///
+    /// - Parameters:
+    ///   - title: The link text, which is escaped when rendered.
+    ///   - destination: The URL of the page.
+    ///   - isActive: Whether this link points at the current page.
     public init(_ title: String, destination: String, isActive: Bool = false) {
         self.init(destination: destination, isActive: isActive) { Text(title) }
     }
+
 }

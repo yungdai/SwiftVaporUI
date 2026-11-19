@@ -46,6 +46,17 @@ struct Plant: Sendable {
 /// An in-memory store, so the demo has some state to show.
 actor PlantShelf {
 
+    // MARK: - Static Properties
+
+    /// Slugs that would clash with the shelf's own routes, such as `/plants/new`.
+    static let reservedSlugs: Set<String> = ["new"]
+
+    /// The most plants the shelf keeps, so a public demo cannot grow without limit.
+    static let capacity = 200
+
+    /// How many plants the shelf starts with. They are never removed.
+    static let seedCount = 3
+
     // MARK: - Properties
 
     /// The plants on the shelf, seeded with a few examples.
@@ -75,22 +86,41 @@ actor PlantShelf {
     /// - Parameter form: The submitted values.
     /// - Returns: The new plant.
     func add(_ form: PlantForm) -> Plant {
-        let base = form.name.lowercased().split(whereSeparator: { !$0.isLetter && !$0.isNumber }).joined(separator: "-")
-        var slug = base.isEmpty ? "plant" : base
-        var suffix = 2
-        while plants.contains(where: { $0.slug == slug }) {
-            slug = "\(base)-\(suffix)"
-            suffix += 1
-        }
+        let slug = Self.uniqueSlug(for: form.name, taken: Set(plants.map(\.slug)))
         let plant = Plant(
             slug: slug,
-            name: form.name.trimmingCharacters(in: .whitespaces),
+            name: form.name.trimmingCharacters(in: .whitespacesAndNewlines),
             light: Light(rawValue: form.light) ?? .medium,
             waterEveryDays: Int(form.waterEveryDays) ?? 7,
             notes: form.notes
         )
         plants.append(plant)
+        if plants.count > Self.capacity {
+            // Keep the demo's memory bounded: drop the oldest added plant.
+            plants.remove(at: Self.seedCount)
+        }
         return plant
+    }
+
+    /// Makes a URL-safe slug from a plant name that no other plant uses.
+    ///
+    /// Words become lowercase and are joined with hyphens. A name with no
+    /// letters or digits becomes `plant`. Slugs that clash with a fixed route,
+    /// such as `new`, or with another plant get a number: `plant-2`.
+    /// - Parameters:
+    ///   - name: The plant's name.
+    ///   - taken: The slugs already in use.
+    /// - Returns: A slug not in `taken` and not a reserved route.
+    static func uniqueSlug(for name: String, taken: Set<String>) -> String {
+        let words = name.lowercased().split(whereSeparator: { !$0.isLetter && !$0.isNumber })
+        let base = words.isEmpty ? "plant" : words.joined(separator: "-")
+        var slug = base
+        var suffix = 2
+        while taken.contains(slug) || reservedSlugs.contains(slug) {
+            slug = "\(base)-\(suffix)"
+            suffix += 1
+        }
+        return slug
     }
 
 }
@@ -134,7 +164,7 @@ struct PlantForm: Content {
     /// - Returns: A message for each problem; empty when the form is valid.
     func validate() -> [String] {
         var errors: [String] = []
-        if name.trimmingCharacters(in: .whitespaces).isEmpty {
+        if name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             errors.append("Give the plant a name.")
         }
         if let days = Int(waterEveryDays), (1...60).contains(days) {

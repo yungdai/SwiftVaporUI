@@ -127,7 +127,7 @@ struct ExampleView: View {
                         Element("iframe", attributes: ["srcdoc": html, "title": "Result of \(example.title)", "loading": "lazy"])
                             .class("preview-frame")
                     } else {
-                        Div { example.preview }.class("preview")
+                        Div { RawHTML(html) }.class("preview")
                     }
                 }
                 .class("panel", "result-panel")

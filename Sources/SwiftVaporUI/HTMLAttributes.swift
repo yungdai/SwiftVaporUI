@@ -45,7 +45,7 @@ public struct HTMLAttributes: Sendable, Equatable, ExpressibleByDictionaryLitera
     /// Gets or sets an attribute's value. Setting `nil` removes it.
     /// - Parameter name: The attribute name.
     public subscript(name: String) -> String? {
-        get { storage.first(where: { $0.name == name })?.value ?? nil }
+        get { storage.first(where: { Self.sameName($0.name, name) })?.value ?? nil }
         set {
             if let newValue {
                 set(name, newValue)
@@ -61,7 +61,7 @@ public struct HTMLAttributes: Sendable, Equatable, ExpressibleByDictionaryLitera
     /// - Parameter name: The attribute name.
     /// - Returns: Whether the attribute is set.
     public func contains(_ name: String) -> Bool {
-        storage.contains(where: { $0.name == name })
+        storage.contains(where: { Self.sameName($0.name, name) })
     }
 
     /// Sets `name` to `value`, or to a bare boolean attribute when `value` is `nil`.
@@ -70,7 +70,7 @@ public struct HTMLAttributes: Sendable, Equatable, ExpressibleByDictionaryLitera
     ///   - value: The value, or `nil` for a bare boolean attribute.
     public mutating func set(_ name: String, _ value: String?) {
         guard HTMLEscaping.isValidAttributeName(name) else { return }
-        if let index = storage.firstIndex(where: { $0.name == name }) {
+        if let index = storage.firstIndex(where: { Self.sameName($0.name, name) }) {
             storage[index].value = value
         } else {
             storage.append(Attribute(name: name, value: value))
@@ -86,7 +86,7 @@ public struct HTMLAttributes: Sendable, Equatable, ExpressibleByDictionaryLitera
     /// Removes the attribute called `name`, if it is set.
     /// - Parameter name: The attribute name.
     public mutating func remove(_ name: String) {
-        storage.removeAll(where: { $0.name == name })
+        storage.removeAll(where: { Self.sameName($0.name, name) })
     }
 
     /// Adds whitespace-separated class names, skipping ones already present.
@@ -111,6 +111,16 @@ public struct HTMLAttributes: Sendable, Equatable, ExpressibleByDictionaryLitera
         } else {
             set("style", trimmed)
         }
+    }
+
+    /// Whether two attribute names are the same. HTML attribute names are
+    /// case-insensitive, so `Class` and `class` are one attribute.
+    /// - Parameters:
+    ///   - lhs: One attribute name.
+    ///   - rhs: The other attribute name.
+    /// - Returns: Whether they name the same attribute.
+    static func sameName(_ lhs: String, _ rhs: String) -> Bool {
+        lhs.utf8.count == rhs.utf8.count && lhs.lowercased() == rhs.lowercased()
     }
 
     /// Applies one modifier change.

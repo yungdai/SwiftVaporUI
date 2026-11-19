@@ -12,10 +12,29 @@ enum SwiftHighlighter {
         "if", "else", "for", "in", "while", "switch", "case", "default", "return", "guard",
         "some", "any", "where", "import", "static", "private", "fileprivate", "public",
         "true", "false", "nil", "self", "Self", "try", "await", "async", "throws", "do", "catch",
-        "typealias", "associatedtype", "break", "continue", "mutating", "inout", "let",
+        "typealias", "associatedtype", "break", "continue", "mutating", "inout",
     ]
 
     // MARK: - Methods
+
+    /// Finds where a number literal ends.
+    ///
+    /// A dot belongs to the number only when a digit follows, so `1...n` and
+    /// `$0.name` are not swallowed into it.
+    /// - Parameters:
+    ///   - chars: The source, as characters.
+    ///   - start: The index of the number's first digit.
+    /// - Returns: The index just after the number.
+    static func numberEnd(in chars: [Character], from start: Int) -> Int {
+        var end = start
+        while end < chars.count {
+            let next = chars[end]
+            let isDecimalPoint = next == "." && end + 1 < chars.count && chars[end + 1].isNumber
+            guard next.isNumber || next == "_" || isDecimalPoint else { break }
+            end += 1
+        }
+        return end
+    }
 
     /// Colours Swift source with `<span>`s.
     /// - Parameter code: The Swift source.
@@ -78,8 +97,7 @@ enum SwiftHighlighter {
 
             // Numbers.
             if char.isNumber {
-                var end = index
-                while end < chars.count, chars[end].isNumber || chars[end] == "." || chars[end] == "_" { end += 1 }
+                let end = numberEnd(in: chars, from: index)
                 emit(String(chars[index..<end]), "number")
                 previousNonSpace = chars[end - 1]
                 index = end

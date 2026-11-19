@@ -79,11 +79,17 @@ public struct HTMLRenderer: Sendable {
             output += attribute.name
             if let value = attribute.value {
                 output += "=\""
-                output += HTMLEscaping.escapeAttribute(value)
+                let safe = HTMLEscaping.isURLAttribute(attribute.name) ? HTMLEscaping.safeURL(value) : value
+                output += HTMLEscaping.escapeAttribute(safe)
                 output += "\""
             }
         }
         output += ">"
+        // The parser drops one newline right after these opening tags, so
+        // write one ourselves and content that starts with a newline keeps it.
+        if tag == "pre" || tag == "textarea" || tag == "listing" {
+            output += "\n"
+        }
     }
 
 }
@@ -111,7 +117,7 @@ public enum HTMLEscaping {
     ///   - quotes: Whether to escape double and single quotes.
     /// - Returns: The escaped string.
     private static func escape(_ string: String, quotes: Bool) -> String {
-        guard string.utf8.contains(where: { $0 == 0x26 || $0 == 0x3C || $0 == 0x3E || $0 == 0x22 || $0 == 0x27 }) else {
+        guard string.utf8.contains(where: { $0 == 0x26 || $0 == 0x3C || $0 == 0x3E || (quotes && ($0 == 0x22 || $0 == 0x27)) }) else {
             return string
         }
         var result = ""
@@ -127,6 +133,44 @@ public enum HTMLEscaping {
             }
         }
         return result
+    }
+
+    /// Whether an attribute holds a URL that a browser may navigate to or load.
+    /// - Parameter name: The attribute name.
+    /// - Returns: Whether the attribute's value is checked by `safeURL(_:)`.
+    public static func isURLAttribute(_ name: String) -> Bool {
+        switch name.lowercased() {
+        case "href", "src", "action", "formaction", "poster", "cite", "data", "xlink:href":
+            return true
+        default:
+            return false
+        }
+    }
+
+    /// Replaces a URL that would run script with `#`.
+    ///
+    /// `javascript:` and `vbscript:` URLs run code when followed, so a link
+    /// built from user input could otherwise be used for cross-site
+    /// scripting. Browsers ignore spaces, control characters and case in the
+    /// scheme, so this does too. Every other URL, including relative ones, is
+    /// returned unchanged. To run script from a button, use
+    /// `ButtonAction.script(_:)` instead.
+    /// - Parameter url: The URL as given.
+    /// - Returns: The URL, or `#` when it uses a scripting scheme.
+    public static func safeURL(_ url: String) -> String {
+        var scheme = ""
+        for scalar in url.unicodeScalars {
+            if scalar == ":" { break }
+            if scalar.value <= 0x20 || scalar.value == 0x7F { continue }
+            scheme.unicodeScalars.append(scalar)
+            if scheme.count > 10 { return url }
+        }
+        switch scheme.lowercased() {
+        case "javascript", "vbscript":
+            return "#"
+        default:
+            return url
+        }
     }
 
     /// Whether `name` is safe to emit as an attribute name.

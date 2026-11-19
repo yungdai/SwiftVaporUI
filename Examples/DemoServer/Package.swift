@@ -22,5 +22,15 @@ let package = Package(
                 .plugin(name: "SwiftLintBuildToolPlugin", package: "SwiftLintPlugins"),
             ]
         ),
+        .testTarget(
+            name: "DemoServerTests",
+            dependencies: [
+                "DemoServer",
+                .product(name: "XCTVapor", package: "vapor"),
+            ],
+            plugins: [
+                .plugin(name: "SwiftLintBuildToolPlugin", package: "SwiftLintPlugins"),
+            ]
+        ),
     ]
 )

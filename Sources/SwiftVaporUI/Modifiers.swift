@@ -84,6 +84,9 @@ extension View {
 
     /// Sets the `title` attribute: advisory text that browsers show as a
     /// tooltip. The same as ``tooltip(_:)``.
+    ///
+    /// This is not the document title: on an `HTMLDocument` it would set a
+    /// tooltip on `<html>`. Set the page title with `HTMLDocument(title:)`.
     /// - Parameter title: The tooltip text.
     /// - Returns: A view with the change applied.
     public func title(_ title: String) -> ModifiedView<Self> {

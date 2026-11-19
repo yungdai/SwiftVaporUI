@@ -1,13 +1,37 @@
 import SwiftVaporUI
 
-/// Where `main.swift` lives, so the page setup topic can show its source.
-let mainSourceFile = #filePath
-    .replacingOccurrences(of: "Showcase/Topics/PageSetupTopic.swift", with: "main.swift")
+/// The folder of the demo's sources (`Sources/DemoServer`), found from this
+/// file's path.
+let demoSourcesDirectory = URL(fileURLWithPath: #filePath)
+    .deletingLastPathComponent() // Topics
+    .deletingLastPathComponent() // Showcase
+    .deletingLastPathComponent() // DemoServer
 
-/// The demo's `Public` folder, found from this file's path so it works
-/// whatever the working directory is.
-let demoPublicDirectory = #filePath
-    .replacingOccurrences(of: "Sources/DemoServer/Showcase/Topics/PageSetupTopic.swift", with: "Public/")
+/// Where `main.swift` lives, so the page setup topic can show its source.
+let mainSourceFile = demoSourcesDirectory.appendingPathComponent("main.swift").path
+
+/// Finds the demo's `Public` folder.
+///
+/// Vapor's `app.directory.publicDirectory` is used when it exists, which is
+/// the case when the server runs from the package folder or a deployment
+/// that ships `Public`. Otherwise the folder next to the demo's
+/// `Package.swift` is used, which also works from Xcode.
+/// - Parameter app: The application, for its working directory and logger.
+/// - Returns: The path of the folder to serve, ending in `/`.
+func demoPublicDirectory(for app: Application) -> String {
+    let fromWorkingDirectory = app.directory.publicDirectory
+    if FileManager.default.fileExists(atPath: fromWorkingDirectory) {
+        return fromWorkingDirectory
+    }
+    let fromSources = demoSourcesDirectory
+        .deletingLastPathComponent() // Sources
+        .deletingLastPathComponent() // the package folder
+        .appendingPathComponent("Public").path + "/"
+    if !FileManager.default.fileExists(atPath: fromSources) {
+        app.logger.warning("No Public folder at \(fromWorkingDirectory) or \(fromSources); CSS and JavaScript files will not be served.")
+    }
+    return fromSources
+}
 
 // snippet: site-layout
 /// The layout every page of a site shares: one `<head>` with the stylesheet

@@ -488,7 +488,7 @@ func registerMarketRoutes(_ app: Application) {
             }
         }
         let guests = Int(form.guests ?? "") ?? 1
-        let name = form.name?.trimmingCharacters(in: .whitespaces) ?? "friend"
+        let name = form.name?.trimmingCharacters(in: .whitespacesAndNewlines) ?? "friend"
         return HTMLResponse {
             MarketPage(market: market, category: nil, visit: .confirmed(name: name, guests: guests))
         }

@@ -144,7 +144,7 @@ struct VisitForm: Content {
     /// Checks the values.
     /// - Returns: A message for the first problem, or `nil` when the form is valid.
     func validate() -> String? {
-        let trimmed = name?.trimmingCharacters(in: .whitespaces) ?? ""
+        let trimmed = name?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
         if trimmed.isEmpty { return "Please tell us your name." }
         guard (1...8).contains(Int(guests ?? "") ?? 0) else {
             return "Choose between 1 and 8 guests."

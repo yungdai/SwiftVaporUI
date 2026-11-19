@@ -305,7 +305,7 @@ public struct VoidElement: View {
     /// - Parameter renderer: The renderer that collects the page's HTML.
     public func _render(into renderer: inout HTMLRenderer) {
         guard HTMLEscaping.isValidTagName(tag) else {
-            renderer.pending.removeAll()
+            // Like `Element`, leave queued modifiers for the next element.
             return
         }
         var attributes = attributes

@@ -531,3 +531,46 @@ final class ReviewFixTests: XCTestCase {
     }
 
 }
+
+/// Tests for the fixes from the review of the core library.
+final class CoreReviewFixTests: XCTestCase {
+
+    /// Checks inline scripts cannot hide their closing tag behind a comment opener.
+    func testScriptEscapesCommentAndScriptOpeners() {
+        let html = Script("const s = '<!--<SCRIPT>';").render()
+        XCTAssertEqual(html, "<script>const s = '<\\!--<\\script>';</script>")
+    }
+
+    /// Checks scripting URLs are neutralised in URL attributes only.
+    func testScriptingURLsAreNeutralised() {
+        XCTAssertEqual(Link("x", destination: "javascript:alert(1)").render(), "<a href=\"#\">x</a>")
+        XCTAssertEqual(Link("x", destination: " Java\tScript:alert(1)").render(), "<a href=\"#\">x</a>")
+        XCTAssertEqual(Image(src: "vbscript:x", alt: "").render(), "<img src=\"#\" alt=\"\">")
+        XCTAssertEqual(Link("x", destination: "/a?b=javascript:1").render(), "<a href=\"/a?b=javascript:1\">x</a>")
+        XCTAssertEqual(Link("x", destination: "https://example.com").render(), "<a href=\"https://example.com\">x</a>")
+        XCTAssertEqual(Div { "x" }.data("url", "javascript:1").render(), "<div data-url=\"javascript:1\">x</div>")
+    }
+
+    /// Checks a leading newline in a text area or pre survives the HTML parser.
+    func testLeadingNewlineIsKept() {
+        XCTAssertEqual(TextArea(name: "n", text: "\nx").render(), "<textarea name=\"n\">\n\nx</textarea>")
+        XCTAssertEqual(Preformatted("a").render(), "<pre>\na</pre>")
+    }
+
+    /// Checks an invalid void element passes modifiers on to the next element.
+    func testInvalidVoidElementKeepsModifiers() {
+        let html = Group {
+            VoidElement("bad tag")
+            Paragraph("x")
+        }
+        .class("card")
+        .render()
+        XCTAssertEqual(html, "<p class=\"card\">x</p>")
+    }
+
+    /// Checks attribute names are matched without regard to case.
+    func testAttributeNamesAreCaseInsensitive() {
+        let html = Element("div", attributes: ["Class": "a"]) { "x" }.class("b").id("c").render()
+        XCTAssertEqual(html, "<div Class=\"a b\" id=\"c\">x</div>")
+    }
+}

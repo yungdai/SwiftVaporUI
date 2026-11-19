@@ -17,8 +17,9 @@ app.http.server.configuration.port = Environment.get("PORT").flatMap(Int.init) ?
 // Serve CSS, JavaScript and images from the Public folder, so
 // Public/css/site.css is at /css/site.css. Vapor's default is
 // app.directory.publicDirectory, which is relative to the working directory;
-// this demo finds Public next to its Package.swift so it also works from Xcode.
-app.middleware.use(FileMiddleware(publicDirectory: demoPublicDirectory))
+// this demo falls back to Public next to its Package.swift so it also works
+// from Xcode.
+app.middleware.use(FileMiddleware(publicDirectory: demoPublicDirectory(for: app)))
 // end-snippet
 
 // The showcase: a home page and one page per feature area.

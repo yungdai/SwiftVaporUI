@@ -32,6 +32,9 @@ struct Example: Sendable {
     /// The view the example renders.
     let preview: AnyView
 
+    /// The HTML the example renders, rendered once when the example is made.
+    let html: String
+
     /// The snippet marker id to show the source of.
     let snippetID: String
 
@@ -47,11 +50,6 @@ struct Example: Sendable {
     /// The Swift source between this example's markers.
     var source: SourceSnippet {
         SourceLibrary.shared.snippet(snippetID, in: file)
-    }
-
-    /// The HTML the example renders.
-    var html: String {
-        preview.render()
     }
 
     // MARK: - Initializer
@@ -78,6 +76,7 @@ struct Example: Sendable {
         self.title = title
         self.summary = summary
         self.preview = AnyView(preview())
+        self.html = self.preview.render()
         self.snippetID = snippet ?? id
         self.file = file
         self.isolated = isolated
@@ -113,8 +112,12 @@ final class SourceLibrary: @unchecked Sendable {
     /// Guards `files` across requests.
     private let lock = NSLock()
 
-    /// File contents already read, as lines, by path.
-    private var files: [String: [String]] = [:]
+    /// File contents already read, as lines, by path. `nil` records a file
+    /// that could not be read, so it is not tried again on every request.
+    private var files: [String: [String]?] = [:]
+
+    /// Snippets already extracted, by file path and snippet id.
+    private var snippets: [String: SourceSnippet] = [:]
 
     // MARK: - Methods
 
@@ -124,10 +127,32 @@ final class SourceLibrary: @unchecked Sendable {
     ///   - path: The file's path.
     /// - Returns: The snippet, or a comment explaining why it could not be read.
     func snippet(_ id: String, in path: String) -> SourceSnippet {
+        let key = path + "#" + id
+        if let cached = withLock({ snippets[key] }) { return cached }
+        let snippet = extractSnippet(id, in: path)
+        withLock { snippets[key] = snippet }
+        return snippet
+    }
+
+    /// Runs `body` while holding the lock.
+    /// - Parameter body: The work to do.
+    /// - Returns: What `body` returns.
+    private func withLock<Result>(_ body: () -> Result) -> Result {
+        lock.lock()
+        defer { lock.unlock() }
+        return body()
+    }
+
+    /// Reads the snippet regions marked `id` in a file, without the cache.
+    /// - Parameters:
+    ///   - id: The snippet marker id.
+    ///   - path: The file's path.
+    /// - Returns: The snippet, or a comment explaining why it could not be read.
+    private func extractSnippet(_ id: String, in path: String) -> SourceSnippet {
         let displayPath = Self.displayPath(for: path)
         guard let lines = lines(of: path) else {
             return SourceSnippet(
-                code: "// The source file could not be read at \(path).\n// Run the server from a checkout of the repository to see the code.",
+                code: "// The source file \(displayPath) could not be read.\n// Run the server from a checkout of the repository to see the code.",
                 displayPath: displayPath,
                 line: nil
             )
@@ -162,12 +187,10 @@ final class SourceLibrary: @unchecked Sendable {
     /// - Parameter path: The file's path.
     /// - Returns: The file's lines, or `nil` if it cannot be read.
     private func lines(of path: String) -> [String]? {
-        lock.lock()
-        defer { lock.unlock() }
-        if let cached = files[path] { return cached }
-        guard let contents = try? String(contentsOfFile: path, encoding: .utf8) else { return nil }
-        let lines = contents.components(separatedBy: "\n")
-        files[path] = lines
+        if let cached = withLock({ files[path] }) { return cached }
+        // Read outside the lock, so one slow read does not hold up other requests.
+        let lines = (try? String(contentsOfFile: path, encoding: .utf8))?.components(separatedBy: "\n")
+        withLock { files[path] = .some(lines) }
         return lines
     }
 

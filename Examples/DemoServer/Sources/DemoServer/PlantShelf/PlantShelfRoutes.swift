@@ -12,23 +12,27 @@ func registerPlantShelfRoutes(_ app: Application) {
         guard let slug = req.parameters.get("slug"), let plant = await shelf.plant(slug: slug) else {
             return HTMLResponse(status: .notFound) { AnyView(NotFoundPage()) }
         }
-        return HTMLResponse { AnyView(PlantPage(plant: plant)) }
+        let justAdded = req.query[String.self, at: "added"] == "1"
+        return HTMLResponse { AnyView(PlantPage(plant: plant, justAdded: justAdded)) }
     }
 
     app.get("plants", "new") { _ in
         NewPlantPage(form: PlantForm(), errors: [])
     }
 
-    app.post("plants") { req in
+    app.post("plants") { req async throws -> Response in
         let form = try req.content.decode(PlantForm.self)
         let errors = form.validate()
         guard errors.isEmpty else {
-            return HTMLResponse(status: .unprocessableEntity) {
-                AnyView(NewPlantPage(form: form, errors: errors))
+            return try await HTMLResponse(status: .unprocessableEntity) {
+                NewPlantPage(form: form, errors: errors)
             }
+            .encodeResponse(for: req)
         }
         let plant = await shelf.add(form)
-        return HTMLResponse(status: .created) { AnyView(PlantPage(plant: plant, justAdded: true)) }
+        // Redirect after a successful POST, so reloading the page does not
+        // submit the form again.
+        return req.redirect(to: "/plants/\(plant.slug)?added=1", redirectType: .normal)
     }
 
     // A fragment: any view can be returned on its own, which suits htmx-style

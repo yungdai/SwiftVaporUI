@@ -317,7 +317,7 @@ final class ElementTests: XCTestCase {
                 + "<input type=\"email\" name=\"email\" value=\"a&amp;b\" placeholder=\"you@example.com\" id=\"email\" required>"
                 + "<input type=\"password\" name=\"password\" placeholder=\"Password\">"
                 + "<select name=\"plan\"><option value=\"free\">Free</option><option value=\"pro\" selected>Pro</option></select>"
-                + "<textarea name=\"bio\" rows=\"3\">&lt;hi&gt;</textarea>"
+                + "<textarea name=\"bio\" rows=\"3\">\n&lt;hi&gt;</textarea>"
                 + "<button type=\"submit\">Join</button>"
                 + "</form>"
         )

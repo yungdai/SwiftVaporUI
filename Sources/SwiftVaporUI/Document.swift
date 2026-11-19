@@ -367,10 +367,25 @@ public struct Script: View {
         var attributes = HTMLAttributes()
         if module { attributes["type"] = "module" }
         self.attributes = attributes
-        self.code = code.replacingOccurrences(of: "</", with: "<\\/")
+        self.code = Self.escapeForScriptElement(code)
     }
 
     // MARK: - View
+
+    /// Makes inline code safe to place inside `<script>`.
+    ///
+    /// `</` becomes `<\/` so the code cannot close the element early, and
+    /// `<!--` and `<script` get a backslash too, because together they would
+    /// make the HTML parser ignore the closing `</script>` tag. Each change
+    /// means the same thing in JavaScript strings, which is where they occur.
+    /// - Parameter code: The JavaScript as written.
+    /// - Returns: The JavaScript with those sequences escaped.
+    static func escapeForScriptElement(_ code: String) -> String {
+        code
+            .replacingOccurrences(of: "</", with: "<\\/")
+            .replacingOccurrences(of: "<!--", with: "<\\!--")
+            .replacingOccurrences(of: "<script", with: "<\\script", options: .caseInsensitive)
+    }
 
     /// The elements this view is made of.
     public var body: Element<RawHTML> {

@@ -1,7 +1,9 @@
 import Foundation
 import SwiftVaporUI
 
+/// The forms showcase page.
 enum FormsTopic {
+    /// The forms topic: its title, introduction and examples.
     static let topic = Topic(
         slug: "forms",
         title: "Forms, inputs and buttons",
@@ -181,6 +183,7 @@ struct FormEcho: View {
     }
 }
 
+/// Registers the routes the form examples submit to.
 func registerFormRoutes(_ app: Application) {
     app.on(.GET, "forms", "echo") { req in
         let fields = try req.query.decode([String: String].self)

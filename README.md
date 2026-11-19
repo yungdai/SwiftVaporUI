@@ -168,13 +168,13 @@ The page shows the code between the markers next to the rendered result and the 
 
 ## Linting
 
-[SwiftLint](https://github.com/realm/SwiftLint) runs automatically on every build of the library, its tests and the showcase server, through the [SwiftLintPlugins](https://github.com/SimplyDanny/SwiftLintPlugins) build tool plugin. Violations show up as warnings and errors in Xcode's issue navigator and in `swift build` output. The rules live in [`.swiftlint.yml`](.swiftlint.yml); the showcase adds [`Examples/DemoServer/.swiftlint.yml`](Examples/DemoServer/.swiftlint.yml) on top of them.
+[SwiftLint](https://github.com/realm/SwiftLint) runs on every build of the library, its tests and the showcase server, through the [SwiftLintPlugins](https://github.com/SimplyDanny/SwiftLintPlugins) build tool plugin. Violations show up in Xcode's issue navigator and in `swift build` output. The rules live in [`.swiftlint.yml`](.swiftlint.yml); the showcase adds [`Examples/DemoServer/.swiftlint.yml`](Examples/DemoServer/.swiftlint.yml) on top of them. House style: every type, property and function, at any access level, has a `///` doc comment, and `missing_docs` warns when one is missing.
 
-- **Xcode:** the first time you build, Xcode asks you to trust the `SwiftLintBuildToolPlugin`. Choose **Trust & Enable All**.
+- **Turn it on for the library (once per clone):** run `touch .enable-swiftlint` in the repository root. The file is git-ignored. Without it the library builds without SwiftLint; the showcase server always lints.
+- **Xcode:** the first time you build with linting on, Xcode asks you to trust `SwiftLintBuildToolPlugin`. Choose **Trust & Enable All**. If you add the file while the package is open, use **File › Packages › Reset Package Caches** so Xcode re-reads the manifest.
 - **Terminal:** `swift build` lints as it builds. To lint without compiling, run `swift package plugin --allow-writing-to-package-directory swiftlint`.
-- **Turning it off locally:** `SWIFTVAPORUI_LINT=0 swift build`.
 
-Projects that depend on SwiftVaporUI don't download or run SwiftLint. The manifest only adds the plugin when the package is built from its own checkout, not when it is resolved as a dependency.
+Projects that depend on SwiftVaporUI never fetch or run SwiftLint, because the opt-in file only exists in your own clone.
 
 ## Requirements
 

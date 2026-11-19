@@ -1,6 +1,8 @@
 import SwiftVaporUI
 
+/// The documents showcase page.
 enum DocumentsTopic {
+    /// The documents topic: its title, introduction and examples.
     static let topic = Topic(
         slug: "documents",
         title: "Full documents",
@@ -144,6 +146,7 @@ struct MissingPage: View {
     }
 }
 
+/// Registers the routes the document examples link to.
 func registerDocumentRoutes(_ app: Application) {
     app.get("documents", "missing") { req in
         HTMLResponse(status: .notFound, headers: ["Cache-Control": "no-store"]) {

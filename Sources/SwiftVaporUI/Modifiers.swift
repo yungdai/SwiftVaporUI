@@ -24,6 +24,7 @@ public struct ModifiedView<Content: View>: View {
 }
 
 extension View {
+    /// Wraps the view in a `ModifiedView` that applies `changes` to its first element.
     func modifier(_ changes: AttributeChange...) -> ModifiedView<Self> {
         ModifiedView(content: self, changes: changes)
     }

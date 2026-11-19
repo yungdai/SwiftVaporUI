@@ -57,6 +57,7 @@ public enum HTMLEscaping {
         escape(string, quotes: true)
     }
 
+    /// Replaces `&`, `<` and `>` (and both quote characters when `quotes` is true) with HTML entities.
     private static func escape(_ string: String, quotes: Bool) -> String {
         guard string.utf8.contains(where: { $0 == 0x26 || $0 == 0x3C || $0 == 0x3E || $0 == 0x22 || $0 == 0x27 }) else {
             return string

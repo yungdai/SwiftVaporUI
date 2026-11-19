@@ -3,6 +3,7 @@ import SwiftVaporUI
 /// A small Swift syntax highlighter, enough to make the snippets easy to
 /// read. It returns escaped HTML with `<span class="tok-…">` around tokens.
 enum SwiftHighlighter {
+    /// Swift keywords that get the keyword colour.
     static let keywords: Set<String> = [
         "let", "var", "func", "struct", "enum", "class", "protocol", "extension", "init",
         "if", "else", "for", "in", "while", "switch", "case", "default", "return", "guard",
@@ -11,9 +12,8 @@ enum SwiftHighlighter {
         "typealias", "associatedtype", "break", "continue", "mutating", "inout", "let",
     ]
 
-    // A single-pass tokenizer reads best as one switch.
-    // swiftlint:disable:next cyclomatic_complexity
-    static func highlight(_ code: String) -> String {
+    /// Returns `code` as escaped HTML with its tokens wrapped in highlighting spans.
+    static func highlight(_ code: String) -> String { // swiftlint:disable:this cyclomatic_complexity
         let chars = Array(code)
         var html = ""
         var index = 0
@@ -111,6 +111,7 @@ enum SwiftHighlighter {
 /// Indents rendered HTML so it is readable on the page: each block-level
 /// tag goes on its own line, while inline tags and text stay together.
 enum HTMLFormatter {
+    /// Tags that start on their own line.
     static let blockTags: Set<String> = [
         "html", "head", "body", "title", "meta", "link", "style", "script",
         "div", "section", "header", "footer", "nav", "main", "article", "aside",
@@ -119,6 +120,7 @@ enum HTMLFormatter {
         "figure", "figcaption", "details", "summary", "form", "fieldset", "legend",
         "label", "input", "select", "option", "textarea", "button", "template", "img",
     ]
+    /// Tags that never have a closing tag.
     static let voidTags: Set<String> = ["meta", "link", "hr", "br", "input", "img"]
     /// Tags whose content is kept on the same line as the tag.
     static let leafTags: Set<String> = [
@@ -126,9 +128,8 @@ enum HTMLFormatter {
         "figcaption", "summary", "legend", "label", "option", "textarea", "button", "pre",
     ]
 
-    // A single-pass tokenizer reads best as one switch.
-    // swiftlint:disable:next cyclomatic_complexity
-    static func format(_ html: String) -> String {
+    /// Returns `html` re-indented with one block-level tag per line.
+    static func format(_ html: String) -> String { // swiftlint:disable:this cyclomatic_complexity
         var lines: [String] = []
         var line = ""
         var depth = 0

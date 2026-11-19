@@ -1,12 +1,14 @@
 // swift-tools-version: 6.0
+import Foundation
 import PackageDescription
 
-// SwiftLint runs as a build tool plugin while developing this package
-// (Xcode and `swift build`). It is skipped when SwiftVaporUI is resolved as
-// a dependency (checked out under a `checkouts` directory), so consumers
-// never download or run it. Set SWIFTVAPORUI_LINT=0 to turn it off locally.
-let lintEnabled = !Context.packageDirectory.contains("/checkouts/")
-    && Context.environment["SWIFTVAPORUI_LINT"] != "0"
+// SwiftLint runs as a build tool plugin, but only in a checkout that has
+// opted in with an untracked `.enable-swiftlint` file (see the README). The
+// file is git-ignored, so it never exists where SwiftPM or Xcode resolve
+// SwiftVaporUI as a dependency, and consumers never fetch or run SwiftLint.
+let lintEnabled = FileManager.default.fileExists(
+    atPath: Context.packageDirectory + "/.enable-swiftlint"
+)
 
 let lintPlugins: [Target.PluginUsage] = lintEnabled
     ? [.plugin(name: "SwiftLintBuildToolPlugin", package: "SwiftLintPlugins")]

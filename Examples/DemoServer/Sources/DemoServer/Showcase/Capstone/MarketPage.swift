@@ -274,6 +274,7 @@ struct VisitFormView: View {
 // end-snippet
 
 // snippet: market-routes
+/// Registers the night market page and its visit form handler.
 func registerMarketRoutes(_ app: Application) {
     let market = NightMarket()
 
@@ -301,6 +302,7 @@ func registerMarketRoutes(_ app: Application) {
 }
 // end-snippet
 
+/// The night market page's stylesheet.
 let marketCSS = """
 :root { --night: #14182b; --night-2: #1d2340; --lantern: #ffb347; --ember: #ff6b4a; --paper: #fdf8ef; --ink: #23263a; --soft: #6b6f85; }
 * { box-sizing: border-box; }

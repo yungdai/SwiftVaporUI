@@ -36,6 +36,7 @@ public protocol View: AsyncResponseEncodable, Sendable {
 }
 
 extension View {
+    /// Renders a composite view by rendering its `body`.
     public func _render(into renderer: inout HTMLRenderer) {
         body._render(into: &renderer)
     }
@@ -49,6 +50,7 @@ extension View {
 }
 
 extension View where Body == Never {
+    /// Primitive views have no body; calling this is a programming error.
     public var body: Never {
         fatalError("\(Self.self) is a primitive view and has no body.")
     }

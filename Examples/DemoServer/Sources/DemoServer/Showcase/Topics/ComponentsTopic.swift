@@ -1,6 +1,8 @@
 import SwiftVaporUI
 
+/// The components showcase page.
 enum ComponentsTopic {
+    /// The components topic: its title, introduction and examples.
     static let topic = Topic(
         slug: "components",
         title: "Custom views",
@@ -129,6 +131,7 @@ struct Panel<Content: View, FooterContent: View>: View {
 }
 
 extension Panel where FooterContent == EmptyView {
+    /// Creates a panel with no footer.
     init(title: String, @ViewBuilder content: () -> Content) {
         self.init(title: title, content: content, footer: { EmptyView() })
     }
@@ -170,6 +173,7 @@ struct PlantSummary: View {
 
 // snippet: fragments
 // In main.swift:
+/// Registers the routes the component examples link to.
 func registerComponentRoutes(_ app: Application) {
     app.get("fragments", "stat") { _ in
         StatTile(label: "Fragments rendered", value: "1")

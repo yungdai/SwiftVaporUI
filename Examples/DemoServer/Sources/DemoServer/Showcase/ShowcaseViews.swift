@@ -261,7 +261,9 @@ struct ShowcaseHomePage: View {
     }
 }
 
+/// The examples shown on the showcase home page.
 enum HomeExamples {
+    /// The quick start example: a small view returned from a route.
     static let quickStart = Example(
         "quick-start",
         title: "A first view",
@@ -295,6 +297,7 @@ struct Greeting: View {
 // }
 // end-snippet
 
+/// Script behind the Copy buttons on code panels.
 let copyScript = """
 function copyCode(button) {
   const code = button.closest('.panel').querySelector('pre code').innerText;

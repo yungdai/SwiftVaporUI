@@ -31,7 +31,9 @@ struct MoistureReading: View {
 }
 // end-snippet
 
+/// The conditionals showcase page.
 enum ConditionalsTopic {
+    /// The conditionals topic: its title, introduction and examples.
     static let topic = Topic(
         slug: "conditionals",
         title: "Conditionals",

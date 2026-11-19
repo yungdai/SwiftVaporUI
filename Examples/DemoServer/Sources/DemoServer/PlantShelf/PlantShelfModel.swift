@@ -22,6 +22,7 @@ struct Plant: Sendable {
 
 /// An in-memory store, so the demo has some state to show.
 actor PlantShelf {
+    /// The plants on the shelf, seeded with a few examples.
     private var plants: [Plant] = [
         Plant(slug: "pothos", name: "Golden pothos", light: .low, waterEveryDays: 7,
               notes: "Trails happily off a bookshelf. Let the top inch of soil dry out."),
@@ -31,12 +32,15 @@ actor PlantShelf {
               notes: "Very forgiving. Overwatering is the main risk."),
     ]
 
+    /// Returns every plant on the shelf.
     func all() -> [Plant] { plants }
 
+    /// Returns the plant with the given URL slug, if there is one.
     func plant(slug: String) -> Plant? {
         plants.first { $0.slug == slug }
     }
 
+    /// Adds a plant from the submitted form, giving it a unique slug, and returns it.
     func add(_ form: PlantForm) -> Plant {
         let base = form.name.lowercased().split(whereSeparator: { !$0.isLetter && !$0.isNumber }).joined(separator: "-")
         var slug = base.isEmpty ? "plant" : base

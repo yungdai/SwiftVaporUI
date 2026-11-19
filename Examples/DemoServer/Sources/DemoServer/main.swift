@@ -6,6 +6,7 @@ import SwiftVaporUI
 // DemoServer scheme and press ⌘R) or from a terminal with `swift run`,
 // then open http://127.0.0.1:8080.
 
+/// The Vapor application that serves the showcase.
 let app = try await Application.make(.detect())
 
 // Default address. `swift run DemoServer serve --port 9000` still overrides it.
@@ -35,6 +36,7 @@ app.get("images", "leaf.svg") { _ in
 // The Plant Shelf sample app.
 registerPlantShelfRoutes(app)
 
+/// The URL the server is listening on, for the startup log.
 let address = "http://\(app.http.server.configuration.hostname):\(app.http.server.configuration.port)"
 app.logger.notice("SwiftVaporUI showcase: open \(address) in your browser.")
 

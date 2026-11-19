@@ -105,6 +105,7 @@ enum AttributeChange: Sendable, Equatable {
 }
 
 private extension String {
+    /// Returns the string without leading or trailing spaces and semicolons.
     func trimmingSeparators() -> String {
         let set: Set<Character> = [" ", ";"]
         var slice = Substring(self)

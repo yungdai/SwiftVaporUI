@@ -5,6 +5,7 @@ import XCTVapor
 // This file imports XCTVapor, which brings in `Vapor.View` too. One
 // module-level typealias settles which `View` the module means. Files that
 // import only SwiftVaporUI do not need this.
+/// Makes `View` mean SwiftVaporUI's protocol in this test module.
 typealias View = SwiftVaporUI.View
 
 private struct Badge: View {

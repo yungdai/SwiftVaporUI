@@ -92,6 +92,7 @@ public struct NavigationBar<Content: View>: View {
     }
 }
 
+/// Builds the inline flexbox style shared by the stack views.
 func stackStyle(_ direction: String, _ alignment: String?, _ spacing: Double?) -> String {
     var style = "display: flex; flex-direction: \(direction)"
     if let alignment {

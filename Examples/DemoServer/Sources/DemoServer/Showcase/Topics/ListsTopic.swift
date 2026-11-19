@@ -7,6 +7,7 @@ struct Seedling: Sendable {
     let sown: Bool
 }
 
+/// Sample seedlings for the list examples.
 let seedlings = [
     Seedling(name: "Basil", daysToSprout: 7, sown: true),
     Seedling(name: "Chilli", daysToSprout: 14, sown: false),
@@ -14,7 +15,9 @@ let seedlings = [
 ]
 // end-snippet
 
+/// The lists showcase page.
 enum ListsTopic {
+    /// The lists topic: its title, introduction and examples.
     static let topic = Topic(
         slug: "lists",
         title: "Lists and ForEach",

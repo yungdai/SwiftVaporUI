@@ -1,6 +1,8 @@
 import SwiftVaporUI
 
+/// The text showcase page.
 enum TextTopic {
+    /// The text topic: its title, introduction and examples.
     static let topic = Topic(
         slug: "text",
         title: "Text and headings",

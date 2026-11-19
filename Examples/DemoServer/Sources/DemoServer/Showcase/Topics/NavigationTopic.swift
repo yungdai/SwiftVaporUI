@@ -1,6 +1,8 @@
 import SwiftVaporUI
 
+/// The navigation showcase page.
 enum NavigationTopic {
+    /// The navigation topic: its title, introduction and examples.
     static let topic = Topic(
         slug: "navigation",
         title: "Navigation and links",
@@ -114,6 +116,7 @@ struct Breadcrumbs: View {
 // end-snippet
 
 // snippet: routes
+/// Registers the routes the navigation examples link to.
 func registerNavigationRoutes(_ app: Application) {
     app.get("navigation", "greet", ":name") { req in
         let name = req.parameters.get("name") ?? "friend"

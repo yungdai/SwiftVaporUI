@@ -7,6 +7,7 @@ struct HarvestRow: Sendable {
     let kilograms: Double
 }
 
+/// Sample harvest rows for the table examples.
 let harvest = [
     HarvestRow(crop: "Tomatoes", bed: "South", kilograms: 12.5),
     HarvestRow(crop: "Courgettes", bed: "East", kilograms: 8),
@@ -15,7 +16,9 @@ let harvest = [
 ]
 // end-snippet
 
+/// The tables showcase page.
 enum TablesTopic {
+    /// The tables topic: its title, introduction and examples.
     static let topic = Topic(
         slug: "tables",
         title: "Tables",

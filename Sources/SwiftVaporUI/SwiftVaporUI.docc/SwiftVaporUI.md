@@ -127,6 +127,9 @@ The repository includes a showcase server in `Examples/DemoServer` with a page f
 
 - ``Form``
 - ``FormMethod``
+- ``FormEncoding``
+- ``InputMode``
+- ``EnterKeyHint``
 - ``Button``
 - ``ButtonAction``
 - ``Label``

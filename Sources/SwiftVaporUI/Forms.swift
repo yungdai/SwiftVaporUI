@@ -1,5 +1,5 @@
 /// The HTTP method a `Form` submits with.
-public enum FormMethod: String, Sendable {
+public enum FormMethod: String, Sendable, Hashable {
 
     /// Sends the fields in the URL query. Use for searches and filters.
     case get
@@ -12,7 +12,31 @@ public enum FormMethod: String, Sendable {
 
 }
 
+/// How a `Form` encodes its fields in a POST body, written as `enctype`.
+public enum FormEncoding: String, Sendable, Hashable {
+
+    /// `application/x-www-form-urlencoded`: names and values in one string.
+    /// The browser's default, and what Vapor's `req.content.decode` expects
+    /// for plain forms.
+    case urlEncoded = "application/x-www-form-urlencoded"
+
+    /// `multipart/form-data`: each field in its own part. Needed for a form
+    /// with a `FileField`, or the browser sends only the file names.
+    case multipart = "multipart/form-data"
+
+    /// `text/plain`: one `name=value` per line, unescaped. Only for debugging.
+    case plainText = "text/plain"
+
+}
+
 /// A form (`<form>`).
+///
+/// ```swift
+/// Form(action: "/photos", encoding: .multipart) {
+///     FileField(name: "photo", accept: ["image/*"])
+///     Button("Upload")
+/// }
+/// ```
 public struct Form<Content: View>: View {
 
     // MARK: - Properties
@@ -23,6 +47,10 @@ public struct Form<Content: View>: View {
     /// The HTTP method the form submits with.
     public let method: FormMethod
 
+    /// How the fields are encoded, written as `enctype`. `nil` leaves it to
+    /// the browser, which uses `.urlEncoded`.
+    public let encoding: FormEncoding?
+
     /// The element's content.
     public let content: Content
 
@@ -32,10 +60,19 @@ public struct Form<Content: View>: View {
     /// - Parameters:
     ///   - action: The URL the form submits to. `nil` submits to the current URL.
     ///   - method: The HTTP method the form submits with.
+    ///   - encoding: How the fields are encoded. Pass `.multipart` for a form
+    ///     with a `FileField`; it needs the `.post` method, because a GET form
+    ///     always puts its fields in the URL. `nil` leaves it to the browser.
     ///   - content: The element's content.
-    public init(action: String? = nil, method: FormMethod = .post, @ViewBuilder content: () -> Content) {
+    public init(
+        action: String? = nil,
+        method: FormMethod = .post,
+        encoding: FormEncoding? = nil,
+        @ViewBuilder content: () -> Content
+    ) {
         self.action = action
         self.method = method
+        self.encoding = encoding
         self.content = content()
     }
 
@@ -45,6 +82,7 @@ public struct Form<Content: View>: View {
     public var body: Element<Content> {
         var attributes: HTMLAttributes = ["method": method.rawValue]
         attributes["action"] = action
+        attributes["enctype"] = encoding?.rawValue
         return Element("form", attributes: attributes, wrapping: content)
     }
 

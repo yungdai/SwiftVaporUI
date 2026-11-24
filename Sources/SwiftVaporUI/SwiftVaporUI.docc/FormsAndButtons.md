@@ -32,7 +32,37 @@ Form(action: "/plants", method: .post) {
 - ``Label`` captions a control. Match its `for:` to the control's `id`.
 - ``Fieldset`` and ``Legend`` group related controls.
 
-The browser validates `.required()`, `type: .email` and `.attribute("min", ...)` before submitting. Always validate on the server as well.
+The browser validates `.required()`, `type: .email`, `.minLength(_:)`, `.maxLength(_:)`, `.pattern(_:)` and `.attribute("min", ...)` before submitting. Always validate on the server as well.
+
+```swift
+TextField("Pot code", name: "pot")
+    .pattern("[A-Z]{2}-[0-9]{3}")
+    .tooltip("Two capital letters, a dash and three digits")
+    .inputMode(.text)
+    .enterKeyHint(.next)
+```
+
+`.inputMode(_:)` picks the on-screen keyboard (``InputMode``) without changing how the value is checked, and `.enterKeyHint(_:)` labels its Enter key (``EnterKeyHint``).
+
+### Uploading files
+
+A form with a `FileField` must use the `.post` method and `encoding: .multipart` (``FormEncoding``), or the browser sends only the file names. Decode the file as Vapor's `File`, and raise the route's body limit, which is 16 KB by default:
+
+```swift
+Form(action: "/photos", encoding: .multipart) {
+    FileField(name: "photo", accept: ["image/*"])
+    Button("Upload")
+}
+
+struct PhotoUpload: Content {
+    var photo: File
+}
+
+app.on(.POST, "photos", body: .collect(maxSize: "10mb")) { req in
+    let upload = try req.content.decode(PhotoUpload.self)
+    ...
+}
+```
 
 ### Buttons
 
@@ -43,6 +73,16 @@ A ``Button``'s ``ButtonAction`` decides what it renders:
 - `.plain` does nothing by itself, for use with your own scripts.
 - `.navigate(to:)` renders a link, so it works without JavaScript. Style it like a button with a class.
 - `.script(_:)` runs inline JavaScript from `onclick`. Never build that code from user input.
+
+A submit button can change how its form submits: `.formAction(_:)`, `.formMethod(_:)`, `.formEncoding(_:)` and `.formNoValidate()` override the form's action, method, encoding and validation for that button alone. They only work on submit buttons, the default ``ButtonAction``.
+
+```swift
+Form(action: "/notes") {
+    TextField(name: "note").required()
+    Button("Publish")
+    Button("Save draft").formAction("/notes/drafts").formNoValidate()
+}
+```
 
 ### Handling the submission
 
@@ -68,6 +108,9 @@ app.post("plants") { req in
 
 - ``Form``
 - ``FormMethod``
+- ``FormEncoding``
+- ``InputMode``
+- ``EnterKeyHint``
 - ``Button``
 - ``ButtonAction``
 - ``Label``

@@ -35,6 +35,7 @@ app.get("playground") { _ in PlaygroundPage() }
 
 // Routes that the examples link to or submit to.
 registerFormRoutes(app)
+registerUploadRoute(app)
 registerNavigationRoutes(app)
 registerComponentRoutes(app)
 registerHTMXRoutes(app)

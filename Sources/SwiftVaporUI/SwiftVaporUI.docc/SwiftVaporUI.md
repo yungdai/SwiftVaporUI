@@ -59,6 +59,7 @@ The repository includes a showcase server in `Examples/DemoServer` with a page f
 - <doc:ComposingViews>
 - <doc:DocumentsAndResponses>
 - <doc:HTMX>
+- <doc:PopoversAndDialogs>
 - <doc:Safety>
 
 ### Text
@@ -144,6 +145,9 @@ The repository includes a showcase server in `Examples/DemoServer` with a page f
 - ``Link``
 - ``LinkTarget``
 - ``Dialog``
+- ``PopoverMode``
+- ``PopoverAction``
+- ``InvokerCommand``
 - ``Image``
 - ``Figure``
 - ``FigureCaption``

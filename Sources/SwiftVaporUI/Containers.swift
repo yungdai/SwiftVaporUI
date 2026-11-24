@@ -44,8 +44,21 @@ struct SupportStyle: Sendable {
             + "border:1px solid GrayText;border-radius:6px;padding:4px;margin-top:4px}"
     )
 
+    /// Styles a `Menu` built on the Popover API. Where the browser supports
+    /// anchor positioning, the items drop down below the button; elsewhere
+    /// they open in the middle of the window, the default for a popover.
+    static let popoverMenu = SupportStyle(
+        key: "popover-menu",
+        css: ".svui-popover-anchor{display:inline-block}"
+            + ".svui-popover-menu{padding:4px;border:1px solid GrayText;border-radius:6px;"
+            + "background:Canvas;color:CanvasText;min-width:8rem}"
+            + ".svui-popover-menu:popover-open{display:flex;flex-direction:column}"
+            + "@supports (anchor-name:--a) and (position-area:bottom){.svui-popover-menu{inset:auto;"
+            + "margin:4px 0 0;position-area:bottom span-right}}"
+    )
+
     /// Every support style, in the order `SupportStyles` writes them.
-    static let all: [SupportStyle] = [.zStack, .grid, .tabs, .menu]
+    static let all: [SupportStyle] = [.zStack, .grid, .tabs, .menu, .popoverMenu]
 
     // MARK: - Properties
 
@@ -806,8 +819,7 @@ extension DisclosureGroup where TitleLabel == Text {
 
 /// A button that opens a list of actions, like SwiftUI's `Menu`.
 ///
-/// Built on `<details>`, so it opens and closes without JavaScript. Fill it
-/// with `Link`s or `Button`s.
+/// Opens and closes without JavaScript. Fill it with `Link`s or `Button`s.
 ///
 /// ```swift
 /// Menu("Share") {
@@ -815,9 +827,19 @@ extension DisclosureGroup where TitleLabel == Text {
 ///     Link("Email", destination: "mailto:?subject=Night%20market")
 /// }
 /// ```
+///
+/// Without a `popoverID`, the menu is built on `<details>` and stays open
+/// until its button is pressed again. Give it a `popoverID` and it is built
+/// on the Popover API instead: the items open on top of the page, and close
+/// when the visitor clicks elsewhere or presses Escape. The `popoverID` is
+/// the `id` of the list of items, so it must be unique in the page. The
+/// `.id(_:)` modifier still sets the `id` of the menu's outer element.
 public struct Menu<MenuLabel: View, Content: View>: View {
 
     // MARK: - Properties
+
+    /// The `id` of the popover holding the items, or `nil` for a `<details>` menu.
+    public let popoverID: String?
 
     /// The button that opens the menu.
     public let label: MenuLabel
@@ -829,24 +851,65 @@ public struct Menu<MenuLabel: View, Content: View>: View {
 
     /// Creates a menu with a custom label.
     /// - Parameters:
+    ///   - popoverID: The `id` of the popover holding the items. Pass one to
+    ///     build the menu on the Popover API; leave it `nil` for a `<details>` menu.
     ///   - content: A view builder that creates the menu's items.
     ///   - label: A view builder that creates the button that opens the menu.
-    public init(@ViewBuilder content: () -> Content, @ViewBuilder label: () -> MenuLabel) {
+    public init(popoverID: String? = nil, @ViewBuilder content: () -> Content, @ViewBuilder label: () -> MenuLabel) {
+        self.popoverID = popoverID
         self.label = label()
         self.content = content()
+    }
+
+    // MARK: - Static Methods
+
+    /// The CSS anchor name for a popover menu: `--svui-menu-` and the `id`,
+    /// with any character that cannot appear in a CSS name replaced by `_`.
+    /// - Parameter popoverID: The `id` of the popover holding the items.
+    /// - Returns: A dashed CSS name, such as `--svui-menu-share`.
+    static func anchorName(for popoverID: String) -> String {
+        let safe = popoverID.unicodeScalars.map { scalar -> String in
+            let isSafe = scalar.properties.isAlphabetic || ("0"..."9").contains(scalar) || scalar == "-" || scalar == "_"
+            return isSafe && scalar.isASCII ? String(scalar) : "_"
+        }
+        return "--svui-menu-" + safe.joined()
     }
 
     // MARK: - View
 
     /// The elements this view is made of.
     public var body: some View {
-        WithSupportStyle(
-            style: .menu,
-            content: Element("details", attributes: ["class": "svui-menu"]) {
-                Summary { label }
-                Element("div", attributes: ["class": "svui-menu-items", "role": "menu"], wrapping: content)
-            }
-        )
+        if let popoverID {
+            // An explicit anchor ties the items to their button, so they drop
+            // down below it even where the button is not an implicit anchor.
+            let anchor = Self.anchorName(for: popoverID)
+            WithSupportStyle(
+                style: .popoverMenu,
+                content: Element("div", attributes: ["class": "svui-popover-anchor"]) {
+                    Button(action: .popover(target: popoverID)) { label }
+                        .style("anchor-name", anchor)
+                    Element(
+                        "div",
+                        attributes: [
+                            "class": "svui-popover-menu",
+                            "id": popoverID,
+                            "role": "menu",
+                            "popover": "auto",
+                            "style": "position-anchor: \(anchor)",
+                        ],
+                        wrapping: content
+                    )
+                }
+            )
+        } else {
+            WithSupportStyle(
+                style: .menu,
+                content: Element("details", attributes: ["class": "svui-menu"]) {
+                    Summary { label }
+                    Element("div", attributes: ["class": "svui-menu-items", "role": "menu"], wrapping: content)
+                }
+            )
+        }
     }
 
 }
@@ -857,9 +920,11 @@ extension Menu where MenuLabel == Text {
     /// Creates a menu with escaped `title` as its label.
     /// - Parameters:
     ///   - title: The menu button's text, which is escaped when rendered.
+    ///   - popoverID: The `id` of the popover holding the items. Pass one to
+    ///     build the menu on the Popover API; leave it `nil` for a `<details>` menu.
     ///   - content: The menu's items.
-    public init(_ title: String, @ViewBuilder content: () -> Content) {
-        self.init(content: content) { Text(title) }
+    public init(_ title: String, popoverID: String? = nil, @ViewBuilder content: () -> Content) {
+        self.init(popoverID: popoverID, content: content) { Text(title) }
     }
 
 }

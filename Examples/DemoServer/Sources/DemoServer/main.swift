@@ -38,6 +38,7 @@ registerFormRoutes(app)
 registerUploadRoute(app)
 registerNavigationRoutes(app)
 registerComponentRoutes(app)
+registerHTMXRoutes(app)
 registerDocumentRoutes(app)
 registerMediaRoutes(app)
 app.get("images", "leaf.svg") { _ in

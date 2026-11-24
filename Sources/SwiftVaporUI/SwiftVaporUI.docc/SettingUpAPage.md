@@ -63,7 +63,7 @@ A plain `<script src>` in the head stops the browser from reading the page until
 | `Script(src:async: true)` in the head | As soon as it downloads, in any order | Independent scripts such as analytics |
 | `Script("...")` at the end of `DocumentBody` | Immediately, with everything above it in place | Small inline set-up code |
 
-Inline scripts and ``ButtonAction/script(_:)`` are written without escaping, so only use code you wrote; never build them from user input.
+Inline scripts and ``ButtonAction/script(_:)`` are written without escaping, so only use code you wrote; never build them from user input. To open dialogs and popovers you need no script at all: see <doc:PopoversAndDialogs>.
 
 ### Serve CSS and JavaScript with FileMiddleware
 

@@ -235,9 +235,20 @@ extension Time where Content == Text {
 /// A dialog box (`<dialog>`).
 ///
 /// A dialog with `isPresented: true` renders open, inline in the page. To
-/// show one as a modal, give it an `id`, open it with
-/// `Button(action: .script("document.getElementById('id').showModal()"))`,
-/// and close it with a `Form(method: .dialog)` containing a button.
+/// show one as a modal, give it an `id` and open it with an invoker command,
+/// which needs no script. Close it with another command, or with a
+/// `Form(method: .dialog)` containing a button. Invoker commands need a
+/// recent browser (Chrome 135, Safari 26.2, Firefox 144 or later); to support
+/// older ones, open the dialog with `ButtonAction.script(_:)` calling `showModal()`.
+///
+/// ```swift
+/// Button("Show today's special", action: .command(.showModal, target: "special"))
+/// Dialog {
+///     Paragraph("Crispy pork belly bao.")
+///     Button("Close", action: .command(.close, target: "special"))
+/// }
+/// .id("special")
+/// ```
 public struct Dialog<Content: View>: View {
 
     // MARK: - Properties

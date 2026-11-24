@@ -29,6 +29,7 @@ struct SiteLayout<Content: View>: View {
         HTMLDocument(title: "\(title) · Plant Shelf") {
             Meta(name: "description", content: "A SwiftVaporUI demo")
             Style(siteCSS)
+            HTMXScript()
         } body: {
             Header {
                 HStack(spacing: 16) {
@@ -98,7 +99,10 @@ struct PlantCard: View {
 
 }
 
-/// A fragment that can be returned on its own from a route.
+// snippet: polling
+/// A fragment that can be returned on its own from a route. It polls that
+/// route with htmx and replaces itself with the answer, so the count stays
+/// current without a reload.
 struct PlantCount: View {
 
     // MARK: - Properties
@@ -115,9 +119,13 @@ struct PlantCount: View {
             count == 1 ? " plant on the shelf" : " plants on the shelf"
         }
         .id("plant-count")
+        .hxGet("/fragments/plant-count")
+        .hxTrigger(.every(.seconds(5)))
+        .hxSwap(.outerHTML)
     }
 
 }
+// end-snippet
 
 /// A list of validation messages, or nothing when there are none.
 struct ErrorSummary: View {

@@ -47,10 +47,12 @@ Any `View` can be returned from a route. It is sent as `text/html; charset=utf-8
 - **Result builder.** `@ViewBuilder` blocks support `if`/`else`, `if let`, `switch`, `for` loops, and bare string literals, which render as escaped `Text`. `ForEach(collection) { ... }` and `Group { ... }` are available too.
 - **Elements.** `Div`, `Span`, `Section`, `Header`, `Footer`, `Nav`, `Main`, `Article`, `Aside`, `Heading`, `Paragraph`, `Strong`, `Emphasis`, `Small`, `Code`, `Preformatted`, `Blockquote`, `Link`, `Image`, `LineBreak`, `Divider`, `UnorderedList`/`OrderedList`/`ListItem`, `List(data) { row }`, `DescriptionList`/`DescriptionTerm`/`DescriptionDetail`, tables, `Figure`, `Details`/`Summary`, `Template`, and form controls (`Form`, `Label`, `Input`, `TextField`, `SecureField`, `TextArea`, `Select`/`Option`, `Button`, `Fieldset`/`Legend`). Use `Element("tag") { ... }` or `VoidElement("tag")` for anything else.
 - **Form attributes.** `Form(encoding: .multipart)` for file uploads; `.pattern(_:)`, `.minLength(_:)`, `.maxLength(_:)`, `.inputMode(_:)` and `.enterKeyHint(_:)` on fields; `.formAction(_:)`, `.formMethod(_:)`, `.formEncoding(_:)` and `.formNoValidate()` on submit buttons.
-- **Buttons.** `Button("Save")` submits its form, as in HTML. Other actions: `.reset`, `.plain`, `.navigate(to:)` (renders a link, so it works without JavaScript) and `.script(_:)` (an `onclick` handler).
+- **Buttons.** `Button("Save")` submits its form, as in HTML. Other actions: `.reset`, `.plain`, `.navigate(to:)` (renders a link, so it works without JavaScript), `.popover(_:target:)` and `.command(_:target:)` (open popovers and dialogs with the Popover API and invoker commands, no script), and `.script(_:)` (an `onclick` handler).
+- **Popovers.** `.popover()` makes any element a popover (`.auto`, `.manual` or `.hint`), and `Menu("Share", popoverID: "share-menu")` builds a menu on the Popover API that closes on an outside click or Escape.
 - **Layout.** `HStack` (flex row, 8px gap by default), `VStack` (a plain `div` unless you pass `alignment` or `spacing`, so CSS can own the layout), `Spacer`, and `NavigationBar` (a `<nav>` laid out as a row).
 - **Documents.** `HTMLDocument(title:head:body:)` writes the doctype, `<head>` (charset, viewport, title) and `<body>`. `Page(title:) { ... }` is the same with an empty head. For full control, compose `Document`, `HTMLRoot`, `Head`, `Title`, `Meta`, `ResourceLink`, `Stylesheet`, `Style`, `Script` and `DocumentBody` yourself.
 - **Attribute modifiers.** `.class(_:)`, `.class(_:when:)`, `.id(_:)`, `.role(_:)`, `.attribute(_:_:)`, `.flag(_:if:)` for boolean attributes, `.data(_:_:)`, `.aria(_:_:)`, `.tooltip(_:)`, `.hidden()`, `.disabled()`, `.required()`, `.autofocus()`.
+- **htmx.** Typed modifiers for htmx's attributes (`.hxGet(_:)`, `.hxPost(_:)`, `.hxTarget(_:)`, `.hxSwap(.outerHTML)`, `.hxTrigger(.every(.seconds(5)))`, `.hxIndicator(_:)`, `.hxVals(_:)`, `.hxBoost()` and more), `HTMXScript()` to load it, and `req.isHTMX`, `req.htmx` and `req.fragmentOrPage(_:page:)` so one route can send htmx a fragment and a browser the full page.
 - **Styling modifiers.** `.style(_:)`, `.style(_:_:)`, `.padding()`, `.padding(_:_:)` with `Edge`s, `.font(_:)` (`.largeTitle`, `.title`, `.headline`, `.body`, `.caption`, `.system(size:weight:)`, ...), `.fontWeight(_:)`, `.bold()`, `.italic()`, `.foregroundColor(_:)`, `.background(_:)`, `.cornerRadius(_:)`, `.opacity(_:)`, `.frame(width:height:)`, `.frame(maxWidth:maxHeight:)`. `Color` has named colors plus `.hex(_:)` and `.rgb(_:_:_:opacity:)`.
 
 Modifiers apply to the first HTML element their view renders, so modifiers on your own views reach the element inside them, and styling modifiers add to that element's `style` rather than wrapping it in another `div`. If the same attribute is set twice, the last modifier in the chain wins; classes and styles accumulate. A modifier on bare `Text` wraps it in a `<span>`.
@@ -132,6 +134,7 @@ Then open http://127.0.0.1:8080. To use another port, run `PORT=9000 swift run D
 | Forms, inputs and buttons | `/forms` |
 | Navigation and links | `/navigation` |
 | Custom views | `/components` |
+| Live updates with htmx | `/htmx` |
 | More elements | `/elements` |
 | Full documents | `/documents` |
 | Capstone: how the night market page is built | `/capstone` |

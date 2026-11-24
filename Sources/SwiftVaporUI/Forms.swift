@@ -106,8 +106,19 @@ public enum ButtonAction: Sendable, Equatable {
     /// style it like a button with a class.
     case navigate(to: String)
 
+    /// Opens, closes or toggles the popover whose `id` is `target`, with the
+    /// Popover API (`popovertarget`). No script is needed. Mark the target
+    /// with the `.popover()` modifier.
+    case popover(PopoverAction = .toggle, target: String)
+
+    /// Sends an invoker command (`commandfor` and `command`) to the element
+    /// whose `id` is `target`, such as `.showModal` to open a `Dialog`. No
+    /// script is needed for the built-in commands.
+    case command(InvokerCommand, target: String)
+
     /// Runs inline JavaScript from an `onclick` attribute. The code is
     /// attribute-escaped but otherwise trusted, so never build it from user input.
+    /// Prefer `.popover(_:target:)` or `.command(_:target:)` to open dialogs and popovers.
     case script(String)
 
 }
@@ -117,7 +128,8 @@ public enum ButtonAction: Sendable, Equatable {
 /// ```swift
 /// Button("Save")                                   // submits its form
 /// Button("Cancel", action: .navigate(to: "/"))     // a link
-/// Button("Close", action: .script("dialog.close()"))
+/// Button("Details", action: .command(.showModal, target: "details"))  // opens a Dialog
+/// Button("Help", action: .popover(target: "help"))     // toggles a popover
 /// ```
 public struct Button<Label: View>: View {
 
@@ -140,6 +152,22 @@ public struct Button<Label: View>: View {
         self.label = label()
     }
 
+    // MARK: - Static Methods
+
+    /// The attributes of a button that controls a popover. `toggle` is the
+    /// default action, so it is left out.
+    /// - Parameters:
+    ///   - action: What the button does to the popover.
+    ///   - target: The popover's `id`.
+    /// - Returns: The `type`, `popovertarget` and, unless toggling, `popovertargetaction` attributes.
+    static func popoverAttributes(_ action: PopoverAction, target: String) -> HTMLAttributes {
+        var attributes: HTMLAttributes = ["type": "button", "popovertarget": target]
+        if action != .toggle {
+            attributes["popovertargetaction"] = action.rawValue
+        }
+        return attributes
+    }
+
     // MARK: - View
 
     /// The elements this view is made of.
@@ -153,6 +181,14 @@ public struct Button<Label: View>: View {
             Element("button", attributes: ["type": "button"], wrapping: label)
         case let .navigate(destination):
             Element("a", attributes: ["href": destination], wrapping: label)
+        case let .popover(popoverAction, target):
+            Element("button", attributes: Self.popoverAttributes(popoverAction, target: target), wrapping: label)
+        case let .command(command, target):
+            Element(
+                "button",
+                attributes: ["type": "button", "commandfor": target, "command": command.rawValue],
+                wrapping: label
+            )
         case let .script(code):
             Element("button", attributes: ["type": "button", "onclick": code], wrapping: label)
         }

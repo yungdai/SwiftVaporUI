@@ -74,7 +74,7 @@ enum ComponentsTopic {
             Example(
                 "fragments",
                 title: "Fragments for partial updates",
-                summary: "A component does not need a full document. Return one from a route on its own and it is sent as an HTML fragment, ready for htmx-style partial page updates."
+                summary: "A component does not need a full document. Return one from a route on its own and it is sent as an HTML fragment, ready for partial page updates. The htmx page uses this route."
             ) {
                 // snippet: fragments
                 StatTile(label: "Fragments rendered", value: "1")
@@ -249,8 +249,37 @@ struct PlantSummary: View {
 /// Registers the fragment routes the component examples load.
 /// - Parameter app: The application to add the routes to.
 func registerComponentRoutes(_ app: Application) {
-    app.get("fragments", "stat") { _ in
-        StatTile(label: "Fragments rendered", value: "1")
+    let counter = FragmentCounter()
+    app.get("fragments", "stat") { req in
+        let tile = StatTile(label: "Fragments rendered", value: "\(await counter.next())")
+            .id("stat-tile")
+        // htmx gets the tile on its own; a browser gets it inside a page.
+        return req.fragmentOrPage(tile) { tile in
+            ShowcaseLayout(title: "A fragment", currentPath: "/components") {
+                Heading("This route returns a fragment")
+                Paragraph("Opened directly, the tile comes inside a page. Requested by htmx, it comes on its own.")
+                tile
+            }
+        }
     }
+}
+
+/// Counts the stat tiles the fragment route has rendered.
+actor FragmentCounter {
+
+    // MARK: - Properties
+
+    /// How many tiles have been rendered.
+    private var count = 0
+
+    // MARK: - Methods
+
+    /// Counts one more tile.
+    /// - Returns: The new count.
+    func next() -> Int {
+        count += 1
+        return count
+    }
+
 }
 // end-snippet

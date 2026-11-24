@@ -68,7 +68,7 @@ A layout is a component that wraps ``HTMLDocument``. Give it a title and the cur
 
 ### Fragments
 
-A component can be returned from a route on its own. It is sent as an HTML fragment, which suits libraries such as htmx that swap parts of a page.
+A component can be returned from a route on its own. It is sent as an HTML fragment, which suits libraries such as htmx that swap parts of a page. See <doc:HTMX> for the typed htmx modifiers and ``Vapor/Request/fragmentOrPage(_:page:)``.
 
 ```swift
 app.get("fragments", "stats") { _ in

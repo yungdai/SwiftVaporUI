@@ -75,7 +75,7 @@ typealias View = SwiftVaporUI.View
 Add the package to your `Package.swift`:
 
 ```swift
-.package(url: "https://github.com/yungdai/SwiftVaporUI.git", branch: "main"),
+.package(url: "https://github.com/yungdai/SwiftVaporUI.git", from: "0.1.0-beta.1"),
 ```
 
 and add `"SwiftVaporUI"` to your target's dependencies.
@@ -183,3 +183,7 @@ Projects that depend on SwiftVaporUI by URL never fetch or run SwiftLint, becaus
 
 - Swift 6.0+
 - macOS 13+ or Linux
+
+## License
+
+SwiftVaporUI is available under the MIT license. See [LICENSE](LICENSE) for details.

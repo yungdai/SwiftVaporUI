@@ -40,6 +40,29 @@ final class PlantShelfTests: XCTestCase {
     }
 }
 
+/// Tests for the form example routes.
+final class FormRouteTests: XCTestCase {
+
+    /// Checks the upload route reads a multipart file and reports it.
+    func testUploadReportsTheFile() async throws {
+        let app = try await Application.make(.testing)
+        registerFormRoutes(app)
+        let upload = PhotoUpload(
+            photo: File(data: "fake png bytes", filename: "fern.png"),
+            caption: "New leaf"
+        )
+        try await app.test(.POST, "forms/upload", beforeRequest: { req in
+            try req.content.encode(upload, as: .formData)
+        }, afterResponse: { res async in
+            XCTAssertEqual(res.status, .ok)
+            XCTAssertTrue(res.body.string.contains("fern.png"), res.body.string)
+            XCTAssertTrue(res.body.string.contains("14 bytes"), res.body.string)
+            XCTAssertTrue(res.body.string.contains("New leaf"), res.body.string)
+        })
+        try await app.asyncShutdown()
+    }
+}
+
 /// Tests for the night market's form and data.
 final class MarketTests: XCTestCase {
 

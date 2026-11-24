@@ -108,7 +108,7 @@ enum FormsTopic {
             Example(
                 "validation",
                 title: "Built-in validation attributes",
-                summary: "The browser checks required fields, email addresses and number ranges before submitting. Use .required(), .attribute(_:_:) and the input type."
+                summary: "The browser checks required fields, lengths, patterns and number ranges before submitting. Use .required(), .minLength(_:), .maxLength(_:), .pattern(_:) and the input type. .inputMode(_:) and .enterKeyHint(_:) pick the on-screen keyboard."
             ) {
                 // snippet: validation
                 Form(action: "/forms/echo") {
@@ -116,7 +116,16 @@ enum FormsTopic {
                         Label("Plant name (required)", for: "plant")
                         TextField(name: "plant", id: "plant")
                             .required()
-                            .attribute("minlength", "2")
+                            .minLength(2)
+                            .maxLength(40)
+                            .enterKeyHint(.next)
+                    }
+                    Div {
+                        Label("Pot code, such as AB-123", for: "pot")
+                        TextField(name: "pot", id: "pot")
+                            .pattern("[A-Z]{2}-[0-9]{3}")
+                            .tooltip("Two capital letters, a dash and three digits")
+                            .enterKeyHint(.next)
                     }
                     Div {
                         Label("Water every (days)", for: "days")
@@ -124,8 +133,58 @@ enum FormsTopic {
                             .id("days")
                             .attribute("min", "1")
                             .attribute("max", "60")
+                            .inputMode(.numeric)
+                            .enterKeyHint(.send)
                     }
                     Button("Check and send").class("button")
+                }
+                .class("stack-form")
+                // end-snippet
+            },
+
+            Example(
+                "button-overrides",
+                title: "Buttons that submit differently",
+                summary: "One form, several buttons. .formNoValidate() skips the browser's checks for a draft, and .formAction(_:) with .formMethod(_:) sends the same fields somewhere else."
+            ) {
+                // snippet: button-overrides
+                Form(action: "/forms/echo") {
+                    Div {
+                        Label("Note (required)", for: "note")
+                        TextField(name: "note", id: "note").required()
+                    }
+                    HStack(spacing: 8) {
+                        Button("Publish").class("button")
+                        Button("Save draft")
+                            .formNoValidate()
+                            .class("button-secondary")
+                        Button("Preview as GET")
+                            .formAction("/forms/echo")
+                            .formMethod(.get)
+                            .formNoValidate()
+                            .class("button-secondary")
+                    }
+                }
+                .class("stack-form")
+                // end-snippet
+            },
+
+            Example(
+                "file-upload",
+                title: "Uploading a file",
+                summary: "A form with a FileField needs encoding: .multipart, or the browser sends only the file name. On the server, decode the file as Vapor's File."
+            ) {
+                // snippet: file-upload
+                Form(action: "/forms/upload", encoding: .multipart) {
+                    Div {
+                        Label("A photo of your plant", for: "photo")
+                        FileField(name: "photo", accept: ["image/*"], id: "photo").required()
+                    }
+                    Div {
+                        Label("Caption", for: "caption")
+                        TextField(name: "caption", id: "caption").maxLength(80)
+                    }
+                    Button("Upload").class("button")
                 }
                 .class("stack-form")
                 // end-snippet
@@ -206,6 +265,36 @@ func registerFormRoutes(_ app: Application) {
     app.on(.POST, "forms", "echo") { req in
         let fields = try req.content.decode([String: String].self)
         return FormEchoPage(method: "POST", fields: fields)
+    }
+    registerUploadRoute(app)
+}
+// end-snippet
+
+// snippet: file-upload
+/// The fields of the upload form.
+struct PhotoUpload: Content {
+
+    /// The uploaded file: its name, type and bytes.
+    var photo: File
+
+    /// The caption, if one was typed.
+    var caption: String?
+
+}
+
+/// Registers the route the upload example submits to. It reports the file
+/// it received rather than keeping it.
+/// - Parameter app: The application to add the route to.
+func registerUploadRoute(_ app: Application) {
+    // Vapor collects at most 16 KB of body by default; allow photos.
+    app.on(.POST, "forms", "upload", body: .collect(maxSize: "10mb")) { req in
+        let upload = try req.content.decode(PhotoUpload.self)
+        return FormEchoPage(method: "POST", fields: [
+            "photo": upload.photo.filename,
+            "size": "\(upload.photo.data.readableBytes) bytes",
+            "type": upload.photo.contentType?.description ?? "unknown",
+            "caption": upload.caption ?? "",
+        ])
     }
 }
 // end-snippet

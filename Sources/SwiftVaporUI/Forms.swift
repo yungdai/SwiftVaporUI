@@ -1,5 +1,5 @@
 /// The HTTP method a `Form` submits with.
-public enum FormMethod: String, Sendable {
+public enum FormMethod: String, Sendable, Hashable {
 
     /// Sends the fields in the URL query. Use for searches and filters.
     case get
@@ -13,7 +13,7 @@ public enum FormMethod: String, Sendable {
 }
 
 /// How a `Form` encodes its fields in a POST body, written as `enctype`.
-public enum FormEncoding: String, Sendable {
+public enum FormEncoding: String, Sendable, Hashable {
 
     /// `application/x-www-form-urlencoded`: names and values in one string.
     /// The browser's default, and what Vapor's `req.content.decode` expects
@@ -61,7 +61,8 @@ public struct Form<Content: View>: View {
     ///   - action: The URL the form submits to. `nil` submits to the current URL.
     ///   - method: The HTTP method the form submits with.
     ///   - encoding: How the fields are encoded. Pass `.multipart` for a form
-    ///     with a `FileField`. `nil` leaves it to the browser.
+    ///     with a `FileField`; it needs the `.post` method, because a GET form
+    ///     always puts its fields in the URL. `nil` leaves it to the browser.
     ///   - content: The element's content.
     public init(
         action: String? = nil,

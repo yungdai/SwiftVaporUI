@@ -266,7 +266,6 @@ func registerFormRoutes(_ app: Application) {
         let fields = try req.content.decode([String: String].self)
         return FormEchoPage(method: "POST", fields: fields)
     }
-    registerUploadRoute(app)
 }
 // end-snippet
 

@@ -46,7 +46,7 @@ final class FormRouteTests: XCTestCase {
     /// Checks the upload route reads a multipart file and reports it.
     func testUploadReportsTheFile() async throws {
         let app = try await Application.make(.testing)
-        registerFormRoutes(app)
+        registerUploadRoute(app)
         let upload = PhotoUpload(
             photo: File(data: "fake png bytes", filename: "fern.png"),
             caption: "New leaf"
@@ -61,6 +61,7 @@ final class FormRouteTests: XCTestCase {
         })
         try await app.asyncShutdown()
     }
+
 }
 
 /// Tests for the night market's form and data.

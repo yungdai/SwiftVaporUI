@@ -69,7 +69,8 @@ extension View {
         changing(.set("pattern", regex))
     }
 
-    /// Requires at least `length` characters before the form submits.
+    /// Requires at least `length` characters before the form submits. Keep it
+    /// no larger than any `maxLength(_:)`, or no value can pass.
     /// - Parameter length: The shortest allowed value, in characters.
     /// - Returns: A view with `minlength` set.
     public func minLength(_ length: Int) -> ModifiedView<Self> {
@@ -101,9 +102,10 @@ extension View {
 
 }
 
-/// Per-button overrides of the form's submission. They apply to submit
-/// buttons, so one form can have, say, a Save and a Delete button that post
-/// to different routes.
+/// Per-button overrides of the form's submission, so one form can have, say,
+/// a Save and a Delete button that post to different routes. They only work
+/// on submit buttons: a `Button` with the default `.submit` action. Browsers
+/// ignore them on other buttons, and on the link `.navigate(to:)` renders.
 extension View {
 
     /// Submits the form to `url` instead of the form's `action`, when this button is pressed.

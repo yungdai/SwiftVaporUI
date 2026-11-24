@@ -46,7 +46,7 @@ TextField("Pot code", name: "pot")
 
 ### Uploading files
 
-A form with a `FileField` must use `encoding: .multipart` (``FormEncoding``), or the browser sends only the file names. Decode the file as Vapor's `File`, and raise the route's body limit, which is 16 KB by default:
+A form with a `FileField` must use the `.post` method and `encoding: .multipart` (``FormEncoding``), or the browser sends only the file names. Decode the file as Vapor's `File`, and raise the route's body limit, which is 16 KB by default:
 
 ```swift
 Form(action: "/photos", encoding: .multipart) {
@@ -74,7 +74,7 @@ A ``Button``'s ``ButtonAction`` decides what it renders:
 - `.navigate(to:)` renders a link, so it works without JavaScript. Style it like a button with a class.
 - `.script(_:)` runs inline JavaScript from `onclick`. Never build that code from user input.
 
-A submit button can change how its form submits: `.formAction(_:)`, `.formMethod(_:)`, `.formEncoding(_:)` and `.formNoValidate()` override the form's action, method, encoding and validation for that button alone.
+A submit button can change how its form submits: `.formAction(_:)`, `.formMethod(_:)`, `.formEncoding(_:)` and `.formNoValidate()` override the form's action, method, encoding and validation for that button alone. They only work on submit buttons, the default ``ButtonAction``.
 
 ```swift
 Form(action: "/notes") {

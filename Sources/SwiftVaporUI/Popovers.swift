@@ -70,12 +70,15 @@ public struct InvokerCommand: Sendable, Hashable {
     // MARK: - Static Methods
 
     /// A custom command, which the target receives as a `command` event for
-    /// your own script to handle. Custom commands start with two dashes, which
-    /// are added when `name` does not have them.
+    /// your own script to handle. Custom commands start with two dashes:
+    /// any leading dashes in `name` are replaced with exactly two.
     /// - Parameter name: The command name, such as `"rotate"` or `"--rotate"`.
+    ///   It must have something other than dashes in it.
     /// - Returns: The command, starting with `--`.
     public static func custom(_ name: String) -> InvokerCommand {
-        InvokerCommand(rawValue: name.hasPrefix("--") ? name : "--" + name)
+        let bare = name.drop(while: { $0 == "-" })
+        precondition(!bare.isEmpty, "A custom invoker command needs a name.")
+        return InvokerCommand(rawValue: "--" + bare)
     }
 
 }

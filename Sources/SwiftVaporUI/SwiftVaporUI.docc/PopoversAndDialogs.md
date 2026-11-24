@@ -27,10 +27,10 @@ The button toggles the popover by default; pass `.show` or `.hide` for a button 
 
 ### Menus
 
-``Menu`` with an `id` is built on the Popover API: its items open on top of the page, below the button where the browser supports anchor positioning, and close on an outside click or Escape. Without an `id`, it is built on `<details>` as before.
+``Menu`` with a `popoverID` is built on the Popover API: its items open on top of the page, below the button where the browser supports anchor positioning, and close on an outside click or Escape. Without one, it is built on `<details>` as before.
 
 ```swift
-Menu("Directions", id: "directions-menu") {
+Menu("Directions", popoverID: "directions-menu") {
     Link("Walking", destination: "/walk")
     Link("By bus", destination: "/bus")
 }
@@ -49,7 +49,9 @@ Dialog {
 .id("special")
 ```
 
-`.showModal` opens a ``Dialog`` as a modal and `.close` closes it. A `Form(method: .dialog)` with a button inside the dialog closes it too, in browsers without invoker commands. The popover commands (`.togglePopover`, `.showPopover`, `.hidePopover`) work on popovers, and ``InvokerCommand/custom(_:)`` sends your own `--` command for a script to handle with a `command` event listener.
+`.showModal` opens a ``Dialog`` as a modal and `.close` closes it. A `Form(method: .dialog)` with a button inside the dialog closes it too.
+
+Invoker commands need Chrome 135, Safari 26.2, Firefox 144 or later; the Popover API is older and works in every current browser. If you must support older browsers, open the dialog with ``ButtonAction/script(_:)`` calling `showModal()` and close it with a `Form(method: .dialog)`, which works everywhere. The popover commands (`.togglePopover`, `.showPopover`, `.hidePopover`) work on popovers, and ``InvokerCommand/custom(_:)`` sends your own `--` command for a script to handle with a `command` event listener.
 
 Reach for ``ButtonAction/script(_:)`` only for behaviour the browser does not have built in.
 

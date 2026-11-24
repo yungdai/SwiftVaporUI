@@ -41,6 +41,7 @@ final class PopoverTests: XCTestCase {
             (.hidePopover, "hide-popover"),
             (.custom("rotate"), "--rotate"),
             (.custom("--spin"), "--spin"),
+            (.custom("-twirl"), "--twirl"),
         ]
         for (command, value) in commands {
             XCTAssertEqual(command.rawValue, value)
@@ -57,7 +58,7 @@ final class PopoverTests: XCTestCase {
 
     /// Checks a menu with an `id` is built on the Popover API, and modifiers reach its wrapper.
     func testPopoverMenu() {
-        let html = Menu("Share", id: "share") {
+        let html = Menu("Share", popoverID: "share") {
             Link("A", destination: "/a")
         }
         .class("tools")
@@ -66,11 +67,19 @@ final class PopoverTests: XCTestCase {
         XCTAssertTrue(html.contains(".svui-popover-menu"), html)
         XCTAssertTrue(
             html.hasSuffix(
-                #"<div class="svui-popover-anchor tools"><button type="button" popovertarget="share">Share</button>"#
-                    + #"<div class="svui-popover-menu" id="share" role="menu" popover="auto"><a href="/a">A</a></div></div>"#
+                #"<div class="svui-popover-anchor tools"><button type="button" popovertarget="share" "#
+                    + #"style="anchor-name: --svui-menu-share">Share</button>"#
+                    + #"<div class="svui-popover-menu" id="share" role="menu" popover="auto" "#
+                    + #"style="position-anchor: --svui-menu-share"><a href="/a">A</a></div></div>"#
             ),
             html
         )
+    }
+
+    /// Checks anchor names keep only characters CSS names allow.
+    func testMenuAnchorName() {
+        let html = Menu("Share", popoverID: "a b;c\"é") { EmptyView() }.render()
+        XCTAssertTrue(html.contains("anchor-name: --svui-menu-a_b_c__"), html)
     }
 
     /// Checks a menu without an `id` is still built on `<details>`.

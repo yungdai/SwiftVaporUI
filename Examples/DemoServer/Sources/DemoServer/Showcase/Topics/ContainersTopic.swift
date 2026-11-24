@@ -165,10 +165,10 @@ enum ContainersTopic {
             Example(
                 "popover-menu",
                 title: "Menu on the Popover API",
-                summary: "Give a Menu an id and it is built on the Popover API: the items open on top of the page and close when you click elsewhere or press Escape. Still no script."
+                summary: "Give a Menu a popoverID and it is built on the Popover API: the items open on top of the page and close when you click elsewhere or press Escape. Still no script."
             ) {
                 // snippet: popover-menu
-                Menu("Directions ▾", id: "directions-menu") {
+                Menu("Directions ▾", popoverID: "directions-menu") {
                     Link("Walking", destination: "#popover-menu")
                     Link("By bike", destination: "#popover-menu")
                     Link("By bus", destination: "#popover-menu")

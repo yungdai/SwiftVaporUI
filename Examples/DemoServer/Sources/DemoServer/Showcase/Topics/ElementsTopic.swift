@@ -93,7 +93,7 @@ enum ElementsTopic {
             Example(
                 "dialog",
                 title: "Dialog",
-                summary: "Dialog renders <dialog>. A button with the .showModal invoker command opens it as a modal and .close closes it, with no script. A Form(method: .dialog) closes it too."
+                summary: "Dialog renders <dialog>. A button with the .showModal invoker command opens it as a modal, with no script; that needs Chrome 135, Safari 26.2 or Firefox 144. The Close button is a Form(method: .dialog), which works in every browser."
             ) {
                 // snippet: dialog
                 Button("Show today's special", action: .command(.showModal, target: "special"))
@@ -101,8 +101,9 @@ enum ElementsTopic {
                 Dialog {
                     Heading("Today's special", level: .h3)
                     Paragraph("Crispy pork belly bao, until they run out.")
-                    Button("Close", action: .command(.close, target: "special"))
-                        .class("button-secondary")
+                    Form(method: .dialog) {
+                        Button("Close").class("button-secondary")
+                    }
                 }
                 .id("special")
                 .border(.hex("e2e5eb"))

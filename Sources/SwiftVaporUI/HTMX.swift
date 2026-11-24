@@ -450,8 +450,21 @@ extension View {
 /// }
 /// ```
 ///
-/// By default it loads a pinned htmx release from the jsDelivr CDN. To serve
-/// htmx yourself, pass its URL, for example `HTMXScript(src: "/js/htmx.min.js")`.
+/// By default it loads a pinned htmx release from the jsDelivr CDN, with its
+/// Subresource Integrity hash, so the browser refuses a file that has been
+/// changed. To serve htmx yourself, pass its URL, for example
+/// `HTMXScript(src: "/js/htmx.min.js")`.
+///
+/// Under a Content Security Policy, the script carries the environment's
+/// ``EnvironmentValues/cspNonce``. htmx also adds a small `<style>` for its
+/// request indicators, which a nonce policy blocks. Turn that off and serve
+/// the same rules yourself:
+///
+/// ```swift
+/// Meta(name: "htmx-config", content: #"{"includeIndicatorStyles":false}"#)
+/// Style(HTMXScript.indicatorCSS)
+/// HTMXScript()
+/// ```
 public struct HTMXScript: View {
 
     // MARK: - Static Properties
@@ -459,23 +472,47 @@ public struct HTMXScript: View {
     /// The htmx release the default URL loads.
     public static let defaultVersion = "2.0.11"
 
+    /// The Subresource Integrity hashes of `htmx.min.js` for the releases
+    /// this library knows, by version. Each was checked against the file
+    /// that both jsDelivr and unpkg serve.
+    public static let knownIntegrity: [String: String] = [
+        "2.0.11": "sha384-2OatzQy1H+Zd/IIrjr1TcuDGqLXeHhbooAyJY1KdQMKnr4LZ22k31GBLdYKHmVjg",
+    ]
+
+    /// The CSS htmx adds for its request indicators, for pages that turn
+    /// `includeIndicatorStyles` off and serve it with a nonce instead.
+    public static let indicatorCSS = ".htmx-indicator{opacity:0}"
+        + ".htmx-request .htmx-indicator,.htmx-request.htmx-indicator{opacity:1;transition:opacity 200ms ease-in}"
+
     // MARK: - Properties
 
     /// The script URL.
     public let src: String
 
+    /// The Subresource Integrity hash, or `nil` for none.
+    public let integrity: String?
+
     // MARK: - Initializers
 
     /// Loads a specific htmx release from the jsDelivr CDN.
-    /// - Parameter version: The htmx version, such as `"2.0.11"`.
-    public init(version: String = HTMXScript.defaultVersion) {
+    /// - Parameters:
+    ///   - version: The htmx version, such as `"2.0.11"`.
+    ///   - integrity: The file's Subresource Integrity hash. `nil` uses the
+    ///     hash in ``knownIntegrity`` for that version, if there is one. An
+    ///     empty string turns the check off.
+    public init(version: String = HTMXScript.defaultVersion, integrity: String? = nil) {
         self.src = "https://cdn.jsdelivr.net/npm/htmx.org@\(version)/dist/htmx.min.js"
+        let hash = integrity ?? Self.knownIntegrity[version]
+        self.integrity = hash?.isEmpty == false ? hash : nil
     }
 
     /// Loads htmx from `src`, such as a copy you serve yourself.
-    /// - Parameter src: The script URL.
-    public init(src: String) {
+    /// - Parameters:
+    ///   - src: The script URL.
+    ///   - integrity: The file's Subresource Integrity hash, if you want the browser to check it.
+    public init(src: String, integrity: String? = nil) {
         self.src = src
+        self.integrity = integrity?.isEmpty == false ? integrity : nil
     }
 
     // MARK: - View
@@ -484,7 +521,7 @@ public struct HTMXScript: View {
     public var body: Script {
         // Deferred, so it does not block parsing; htmx processes the page
         // once it runs, which is still before `DOMContentLoaded`.
-        Script(src: src, defer: true)
+        Script(src: src, defer: true, integrity: integrity)
     }
 
 }

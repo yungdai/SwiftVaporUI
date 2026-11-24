@@ -41,11 +41,13 @@ Pass `nonce:` to a single ``Script`` or ``Style`` to override the environment, o
 Two things a nonce cannot cover:
 
 - **`style` attributes.** Styling modifiers such as `.padding(_:)` write them. Allow them with `style-src-attr 'unsafe-inline'`, which lets markup set styles but not run script.
-- **Inline event handlers.** ``ButtonAction/script(_:)`` writes an `onclick` attribute, which a nonce policy blocks. Use a ``Script`` with `addEventListener`, or a button action that needs no script, such as `.navigate(to:)`.
+- **Inline event handlers.** ``ButtonAction/script(_:)`` writes an `onclick` attribute, which a nonce policy blocks. Use a ``Script`` with `addEventListener`, or the script-free popover and command button actions in <doc:PopoversAndDialogs>.
 
 ### Subresource Integrity
 
 For a script or stylesheet on a CDN, pass its integrity hash. The browser refuses the file if it has changed. A hash adds `crossorigin="anonymous"`, which cross-origin integrity checks need, unless you choose another ``CrossOrigin`` mode.
+
+``HTMXScript`` pins the hash of the htmx release it loads. Under a nonce policy, htmx's own indicator `<style>` is blocked; turn it off with `Meta(name: "htmx-config", content: #"{"includeIndicatorStyles":false}"#)` and add `Style(HTMXScript.indicatorCSS)`, which carries the nonce. Don't put the nonce itself in `htmx-config`: browsers hide `nonce` attributes from the page, but not a meta tag's content.
 
 ```swift
 Script(src: "https://cdn.example.com/chart.js", defer: true, integrity: "sha384-...")

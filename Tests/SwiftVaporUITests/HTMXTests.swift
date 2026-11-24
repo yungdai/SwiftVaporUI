@@ -84,13 +84,26 @@ final class HTMXTests: XCTestCase {
         XCTAssertTrue(Div {}.hxSwapOOB(.beforeEnd).render().contains(#"hx-swap-oob="beforeend""#))
     }
 
-    /// Checks the script tag, by version and by URL.
+    /// Checks the script tag, by version and by URL, with the pinned integrity hash.
     func testHTMXScript() {
+        let hash = HTMXScript.knownIntegrity[HTMXScript.defaultVersion] ?? ""
+        XCTAssertTrue(hash.hasPrefix("sha384-"), "the default version needs a known hash")
         XCTAssertEqual(
             HTMXScript().render(),
-            #"<script src="https://cdn.jsdelivr.net/npm/htmx.org@\#(HTMXScript.defaultVersion)/dist/htmx.min.js" defer></script>"#
+            #"<script src="https://cdn.jsdelivr.net/npm/htmx.org@\#(HTMXScript.defaultVersion)/dist/htmx.min.js" defer "#
+                + #"integrity="\#(hash)" crossorigin="anonymous"></script>"#
         )
+        XCTAssertFalse(HTMXScript(version: "2.0.0").render().contains("integrity"))
+        XCTAssertFalse(HTMXScript(integrity: "").render().contains("integrity"))
+        XCTAssertFalse(HTMXScript(integrity: "").render().contains("crossorigin"))
+        XCTAssertTrue(HTMXScript(version: "2.0.0", integrity: "sha384-x").render().contains(#"integrity="sha384-x""#))
         XCTAssertEqual(HTMXScript(src: "/js/htmx.min.js").render(), #"<script src="/js/htmx.min.js" defer></script>"#)
+    }
+
+    /// Checks a CSP nonce reaches the script, and never appears outside a `nonce` attribute.
+    func testHTMXScriptNonce() {
+        let html = HTMXScript(src: "/htmx.js").environment(\.cspNonce, "abc").render()
+        XCTAssertEqual(html, #"<script src="/htmx.js" defer nonce="abc"></script>"#)
     }
 
     /// Checks the request headers are read, and when a fragment is wanted.

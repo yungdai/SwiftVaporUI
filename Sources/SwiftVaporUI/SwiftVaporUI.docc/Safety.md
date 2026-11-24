@@ -47,7 +47,7 @@ Two things a nonce cannot cover:
 
 For a script or stylesheet on a CDN, pass its integrity hash. The browser refuses the file if it has changed. A hash adds `crossorigin="anonymous"`, which cross-origin integrity checks need, unless you choose another ``CrossOrigin`` mode.
 
-``HTMXScript`` pins the hash of the htmx release it loads, and passes the nonce to htmx's own indicator styles.
+``HTMXScript`` pins the hash of the htmx release it loads. Under a nonce policy, htmx's own indicator `<style>` is blocked; turn it off with `Meta(name: "htmx-config", content: #"{"includeIndicatorStyles":false}"#)` and add `Style(HTMXScript.indicatorCSS)`, which carries the nonce. Don't put the nonce itself in `htmx-config`: browsers hide `nonce` attributes from the page, but not a meta tag's content.
 
 ```swift
 Script(src: "https://cdn.example.com/chart.js", defer: true, integrity: "sha384-...")

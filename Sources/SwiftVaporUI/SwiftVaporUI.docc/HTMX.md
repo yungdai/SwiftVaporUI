@@ -8,7 +8,7 @@ Update parts of a page from server-rendered fragments, with typed htmx modifiers
 
 ### Load htmx
 
-Add ``HTMXScript`` to the document head. It loads a pinned htmx release from the jsDelivr CDN; pass `src:` to serve your own copy.
+Add ``HTMXScript`` to the document head. It loads a pinned htmx release from the jsDelivr CDN with its Subresource Integrity hash; pass `src:` to serve your own copy. Under a Content Security Policy, see <doc:Safety>.
 
 ```swift
 HTMLDocument(title: "Plants") {

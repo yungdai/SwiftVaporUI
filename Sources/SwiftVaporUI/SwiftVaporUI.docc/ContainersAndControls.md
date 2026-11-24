@@ -55,7 +55,7 @@ The `id` names the radio group, so it must be unique in the page.
 
 ### DisclosureGroup and Menu
 
-``DisclosureGroup`` renders `<details>` and `<summary>`; `isExpanded` starts it open. ``Menu`` is a `<details>` too, with its items dropped down under the button. Fill it with ``Link``s or ``Button``s.
+``DisclosureGroup`` renders `<details>` and `<summary>`; `isExpanded` starts it open. ``Menu`` is a `<details>` too, with its items dropped down under the button. Fill it with ``Link``s or ``Button``s. Give a menu an `id`, as in `Menu("Share", id: "share-menu")`, and it is built on the Popover API instead, so it closes when the visitor clicks elsewhere or presses Escape. See <doc:PopoversAndDialogs>.
 
 ### NavigationLink and Divider
 

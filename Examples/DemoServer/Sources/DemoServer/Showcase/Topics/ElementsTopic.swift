@@ -93,20 +93,47 @@ enum ElementsTopic {
             Example(
                 "dialog",
                 title: "Dialog",
-                summary: "Dialog renders <dialog>. Open it as a modal with one line of script, and close it with a Form(method: .dialog), which needs no script at all."
+                summary: "Dialog renders <dialog>. A button with the .showModal invoker command opens it as a modal and .close closes it, with no script. A Form(method: .dialog) closes it too."
             ) {
                 // snippet: dialog
-                Button("Show today's special", action: .script("document.getElementById('special').showModal()"))
+                Button("Show today's special", action: .command(.showModal, target: "special"))
                     .class("button")
                 Dialog {
                     Heading("Today's special", level: .h3)
                     Paragraph("Crispy pork belly bao, until they run out.")
-                    Form(method: .dialog) {
-                        Button("Close").class("button-secondary")
-                    }
+                    Button("Close", action: .command(.close, target: "special"))
+                        .class("button-secondary")
                 }
                 .id("special")
                 .border(.hex("e2e5eb"))
+                .cornerRadius(12)
+                // end-snippet
+            },
+
+            Example(
+                "popover",
+                title: "Popovers",
+                summary: "Any element becomes a popover with .popover(). A button with .popover(target:) toggles it, and an auto popover closes when you click elsewhere or press Escape. Use .manual for one that stays open until a button hides it."
+            ) {
+                // snippet: popover
+                HStack(spacing: 12) {
+                    Button("What's a bao?", action: .popover(target: "bao-info"))
+                        .class("button-secondary")
+                    Button("Show the notice", action: .popover(.show, target: "rain-notice"))
+                        .class("button-secondary")
+                }
+                Paragraph("A soft steamed bun, folded around a filling such as braised pork.")
+                    .id("bao-info")
+                    .popover()
+                    .padding(16)
+                    .cornerRadius(12)
+                Div {
+                    Paragraph("Light rain after 9pm: the covered stalls stay open.")
+                    Button("Got it", action: .popover(.hide, target: "rain-notice"))
+                }
+                .id("rain-notice")
+                .popover(.manual)
+                .padding(16)
                 .cornerRadius(12)
                 // end-snippet
             },

@@ -48,6 +48,9 @@ private struct CSPNonceStorageKey: StorageKey {
 
 }
 
+/// Makes ``Vapor/Request/cspNonce``'s read-then-store a single step.
+private let cspNonceLock = NSLock()
+
 /// A CSP nonce for each request.
 extension Request {
 
@@ -72,6 +75,10 @@ extension Request {
     /// `style-src-attr 'unsafe-inline'`. That lets markup set styles, but
     /// not run script.
     public var cspNonce: String {
+        // Read and store under one lock, so two first reads on different
+        // tasks cannot make two different nonces.
+        cspNonceLock.lock()
+        defer { cspNonceLock.unlock() }
         if let nonce = storage[CSPNonceStorageKey.self] {
             return nonce
         }

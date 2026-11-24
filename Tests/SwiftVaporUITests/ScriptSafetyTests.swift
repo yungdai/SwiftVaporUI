@@ -47,6 +47,28 @@ final class ScriptSafetyTests: XCTestCase {
         XCTAssertTrue(html.contains(#"<style nonce="env">.svui-zstack"#), html)
     }
 
+    /// Checks an empty nonce, given or from the environment, writes no attribute.
+    func testEmptyNonceOptsOut() {
+        let html = Group {
+            Script("a()", nonce: "")
+            Style("p{}")
+        }
+        .environment(\.cspNonce, "env")
+        .render()
+        XCTAssertTrue(html.contains("<script>a()</script>"), html)
+        XCTAssertEqual(Style("p{}").environment(\.cspNonce, "").render(), "<style>p{}</style>")
+    }
+
+    /// Checks the nonce reaches the head's support styles when it is set inside the body.
+    func testBodyEnvironmentNonceReachesHead() {
+        let html = Page(title: "T") {
+            ZStack { Text("A") }.environment(\.cspNonce, "inner")
+        }
+        .render()
+        XCTAssertTrue(html.contains(#"<head>"#), html)
+        XCTAssertTrue(html.contains(#"<style nonce="inner">.svui-zstack"#), html)
+    }
+
     /// Checks the support styles `HTMLDocument` collects into the head carry the nonce.
     func testDocumentHeadSupportStylesNonce() {
         let html = Page(title: "T") { ZStack { Text("A") } }

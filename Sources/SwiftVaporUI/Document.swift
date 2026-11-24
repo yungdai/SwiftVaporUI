@@ -80,7 +80,10 @@ public struct HTMLDocument<HeadContent: View, Content: View>: View {
         bodyRenderer.collectedSupportStyles = []
         DocumentBody { content }._render(into: &bodyRenderer)
 
-        let headHTML = headRenderer.output + SupportStyle.styleElement(for: bodyRenderer.collectedSupportStyles ?? [])
+        let headHTML = headRenderer.output + SupportStyle.styleElement(
+            for: bodyRenderer.collectedSupportStyles ?? [],
+            nonce: bodyRenderer.collectedSupportStyleNonce
+        )
         Document {
             HTMLRoot(language: language) {
                 Head {
@@ -351,7 +354,8 @@ public struct Style: View {
     /// The CSS, after neutralising any closing tag inside it.
     public let css: String
 
-    /// The CSP nonce to write, or `nil` to use the environment's ``EnvironmentValues/cspNonce``.
+    /// The CSP nonce to write, or `nil` to use the environment's
+    /// ``EnvironmentValues/cspNonce``. An empty string writes no nonce.
     public let nonce: String?
 
     // MARK: - Initializer
@@ -359,10 +363,22 @@ public struct Style: View {
     /// Creates a `<style>` element containing `css`.
     /// - Parameters:
     ///   - css: The CSS, after neutralising any closing tag inside it.
-    ///   - nonce: The CSP nonce. `nil` uses the environment's ``EnvironmentValues/cspNonce``.
+    ///   - nonce: The CSP nonce. `nil` uses the environment's ``EnvironmentValues/cspNonce``,
+    ///     and an empty string leaves the nonce off.
     public init(_ css: String, nonce: String? = nil) {
         self.css = css
         self.nonce = nonce
+    }
+
+    // MARK: - Static Methods
+
+    /// The nonce a `Style` or `Script` writes.
+    /// - Parameter nonce: The nonce the element was given, if any.
+    /// - Returns: `nonce`, or else the environment's ``EnvironmentValues/cspNonce``,
+    ///   or `nil` when that is missing or empty, so no attribute is written.
+    static func resolvedNonce(_ nonce: String?) -> String? {
+        let resolved = nonce ?? EnvironmentValues.current.cspNonce
+        return resolved?.isEmpty == false ? resolved : nil
     }
 
     // MARK: - View
@@ -370,7 +386,7 @@ public struct Style: View {
     /// The elements this view is made of.
     public var body: Element<RawHTML> {
         var attributes = HTMLAttributes()
-        attributes["nonce"] = nonce ?? EnvironmentValues.current.cspNonce
+        attributes["nonce"] = Self.resolvedNonce(nonce)
         return Element("style", attributes: attributes, wrapping: RawHTML(css.replacingOccurrences(of: "</", with: "<\\/")))
     }
 
@@ -397,7 +413,8 @@ public struct Script: View {
     /// The inline JavaScript, or an empty string for an external script.
     let code: String
 
-    /// The CSP nonce to write, or `nil` to use the environment's ``EnvironmentValues/cspNonce``.
+    /// The CSP nonce to write, or `nil` to use the environment's
+    /// ``EnvironmentValues/cspNonce``. An empty string writes no nonce.
     let nonce: String?
 
     // MARK: - Initializers
@@ -413,7 +430,8 @@ public struct Script: View {
     ///   - integrity: The Subresource Integrity hash, such as `"sha384-..."`.
     ///   - crossOrigin: The CORS mode. `nil` uses `.anonymous` when there is
     ///     an `integrity` hash, and leaves the attribute out otherwise.
-    ///   - nonce: The CSP nonce. `nil` uses the environment's ``EnvironmentValues/cspNonce``.
+    ///   - nonce: The CSP nonce. `nil` uses the environment's ``EnvironmentValues/cspNonce``,
+    ///     and an empty string leaves the nonce off.
     public init(
         src: String,
         defer isDeferred: Bool = false,
@@ -438,7 +456,8 @@ public struct Script: View {
     /// - Parameters:
     ///   - code: The JavaScript, written without escaping. Only pass code you trust.
     ///   - module: Whether to load the script as an ES module.
-    ///   - nonce: The CSP nonce. `nil` uses the environment's ``EnvironmentValues/cspNonce``.
+    ///   - nonce: The CSP nonce. `nil` uses the environment's ``EnvironmentValues/cspNonce``,
+    ///     and an empty string leaves the nonce off.
     public init(_ code: String, module: Bool = false, nonce: String? = nil) {
         var attributes = HTMLAttributes()
         if module { attributes["type"] = "module" }
@@ -467,7 +486,7 @@ public struct Script: View {
     /// The elements this view is made of.
     public var body: Element<RawHTML> {
         var attributes = attributes
-        attributes["nonce"] = nonce ?? EnvironmentValues.current.cspNonce
+        attributes["nonce"] = Style.resolvedNonce(nonce)
         return Element("script", attributes: attributes, wrapping: RawHTML(code))
     }
 

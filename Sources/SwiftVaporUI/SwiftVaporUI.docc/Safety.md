@@ -36,7 +36,7 @@ app.get { req in
 }
 ```
 
-Pass `nonce:` to a single ``Script`` or ``Style`` to override the environment. ``CSPNonce/generate()`` makes a nonce outside a request.
+Pass `nonce:` to a single ``Script`` or ``Style`` to override the environment, or an empty string to leave its nonce off. ``CSPNonce/generate()`` makes a nonce outside a request.
 
 Two things a nonce cannot cover:
 

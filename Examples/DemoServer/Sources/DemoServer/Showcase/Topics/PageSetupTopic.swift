@@ -160,7 +160,7 @@ enum PageSetupTopic {
             Example(
                 "content-security-policy",
                 title: "A Content Security Policy with a nonce",
-                summary: "Set .environment(\\.cspNonce, req.cspNonce) once, and every Script and Style, and the CSS built-in views need, carries the nonce the policy header allows. The preview below has no policy, so both of its scripts run; open /page-setup/csp, which sends one, and the browser blocks the script injected without the nonce. Scripts from a CDN take an integrity hash.",
+                summary: "Set .environment(\\.cspNonce, req.cspNonce) once, and every Script and Style, and the CSS built-in views need, carries the nonce the policy header allows. The preview below has no policy, so both of its scripts run; open /page-setup/csp, which sends one, and the browser blocks the script injected without the nonce.",
                 isolated: true
             ) {
                 CSPDemoPage().environment(\.cspNonce, "shown-here-a-fresh-one-per-request")
@@ -185,7 +185,7 @@ struct CSPDemoPage: View {
             Paragraph("No injected script has run.").id("injected")
             ZStack { Small("The ZStack's support CSS carries the nonce too.") }
             // Written by Script, so it gets the nonce from the environment.
-            Script("document.getElementById('own').textContent = 'The page’s own script ran: it has the nonce.'")
+            Script("document.getElementById('own').textContent = 'The page’s own script, which carries the nonce, ran.'")
             // Written as raw markup without a nonce, as an attacker's script
             // would be. The policy stops it.
             RawHTML("<script>document.getElementById('injected').textContent = 'An injected script ran!'</script>")

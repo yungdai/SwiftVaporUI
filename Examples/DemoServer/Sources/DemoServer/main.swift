@@ -38,6 +38,7 @@ registerFormRoutes(app)
 registerNavigationRoutes(app)
 registerComponentRoutes(app)
 registerDocumentRoutes(app)
+registerCSPRoute(app)
 registerMediaRoutes(app)
 app.get("images", "leaf.svg") { _ in
     Response(status: .ok, headers: ["Content-Type": "image/svg+xml"], body: .init(string: leafSVG))

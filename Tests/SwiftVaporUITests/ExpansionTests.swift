@@ -573,4 +573,5 @@ final class CoreReviewFixTests: XCTestCase {
         let html = Element("div", attributes: ["Class": "a"]) { "x" }.class("b").id("c").render()
         XCTAssertEqual(html, "<div Class=\"a b\" id=\"c\">x</div>")
     }
+
 }

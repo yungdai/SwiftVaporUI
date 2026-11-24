@@ -171,6 +171,8 @@ The repository includes a showcase server in `Examples/DemoServer` with a page f
 - ``Stylesheet``
 - ``Style``
 - ``Script``
+- ``CrossOrigin``
+- ``CSPNonce``
 - ``DocumentBody``
 
 ### htmx

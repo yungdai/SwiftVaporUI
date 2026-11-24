@@ -21,6 +21,11 @@ public struct HTMLRenderer: Sendable {
     /// `HTMLDocument` to write in the head, instead of writing them inline.
     var collectedSupportStyles: [SupportStyle]?
 
+    /// The CSP nonce in the environment where a collected support style was
+    /// first asked for, so the head's `<style>` carries it even though the
+    /// head is written outside the body's environment.
+    var collectedSupportStyleNonce: String?
+
     /// The HTML written so far.
     public internal(set) var output = ""
 
@@ -41,6 +46,9 @@ public struct HTMLRenderer: Sendable {
         guard writtenSupportStyles.insert(style.key).inserted else { return }
         if collectedSupportStyles != nil {
             collectedSupportStyles?.append(style)
+            if collectedSupportStyleNonce == nil {
+                collectedSupportStyleNonce = EnvironmentValues.current.cspNonce
+            }
         } else {
             output += SupportStyle.styleElement(for: [style])
         }

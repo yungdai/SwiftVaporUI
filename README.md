@@ -61,6 +61,7 @@ Modifiers apply to the first HTML element their view renders, so modifiers on yo
 
 - Text and attribute values are always HTML-escaped.
 - Attribute names and tag names are validated; unsafe ones are dropped instead of written.
+- Content Security Policy: `req.cspNonce` plus `.environment(\.cspNonce, nonce)` puts a per-request nonce on every `Script`, `Style` and built-in support style. `Script(src:integrity:)` and `Stylesheet(href:integrity:)` add Subresource Integrity, with `crossorigin="anonymous"`.
 - Inline `Script` and `Style` content cannot close its own tag early.
 - `RawHTML("...")` is the only way to write unescaped markup. Only use it with HTML you trust.
 - Escaping does not validate URLs. Do not put untrusted input into `href` or `src` without checking the scheme.

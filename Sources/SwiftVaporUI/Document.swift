@@ -80,7 +80,10 @@ public struct HTMLDocument<HeadContent: View, Content: View>: View {
         bodyRenderer.collectedSupportStyles = []
         DocumentBody { content }._render(into: &bodyRenderer)
 
-        let headHTML = headRenderer.output + SupportStyle.styleElement(for: bodyRenderer.collectedSupportStyles ?? [])
+        let headHTML = headRenderer.output + SupportStyle.styleElement(
+            for: bodyRenderer.collectedSupportStyles ?? [],
+            nonce: bodyRenderer.collectedSupportStyleNonce
+        )
         Document {
             HTMLRoot(language: language) {
                 Head {
@@ -278,6 +281,13 @@ public struct Meta: View {
 }
 
 /// Links an external stylesheet (`<link rel="stylesheet">`).
+///
+/// For a stylesheet on a CDN, pass its Subresource Integrity hash, so the
+/// browser refuses a file that has been changed:
+///
+/// ```swift
+/// Stylesheet(href: "https://cdn.example.com/kit.css", integrity: "sha384-...")
+/// ```
 public struct Stylesheet: View {
 
     // MARK: - Properties
@@ -285,25 +295,58 @@ public struct Stylesheet: View {
     /// The stylesheet URL.
     public let href: String
 
+    /// The Subresource Integrity hash, such as `"sha384-..."`, or `nil` for none.
+    public let integrity: String?
+
+    /// The CORS mode, written as `crossorigin`. With an `integrity` hash it
+    /// defaults to `.anonymous`, which cross-origin integrity checks need.
+    public let crossOrigin: CrossOrigin?
+
     // MARK: - Initializer
 
     /// Creates a link to the stylesheet at `href`.
-    /// - Parameter href: The stylesheet URL.
-    public init(href: String) {
+    /// - Parameters:
+    ///   - href: The stylesheet URL.
+    ///   - integrity: The Subresource Integrity hash, such as `"sha384-..."`.
+    ///   - crossOrigin: The CORS mode. `nil` uses `.anonymous` when there is
+    ///     an `integrity` hash, and leaves the attribute out otherwise.
+    public init(href: String, integrity: String? = nil, crossOrigin: CrossOrigin? = nil) {
         self.href = href
+        self.integrity = integrity
+        self.crossOrigin = crossOrigin ?? (integrity == nil ? nil : .anonymous)
     }
 
     // MARK: - View
 
     /// The elements this view is made of.
     public var body: VoidElement {
-        VoidElement("link", attributes: ["rel": "stylesheet", "href": href])
+        var attributes: HTMLAttributes = ["rel": "stylesheet", "href": href]
+        attributes["integrity"] = integrity
+        attributes["crossorigin"] = crossOrigin?.rawValue
+        return VoidElement("link", attributes: attributes)
     }
+
+}
+
+/// How the browser fetches a script or stylesheet from another origin,
+/// written as `crossorigin`.
+public enum CrossOrigin: String, Sendable, Hashable {
+
+    /// Fetches without cookies or credentials. Needed for a Subresource
+    /// Integrity check on a file from another origin.
+    case anonymous
+
+    /// Fetches with cookies and credentials, for a server that allows them.
+    case useCredentials = "use-credentials"
 
 }
 
 /// Inline CSS (`<style>`). The CSS is not escaped, but any `</style` inside
 /// it is neutralised so it cannot close the tag early.
+///
+/// Under a Content Security Policy that uses a nonce, the element carries
+/// the nonce you pass, or else the environment's
+/// ``EnvironmentValues/cspNonce``.
 public struct Style: View {
 
     // MARK: - Properties
@@ -311,34 +354,68 @@ public struct Style: View {
     /// The CSS, after neutralising any closing tag inside it.
     public let css: String
 
+    /// The CSP nonce to write, or `nil` to use the environment's
+    /// ``EnvironmentValues/cspNonce``. An empty string writes no nonce.
+    public let nonce: String?
+
     // MARK: - Initializer
 
     /// Creates a `<style>` element containing `css`.
-    /// - Parameter css: The CSS, after neutralising any closing tag inside it.
-    public init(_ css: String) {
+    /// - Parameters:
+    ///   - css: The CSS, after neutralising any closing tag inside it.
+    ///   - nonce: The CSP nonce. `nil` uses the environment's ``EnvironmentValues/cspNonce``,
+    ///     and an empty string leaves the nonce off.
+    public init(_ css: String, nonce: String? = nil) {
         self.css = css
+        self.nonce = nonce
+    }
+
+    // MARK: - Static Methods
+
+    /// The nonce a `Style` or `Script` writes.
+    /// - Parameter nonce: The nonce the element was given, if any.
+    /// - Returns: `nonce`, or else the environment's ``EnvironmentValues/cspNonce``,
+    ///   or `nil` when that is missing or empty, so no attribute is written.
+    static func resolvedNonce(_ nonce: String?) -> String? {
+        let resolved = nonce ?? EnvironmentValues.current.cspNonce
+        return resolved?.isEmpty == false ? resolved : nil
     }
 
     // MARK: - View
 
     /// The elements this view is made of.
     public var body: Element<RawHTML> {
-        Element("style", wrapping: RawHTML(css.replacingOccurrences(of: "</", with: "<\\/")))
+        var attributes = HTMLAttributes()
+        attributes["nonce"] = Self.resolvedNonce(nonce)
+        return Element("style", attributes: attributes, wrapping: RawHTML(css.replacingOccurrences(of: "</", with: "<\\/")))
     }
 
 }
 
 /// A script, either external (`src`) or inline. Inline code is not escaped,
 /// but any `</` inside it is written as `<\/` so it cannot close the tag early.
+///
+/// For a script on a CDN, pass its Subresource Integrity hash, so the
+/// browser refuses a file that has been changed. Under a Content Security
+/// Policy that uses a nonce, the element carries the nonce you pass, or else
+/// the environment's ``EnvironmentValues/cspNonce``.
+///
+/// ```swift
+/// Script(src: "https://cdn.example.com/chart.js", defer: true, integrity: "sha384-...")
+/// ```
 public struct Script: View {
 
     // MARK: - Properties
 
-    /// The element's attributes.
+    /// The element's attributes, apart from the nonce.
     let attributes: HTMLAttributes
 
     /// The inline JavaScript, or an empty string for an external script.
     let code: String
+
+    /// The CSP nonce to write, or `nil` to use the environment's
+    /// ``EnvironmentValues/cspNonce``. An empty string writes no nonce.
+    let nonce: String?
 
     // MARK: - Initializers
 
@@ -350,24 +427,43 @@ public struct Script: View {
     ///   - isAsync: Adds `async`: the script runs as soon as it downloads, in
     ///     any order. Use it for independent scripts such as analytics.
     ///   - module: Adds `type="module"`. Modules are deferred by default.
-    public init(src: String, defer isDeferred: Bool = false, async isAsync: Bool = false, module: Bool = false) {
+    ///   - integrity: The Subresource Integrity hash, such as `"sha384-..."`.
+    ///   - crossOrigin: The CORS mode. `nil` uses `.anonymous` when there is
+    ///     an `integrity` hash, and leaves the attribute out otherwise.
+    ///   - nonce: The CSP nonce. `nil` uses the environment's ``EnvironmentValues/cspNonce``,
+    ///     and an empty string leaves the nonce off.
+    public init(
+        src: String,
+        defer isDeferred: Bool = false,
+        async isAsync: Bool = false,
+        module: Bool = false,
+        integrity: String? = nil,
+        crossOrigin: CrossOrigin? = nil,
+        nonce: String? = nil
+    ) {
         var attributes: HTMLAttributes = ["src": src]
         if module { attributes["type"] = "module" }
         if isDeferred { attributes.setFlag("defer") }
         if isAsync { attributes.setFlag("async") }
+        attributes["integrity"] = integrity
+        attributes["crossorigin"] = (crossOrigin ?? (integrity == nil ? nil : .anonymous))?.rawValue
         self.attributes = attributes
         self.code = ""
+        self.nonce = nonce
     }
 
     /// Creates an inline script. Only pass code you trust.
     /// - Parameters:
     ///   - code: The JavaScript, written without escaping. Only pass code you trust.
     ///   - module: Whether to load the script as an ES module.
-    public init(_ code: String, module: Bool = false) {
+    ///   - nonce: The CSP nonce. `nil` uses the environment's ``EnvironmentValues/cspNonce``,
+    ///     and an empty string leaves the nonce off.
+    public init(_ code: String, module: Bool = false, nonce: String? = nil) {
         var attributes = HTMLAttributes()
         if module { attributes["type"] = "module" }
         self.attributes = attributes
         self.code = Self.escapeForScriptElement(code)
+        self.nonce = nonce
     }
 
     // MARK: - View
@@ -389,7 +485,9 @@ public struct Script: View {
 
     /// The elements this view is made of.
     public var body: Element<RawHTML> {
-        Element("script", attributes: attributes, wrapping: RawHTML(code))
+        var attributes = attributes
+        attributes["nonce"] = Style.resolvedNonce(nonce)
+        return Element("script", attributes: attributes, wrapping: RawHTML(code))
     }
 
 }

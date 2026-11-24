@@ -70,12 +70,15 @@ struct SupportStyle: Sendable {
 
     // MARK: - Methods
 
-    /// Builds one `<style>` element holding several support styles.
-    /// - Parameter styles: The styles to write.
+    /// Builds one `<style>` element holding several support styles. It
+    /// carries a CSP nonce, so a Content Security Policy with a nonce allows it.
+    /// - Parameters:
+    ///   - styles: The styles to write.
+    ///   - nonce: The nonce to write. `nil` uses the environment's ``EnvironmentValues/cspNonce``.
     /// - Returns: The `<style>` element, or an empty string when there are no styles.
-    static func styleElement(for styles: [SupportStyle]) -> String {
+    static func styleElement(for styles: [SupportStyle], nonce: String? = nil) -> String {
         guard !styles.isEmpty else { return "" }
-        return "<style>" + styles.map(\.css).joined() + "</style>"
+        return Style(styles.map(\.css).joined(), nonce: nonce).render()
     }
 
 }

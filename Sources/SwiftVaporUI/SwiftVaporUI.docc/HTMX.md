@@ -54,7 +54,7 @@ app.get("plants", "count") { req in
 }
 ```
 
-The response has `Vary: HX-Request`, so caches keep the two answers apart.
+The response has `Vary: HX-Request, HX-Boosted, HX-History-Restore-Request`, so caches keep the two answers apart.
 
 ### Response headers
 

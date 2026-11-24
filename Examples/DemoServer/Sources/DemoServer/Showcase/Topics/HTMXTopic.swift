@@ -43,18 +43,23 @@ enum HTMXTopic {
             Example(
                 "active-search",
                 title: "Search as you type",
-                summary: "The field sends its value to /htmx/search after you stop typing for 300 ms, and the results replace the list below it. The spinner shows while the request is in flight."
+                summary: "The field sends its value to /htmx/search after you stop typing for 300 ms, and the results replace the list below it. Pressing Enter does the same, and without JavaScript the form still submits. The spinner shows while the request is in flight."
             ) {
                 // snippet: active-search
+                // Without JavaScript the form submits normally. With htmx,
+                // pressing Enter and typing both update the results in place.
+                // The input inherits hx-target, hx-swap and hx-indicator.
                 Form(action: "/htmx/search", method: .get) {
                     Input(type: .search, name: "q", placeholder: "Search plants")
                         .aria("label", "Search plants")
                         .hxGet("/htmx/search")
                         .hxTrigger(.input.changed().delay(.milliseconds(300)), .search)
-                        .hxTarget("#search-results")
-                        .hxIndicator("#search-spinner")
                     Small("Searching…").id("search-spinner").class("htmx-indicator muted")
                 }
+                .hxGet("/htmx/search")
+                .hxTarget("#search-results")
+                .hxSwap(.outerHTML)
+                .hxIndicator("#search-spinner")
                 PlantSearchResults(query: "")
                 // end-snippet
             },

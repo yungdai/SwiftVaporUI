@@ -74,7 +74,7 @@ enum ComponentsTopic {
             Example(
                 "fragments",
                 title: "Fragments for partial updates",
-                summary: "A component does not need a full document. Return one from a route on its own and it is sent as an HTML fragment, ready for partial page updates. The htmx page uses this route."
+                summary: "A component does not need a full document. Return one from a route on its own and it is sent as an HTML fragment. This route uses req.fragmentOrPage, so htmx gets the bare tile and a browser that opens it gets a page; the htmx page shows it in action."
             ) {
                 // snippet: fragments
                 StatTile(label: "Fragments rendered", value: "1")

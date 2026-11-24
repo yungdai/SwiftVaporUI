@@ -236,11 +236,17 @@ public struct HTMXTrigger: Sendable, Hashable, ExpressibleByStringLiteral {
         adding("from:\(selector)")
     }
 
-    /// Fires only when the event matches a JavaScript condition, such as `"ctrlKey"`.
+    /// Fires only when the event matches a JavaScript condition, such as
+    /// `"ctrlKey"`. The filter goes straight after the event name, where htmx
+    /// reads it, whatever order the options were added in.
     /// - Parameter condition: A JavaScript expression, evaluated against the event.
     /// - Returns: The trigger with the `[condition]` filter added.
     public func filter(_ condition: String) -> HTMXTrigger {
-        HTMXTrigger(rawValue: rawValue + "[\(condition)]")
+        let filter = "[\(condition)]"
+        guard let space = rawValue.firstIndex(of: " ") else {
+            return HTMXTrigger(rawValue: rawValue + filter)
+        }
+        return HTMXTrigger(rawValue: rawValue[..<space] + filter + rawValue[space...])
     }
 
     /// Appends one trigger option.
@@ -255,12 +261,23 @@ public struct HTMXTrigger: Sendable, Hashable, ExpressibleByStringLiteral {
 /// Writes durations the way htmx reads them.
 enum HTMXTiming {
 
+    /// The longest duration written, in seconds: about 31 years, far past
+    /// any useful delay, and small enough to count in milliseconds safely.
+    static let maximumSeconds: Int64 = 1_000_000_000
+
     /// Formats a duration as htmx's `500ms` or `2s`.
-    /// - Parameter duration: The duration to format. Negative durations count as zero.
+    /// - Parameter duration: The duration to format. Negative durations count
+    ///   as zero, a part of a millisecond counts as a whole one, and durations
+    ///   longer than ``maximumSeconds`` are shortened to it.
     /// - Returns: Whole seconds as `<n>s`, anything else as whole milliseconds `<n>ms`.
     static func format(_ duration: Duration) -> String {
         let (seconds, attoseconds) = duration.components
-        let milliseconds = max(0, seconds * 1000 + attoseconds / 1_000_000_000_000_000)
+        guard seconds >= 0, seconds < maximumSeconds else {
+            return seconds < 0 ? "0s" : "\(maximumSeconds)s"
+        }
+        let attosecondsPerMillisecond: Int64 = 1_000_000_000_000_000
+        let (wholeMilliseconds, remainder) = attoseconds.quotientAndRemainder(dividingBy: attosecondsPerMillisecond)
+        let milliseconds = seconds * 1000 + wholeMilliseconds + (remainder > 0 ? 1 : 0)
         return milliseconds % 1000 == 0 ? "\(milliseconds / 1000)s" : "\(milliseconds)ms"
     }
 
@@ -323,10 +340,12 @@ extension View {
 
     /// Chooses the events that send the request. Several triggers are joined
     /// with commas, and any of them sends it.
-    /// - Parameter triggers: The triggers, such as `.click` or `.every(.seconds(5))`.
+    /// - Parameters:
+    ///   - trigger: The first trigger, such as `.click` or `.every(.seconds(5))`.
+    ///   - more: Other triggers that also send the request.
     /// - Returns: A view with `hx-trigger` set.
-    public func hxTrigger(_ triggers: HTMXTrigger...) -> ModifiedView<Self> {
-        changing(.set("hx-trigger", triggers.map(\.rawValue).joined(separator: ", ")))
+    public func hxTrigger(_ trigger: HTMXTrigger, _ more: HTMXTrigger...) -> ModifiedView<Self> {
+        changing(.set("hx-trigger", ([trigger] + more).map(\.rawValue).joined(separator: ", ")))
     }
 
     /// Swaps in only part of the response.

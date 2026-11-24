@@ -93,7 +93,8 @@ extension Request {
     ///
     /// The same URL then works when it is opened directly, bookmarked or
     /// reloaded, and when htmx requests it to update part of a page. The
-    /// response has `Vary: HX-Request`, so caches keep the two answers apart.
+    /// response varies on the three headers the choice reads, so caches keep
+    /// the two answers apart.
     /// - Parameters:
     ///   - fragment: The view htmx swaps into the page.
     ///   - page: Builds the full page around the fragment.
@@ -103,7 +104,7 @@ extension Request {
         @ViewBuilder page: (Fragment) -> FullPage
     ) -> HTMLResponse<AnyView> {
         let view = htmx.wantsFragment ? AnyView(fragment) : AnyView(page(fragment))
-        return HTMLResponse(headers: ["Vary": "HX-Request"], view)
+        return HTMLResponse(headers: ["Vary": "HX-Request, HX-Boosted, HX-History-Restore-Request"], view)
     }
 
 }

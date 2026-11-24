@@ -43,6 +43,7 @@ final class HTMXTests: XCTestCase {
         XCTAssertEqual(HTMXTrigger.input.changed().delay(.milliseconds(300)).rawValue, "input changed delay:300ms")
         XCTAssertEqual(HTMXTrigger.click.once().rawValue, "click once")
         XCTAssertEqual(HTMXTrigger.keyup.filter("key=='Enter'").from("body").rawValue, "keyup[key=='Enter'] from:body")
+        XCTAssertEqual(HTMXTrigger.click.once().filter("ctrlKey").rawValue, "click[ctrlKey] once")
         XCTAssertEqual(HTMXTrigger.event("plant-added").throttle(.seconds(2)).rawValue, "plant-added throttle:2s")
         let html = Input(name: "q").hxTrigger(.input.changed().delay(.milliseconds(300)), .search).render()
         XCTAssertTrue(html.contains(#"hx-trigger="input changed delay:300ms, search""#), html)
@@ -54,6 +55,8 @@ final class HTMXTests: XCTestCase {
         XCTAssertEqual(HTMXTrigger.every(.milliseconds(250)).rawValue, "every 250ms")
         XCTAssertEqual(HTMXTrigger.every(.seconds(2)).rawValue, "every 2s")
         XCTAssertEqual(HTMXTrigger.every(.seconds(-1)).rawValue, "every 0s")
+        XCTAssertEqual(HTMXTrigger.every(.microseconds(500)).rawValue, "every 1ms")
+        XCTAssertEqual(HTMXTrigger.every(.seconds(Int64.max / 100)).rawValue, "every 1000000000s")
     }
 
     /// Checks the other modifiers, including JSON for `hx-vals` and escaping.
@@ -126,7 +129,7 @@ final class HTMXTests: XCTestCase {
         }
         try await app.test(.GET, "count", headers: ["HX-Request": "true"]) { res async in
             XCTAssertEqual(res.body.string, #"<p id="count">3 plants</p>"#)
-            XCTAssertEqual(res.headers.first(name: .vary), "HX-Request")
+            XCTAssertEqual(res.headers.first(name: .vary), "HX-Request, HX-Boosted, HX-History-Restore-Request")
             XCTAssertEqual(res.headers.contentType, .html)
         }
         try await app.test(.GET, "count") { res async in

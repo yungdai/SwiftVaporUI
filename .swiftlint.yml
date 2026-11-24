@@ -60,6 +60,41 @@ missing_docs:
 
 # House style also puts a blank line after a type's opening brace, before
 # its closing brace, between documented members and around each MARK.
-# SwiftLint has no built-in rule that requires those blank lines, so
-# `vertical_whitespace_opening_braces` and `vertical_whitespace_closing_braces`
-# (which forbid them) stay off.
+# SwiftLint has no built-in rule that requires those blank lines, so the
+# custom rules below enforce them, and `vertical_whitespace_opening_braces`
+# and `vertical_whitespace_closing_braces` (which forbid them) stay off. The
+# default `vertical_whitespace` rule keeps each gap to a single blank line.
+#
+# A "type" is any struct, class, enum, protocol, actor or extension whose
+# declaration ends with `{` on the same line.
+custom_rules:
+  type_opening_brace_blank_line:
+    name: "Blank Line After Type Opening Brace"
+    regex: '^[ \t]*(?:(?:@[\w.]+(?:\([^)\n]*\))?|public|package|internal|private|fileprivate|open|final|indirect|nonisolated)[ \t]+)*(?:struct|class|enum|protocol|actor|extension)[ \t]+[A-Z_][^\n]*\{[ \t]*(?://[^\n]*)?\n(?=[ \t]*[^\s}])'
+    message: "Put a blank line after a type's opening brace."
+    severity: warning
+  type_closing_brace_blank_line:
+    name: "Blank Line Before Type Closing Brace"
+    regex: '^([ \t]*)(?:(?:@[\w.]+(?:\([^)\n]*\))?|public|package|internal|private|fileprivate|open|final|indirect|nonisolated)[ \t]+)*(?:struct|class|enum|protocol|actor|extension)[ \t]+[A-Z_][^\n]*\{[ \t]*(?://[^\n]*)?\n(?:(?!\1\}[ \t]*(?://[^\n]*)?$)[^\n]*\n)*(?<=[^\s{]\n)\1\}'
+    message: "Put a blank line before the closing brace of the type declared here."
+    severity: warning
+  doc_comment_blank_line_before:
+    name: "Blank Line Before Doc Comment"
+    regex: '(?<=^[ \t]{0,40}[^\s/{#](?:[^\n]{0,400}[^\s{])?\n)[ \t]*///'
+    message: "Put a blank line between a declaration and the next doc comment."
+    severity: warning
+  doc_comment_no_gap:
+    name: "Doc Comment Directly Above Declaration"
+    regex: '^[ \t]*///[^\n]*\n(?=[ \t]*\n)'
+    message: "A doc comment sits directly above its declaration, with no blank line between them."
+    severity: warning
+  mark_blank_line_before:
+    name: "Blank Line Before MARK"
+    regex: '(?<=^[ \t]{0,40}\S[^\n]{0,400}\n)[ \t]*// MARK:'
+    message: "Put a blank line before each MARK."
+    severity: warning
+  mark_blank_line_after:
+    name: "Blank Line After MARK"
+    regex: '^[ \t]*// MARK:[^\n]*\n(?=[ \t]*\S)'
+    message: "Put a blank line after each MARK."
+    severity: warning

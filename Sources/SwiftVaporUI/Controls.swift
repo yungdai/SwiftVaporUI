@@ -846,6 +846,7 @@ public struct DatePicker: View {
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = timeZone
         let parts = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: date)
+
         /// Pads a number with leading zeros.
         func pad(_ value: Int?, _ width: Int = 2) -> String {
             let string = String(value ?? 0)

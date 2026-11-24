@@ -44,7 +44,7 @@ The modifiers are `hxGet`, `hxPost`, `hxPut`, `hxPatch`, `hxDelete`, `hxTarget`,
 
 ### Answer with a fragment or a page
 
-Read the request's htmx headers with `req.isHTMX` or `req.htmx`. Most routes want ``Vapor/Request/fragmentOrPage(_:page:)``: it sends the fragment when htmx asks for it, and the full page when a browser opens the URL directly, follows a boosted link, or restores history.
+Read the request's htmx headers with `req.isHTMX` or `req.htmx`. Most routes want `req.fragmentOrPage(_:page:)`: it sends the fragment when htmx asks for it, and the full page when a browser opens the URL directly, follows a boosted link, or restores history.
 
 ```swift
 app.get("plants", "count") { req in

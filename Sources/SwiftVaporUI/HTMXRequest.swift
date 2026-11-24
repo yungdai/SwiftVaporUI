@@ -2,8 +2,8 @@ import Vapor
 
 /// What htmx said about a request, read from the `HX-*` request headers.
 ///
-/// Get one from ``Vapor/Request/htmx``. Most routes only need
-/// ``wantsFragment``, or ``Vapor/Request/fragmentOrPage(_:page:)``, which
+/// Get one from `req.htmx`. Most routes only need
+/// ``wantsFragment``, or `req.fragmentOrPage(_:page:)`, which
 /// uses it.
 public struct HTMXRequestDetails: Sendable, Equatable {
 

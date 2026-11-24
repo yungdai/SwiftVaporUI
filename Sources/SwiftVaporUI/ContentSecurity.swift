@@ -40,7 +40,7 @@ public enum CSPNonce {
 
 }
 
-/// The request storage key for ``Vapor/Request/cspNonce``.
+/// The request storage key for `req.cspNonce`.
 private struct CSPNonceStorageKey: StorageKey {
 
     /// The stored nonce.
@@ -48,7 +48,7 @@ private struct CSPNonceStorageKey: StorageKey {
 
 }
 
-/// Makes ``Vapor/Request/cspNonce``'s read-then-store a single step.
+/// Makes `req.cspNonce`'s read-then-store a single step.
 private let cspNonceLock = NSLock()
 
 /// A CSP nonce for each request.

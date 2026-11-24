@@ -35,9 +35,11 @@ func registerPlantShelfRoutes(_ app: Application) {
         return req.redirect(to: "/plants/\(plant.slug)?added=1", redirectType: .normal)
     }
 
-    // A fragment: any view can be returned on its own, which suits htmx-style
-    // partial updates.
-    app.get("fragments", "plant-count") { _ in
-        PlantCount(count: await shelf.all().count)
+    // A fragment: any view can be returned on its own. PlantCount polls this
+    // route with htmx, which gets the paragraph alone; a browser gets a page.
+    app.get("fragments", "plant-count") { req in
+        req.fragmentOrPage(PlantCount(count: await shelf.all().count)) { count in
+            SiteLayout(title: "Plant count") { count }
+        }
     }
 }

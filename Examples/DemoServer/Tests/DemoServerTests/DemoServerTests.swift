@@ -38,6 +38,20 @@ final class PlantShelfTests: XCTestCase {
         }
         try await app.asyncShutdown()
     }
+
+    /// Checks the plant count route sends htmx the fragment and browsers a page.
+    func testPlantCountFragment() async throws {
+        let app = try await Application.make(.testing)
+        registerPlantShelfRoutes(app)
+        try await app.test(.GET, "fragments/plant-count", headers: ["HX-Request": "true"]) { res async in
+            XCTAssertTrue(res.body.string.hasPrefix(#"<p id="plant-count" hx-get="/fragments/plant-count""#), res.body.string)
+        }
+        try await app.test(.GET, "fragments/plant-count") { res async in
+            XCTAssertTrue(res.body.string.hasPrefix("<!DOCTYPE html>"))
+            XCTAssertTrue(res.body.string.contains("htmx.min.js"))
+        }
+        try await app.asyncShutdown()
+    }
 }
 
 /// Tests for the night market's form and data.

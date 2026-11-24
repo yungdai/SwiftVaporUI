@@ -46,6 +46,7 @@ enum Topics {
         ControlsTopic.topic,
         NavigationTopic.topic,
         ComponentsTopic.topic,
+        HTMXTopic.topic,
         ElementsTopic.topic,
         MediaTopic.topic,
         DocumentsTopic.topic,

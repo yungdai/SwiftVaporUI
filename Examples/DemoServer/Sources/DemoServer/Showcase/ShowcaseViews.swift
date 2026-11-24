@@ -37,6 +37,7 @@ struct ShowcaseLayout<Content: View>: View {
         HTMLDocument(title: "\(title) · SwiftVaporUI Showcase") {
             Meta(name: "description", content: "Live examples of the SwiftVaporUI DSL, each shown next to its Swift source.")
             Style(showcaseCSS)
+            HTMXScript()
         } body: {
             Header {
                 HStack(spacing: 16) {

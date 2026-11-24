@@ -51,6 +51,7 @@ Any `View` can be returned from a route. It is sent as `text/html; charset=utf-8
 - **Layout.** `HStack` (flex row, 8px gap by default), `VStack` (a plain `div` unless you pass `alignment` or `spacing`, so CSS can own the layout), `Spacer`, and `NavigationBar` (a `<nav>` laid out as a row).
 - **Documents.** `HTMLDocument(title:head:body:)` writes the doctype, `<head>` (charset, viewport, title) and `<body>`. `Page(title:) { ... }` is the same with an empty head. For full control, compose `Document`, `HTMLRoot`, `Head`, `Title`, `Meta`, `ResourceLink`, `Stylesheet`, `Style`, `Script` and `DocumentBody` yourself.
 - **Attribute modifiers.** `.class(_:)`, `.class(_:when:)`, `.id(_:)`, `.role(_:)`, `.attribute(_:_:)`, `.flag(_:if:)` for boolean attributes, `.data(_:_:)`, `.aria(_:_:)`, `.tooltip(_:)`, `.hidden()`, `.disabled()`, `.required()`, `.autofocus()`.
+- **htmx.** Typed modifiers for htmx's attributes (`.hxGet(_:)`, `.hxPost(_:)`, `.hxTarget(_:)`, `.hxSwap(.outerHTML)`, `.hxTrigger(.every(.seconds(5)))`, `.hxIndicator(_:)`, `.hxVals(_:)`, `.hxBoost()` and more), `HTMXScript()` to load it, and `req.isHTMX`, `req.htmx` and `req.fragmentOrPage(_:page:)` so one route can send htmx a fragment and a browser the full page.
 - **Styling modifiers.** `.style(_:)`, `.style(_:_:)`, `.padding()`, `.padding(_:_:)` with `Edge`s, `.font(_:)` (`.largeTitle`, `.title`, `.headline`, `.body`, `.caption`, `.system(size:weight:)`, ...), `.fontWeight(_:)`, `.bold()`, `.italic()`, `.foregroundColor(_:)`, `.background(_:)`, `.cornerRadius(_:)`, `.opacity(_:)`, `.frame(width:height:)`, `.frame(maxWidth:maxHeight:)`. `Color` has named colors plus `.hex(_:)` and `.rgb(_:_:_:opacity:)`.
 
 Modifiers apply to the first HTML element their view renders, so modifiers on your own views reach the element inside them, and styling modifiers add to that element's `style` rather than wrapping it in another `div`. If the same attribute is set twice, the last modifier in the chain wins; classes and styles accumulate. A modifier on bare `Text` wraps it in a `<span>`.
@@ -132,6 +133,7 @@ Then open http://127.0.0.1:8080. To use another port, run `PORT=9000 swift run D
 | Forms, inputs and buttons | `/forms` |
 | Navigation and links | `/navigation` |
 | Custom views | `/components` |
+| Live updates with htmx | `/htmx` |
 | More elements | `/elements` |
 | Full documents | `/documents` |
 | Capstone: how the night market page is built | `/capstone` |
